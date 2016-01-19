@@ -61,14 +61,48 @@ namespace DMS_Viewer
                 ProcessRowData();
             }
         }
-
+        int leftOverValue = 0; 
         private string DecodeBinaryData(string data)
         {
+            bool isUsingLeftover = leftOverValue != 0;
+
             var chars = data.ToCharArray();
             StringBuilder sb = new StringBuilder();
             for (var x = 0; x < chars.Length - 1; x += 2)
             {
-                sb.Append((char)(chars[x+1] - chars[x]));
+                var decodedValue = 0;
+                if (isUsingLeftover)
+                {
+                    decodedValue = leftOverValue;
+                } else
+                {
+                    decodedValue = (chars[x] - 'A') << 4 | (chars[x + 1] - 'A');
+                }
+                
+                if (decodedValue >= 194)
+                {
+                    if (isUsingLeftover == false)
+                    {
+                        x += 2;
+                    } else
+                    {
+                        isUsingLeftover = false;
+                        leftOverValue = 0;
+                    }
+                    if (x == chars.Length)
+                    {
+                        leftOverValue = decodedValue;
+                        break;
+                    }
+                    var secondValue = (chars[x] - 'A') << 4 | (chars[x + 1] - 'A');
+
+                    if (decodedValue > 194)
+                    {
+                        secondValue += (64 * (decodedValue - 194));
+                    }
+                    decodedValue = secondValue;
+                }
+                sb.Append((char)decodedValue);
             }
             return sb.ToString();
         }
@@ -89,7 +123,8 @@ namespace DMS_Viewer
                         if (data[curIndex] == '\\')
                         {
                             /* escape char */
-                            columnValue += data[curIndex++] + data[curIndex++];
+                            curIndex++;
+                            columnValue += data[curIndex++];
                         } else
                         {
                             columnValue += data[curIndex++];
@@ -120,7 +155,10 @@ namespace DMS_Viewer
                     curIndex++;
                 }
             }
-            row.Values.Add(columnValue);
+            if (columnValue.Length > 0)
+            {
+                row.Values.Add(columnValue);
+            }
             columnValue = "";
         }
 
