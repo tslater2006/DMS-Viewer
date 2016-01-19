@@ -18,7 +18,7 @@ namespace DMS_Viewer
             Application.SetCompatibleTextRenderingDefault(false);
 
             DMSParser parser = new DMSParser();
-            var result = parser.ParseFile(@"C:\Users\tslat\Desktop\IS_TP_CHG_01_01_00_02_TREE.DAT");
+            
 
             
             Application.Run(new Form1());
