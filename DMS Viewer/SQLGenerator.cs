@@ -51,8 +51,15 @@ namespace DMS_Viewer
                             case "CHAR":
                                 printValue = SafeString(row.Values[x]);
                                 break;
+                            case "LONG":
+                                printValue = SafeString(row.Values[x]);
+                                break;
                             case "DATE":
-
+                                printValue = String.Format("TO_DATE('{0}','YYYY-MM-DD')",row.Values[x]);
+                                break;
+                            case "DATETIME":
+                                printValue = String.Format("TO_DATE('{0}','YYYY-MM-DD-HH24:MI:SS')", row.Values[x].Replace(".000000", ""));
+                                break;
                             default:
                                 printValue = row.Values[x] == null ? "NULL" : row.Values[x].ToString();
                                 break;
@@ -83,7 +90,8 @@ namespace DMS_Viewer
                         columnNames.Append(colName).Append(new string(' ', colPad)).Append(", ");
                         columnValues.Append(printValue).Append(new string(' ', valuePad)).Append(", ");
                     }
-
+                    columnNames.Length -= 2;
+                    columnValues.Length -= 2;
                     var sqlStatement = String.Format("INSERT INTO {0} \r\n({1}) \r\nVALUES \r\n({2});", table.DBName, columnNames.ToString(),columnValues.ToString());
                     sw.WriteLine(sqlStatement);
                 }
@@ -96,9 +104,57 @@ namespace DMS_Viewer
             sw.Close();
         }
 
-        private static string SafeString(string s)
+        public static string SafeString(string s)
         {
-            return "'" + s + "'";
+            bool previousCharControl = true;
+            StringBuilder str = new StringBuilder();
+            foreach (char c in s)
+            {
+                if (c >= 32 && c <= 126)
+                {
+                    if (previousCharControl)
+                    {
+                        str.Append("'").Append(c);
+                        if (c == '\'')
+                        {
+                            str.Append(c);
+                        }
+                        previousCharControl = false;
+                    } else
+                    {
+                        str.Append(c);
+                        if (c == '\'')
+                        {
+                            str.Append(c);
+                        }
+                    }
+                } else
+                {
+                    /* non printable */
+                    if (previousCharControl == false)
+                    {
+                        /* close out the string */
+                        str.Append("' || ");
+                        previousCharControl = true;
+                    }
+                    /* print out the "char" */
+                    str.Append("chr(" + ((int)c) + ") || ");
+                }
+            }
+            if (previousCharControl == false)
+            {
+                /* close out string */
+                str.Append("'");
+            }
+            if (str.Length >=3 )
+            {
+                if (str[str.Length - 3] == '|' && str[str.Length - 2] == '|' && str[str.Length - 1] == ' ')
+                {
+                    str.Length = str.Length - 3;
+                }
+            }
+            
+            return str.ToString();
         }
     }
 }

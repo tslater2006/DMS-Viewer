@@ -16,6 +16,7 @@ namespace DMS_Viewer
         public Form1()
         {
             InitializeComponent();
+            SQLGenerator.SafeString("test\r\ntest");
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -69,7 +70,7 @@ namespace DMS_Viewer
 
         private void exportToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SQLGenerator.GenerateSQLFile(dmsFile, @"C:\users\tslat\Desktop\out.sql",false);
+            SQLGenerator.GenerateSQLFile(dmsFile, @"out.sql",false);
         }
     }
 }
