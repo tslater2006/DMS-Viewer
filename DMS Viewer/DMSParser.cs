@@ -18,7 +18,7 @@ namespace DMS_Viewer
         Regex databaseRegex = new Regex(@"REM Database: (.*)");
         Regex startedRegex = new Regex(@"REM Started: (.*)");
 
-        Regex tableNameRegex = new Regex(@"EXPORT\s+(.*?)\.(.*?)\s+WHERE");
+        Regex tableNameRegex = new Regex(@"EXPORT\s+(.*?)\.(.*?)\s+(WHERE)?");
         Regex columnRegex = new Regex(@"(([A-Z0-9_]+):([A-Z]+)\((\d+)\)~~~).*?");
         int lineNumber = 0;
 

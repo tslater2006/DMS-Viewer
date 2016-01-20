@@ -49,7 +49,10 @@ namespace DMS_Viewer
         private void tableList_SelectedIndexChanged(object sender, EventArgs e)
         {
             var value = tableList.SelectedItem as DMSTable;
-
+            if (value == null)
+            {
+                return;
+            }
             columnList.Items.Clear();
             
             foreach (DMSTableColumn col in value.Columns)
@@ -60,7 +63,13 @@ namespace DMS_Viewer
                 item.SubItems.Add(col.Size);
                 columnList.Items.Add(item);
             }
+
             lblRowCount.Text = value.Rows.Count.ToString();
+        }
+
+        private void exportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SQLGenerator.GenerateSQLFile(dmsFile, @"C:\users\tslat\Desktop\out.sql",false);
         }
     }
 }

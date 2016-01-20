@@ -41,12 +41,13 @@
             this.txtStarted = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.columnList = new System.Windows.Forms.ListView();
-            this.label5 = new System.Windows.Forms.Label();
             this.colName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colSize = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.lblRowCount = new System.Windows.Forms.Label();
+            this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -57,22 +58,24 @@
             this.fileToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1238, 40);
+            this.menuStrip1.Padding = new System.Windows.Forms.Padding(3, 1, 0, 1);
+            this.menuStrip1.Size = new System.Drawing.Size(619, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openToolStripMenuItem});
+            this.openToolStripMenuItem,
+            this.exportToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(64, 36);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 22);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(174, 38);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
@@ -83,70 +86,77 @@
             // tableList
             // 
             this.tableList.FormattingEnabled = true;
-            this.tableList.ItemHeight = 25;
-            this.tableList.Location = new System.Drawing.Point(17, 157);
+            this.tableList.Location = new System.Drawing.Point(8, 82);
+            this.tableList.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.tableList.Name = "tableList";
-            this.tableList.Size = new System.Drawing.Size(306, 479);
+            this.tableList.Size = new System.Drawing.Size(155, 251);
             this.tableList.TabIndex = 6;
             this.tableList.SelectedIndexChanged += new System.EventHandler(this.tableList_SelectedIndexChanged);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(17, 129);
+            this.label1.Location = new System.Drawing.Point(8, 67);
+            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(77, 25);
+            this.label1.Size = new System.Drawing.Size(39, 13);
             this.label1.TabIndex = 7;
             this.label1.Text = "Tables";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 62);
+            this.label2.Location = new System.Drawing.Point(6, 32);
+            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(91, 25);
+            this.label2.Size = new System.Drawing.Size(45, 13);
             this.label2.TabIndex = 8;
             this.label2.Text = "Version:";
             // 
             // txtVersion
             // 
-            this.txtVersion.Location = new System.Drawing.Point(103, 62);
+            this.txtVersion.Location = new System.Drawing.Point(52, 32);
+            this.txtVersion.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.txtVersion.Name = "txtVersion";
             this.txtVersion.ReadOnly = true;
-            this.txtVersion.Size = new System.Drawing.Size(204, 31);
+            this.txtVersion.Size = new System.Drawing.Size(104, 20);
             this.txtVersion.TabIndex = 9;
             // 
             // txtDatabase
             // 
-            this.txtDatabase.Location = new System.Drawing.Point(444, 62);
+            this.txtDatabase.Location = new System.Drawing.Point(222, 32);
+            this.txtDatabase.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.txtDatabase.Name = "txtDatabase";
             this.txtDatabase.ReadOnly = true;
-            this.txtDatabase.Size = new System.Drawing.Size(294, 31);
+            this.txtDatabase.Size = new System.Drawing.Size(149, 20);
             this.txtDatabase.TabIndex = 11;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(328, 65);
+            this.label3.Location = new System.Drawing.Point(164, 34);
+            this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(110, 25);
+            this.label3.Size = new System.Drawing.Size(56, 13);
             this.label3.TabIndex = 10;
             this.label3.Text = "Database:";
             // 
             // txtStarted
             // 
-            this.txtStarted.Location = new System.Drawing.Point(877, 59);
+            this.txtStarted.Location = new System.Drawing.Point(438, 31);
+            this.txtStarted.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.txtStarted.Name = "txtStarted";
             this.txtStarted.ReadOnly = true;
-            this.txtStarted.Size = new System.Drawing.Size(294, 31);
+            this.txtStarted.Size = new System.Drawing.Size(149, 20);
             this.txtStarted.TabIndex = 13;
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(784, 62);
+            this.label4.Location = new System.Drawing.Point(392, 32);
+            this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(87, 25);
+            this.label4.Size = new System.Drawing.Size(44, 13);
             this.label4.TabIndex = 12;
             this.label4.Text = "Started:";
             // 
@@ -156,21 +166,13 @@
             this.colName,
             this.colType,
             this.colSize});
-            this.columnList.Location = new System.Drawing.Point(364, 157);
+            this.columnList.Location = new System.Drawing.Point(182, 82);
+            this.columnList.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.columnList.Name = "columnList";
-            this.columnList.Size = new System.Drawing.Size(653, 479);
+            this.columnList.Size = new System.Drawing.Size(328, 251);
             this.columnList.TabIndex = 14;
             this.columnList.UseCompatibleStateImageBehavior = false;
             this.columnList.View = System.Windows.Forms.View.Details;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(361, 129);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(96, 25);
-            this.label5.TabIndex = 15;
-            this.label5.Text = "Columns";
             // 
             // colName
             // 
@@ -187,29 +189,48 @@
             this.colSize.Text = "Size";
             this.colSize.Width = 100;
             // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(180, 67);
+            this.label5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(47, 13);
+            this.label5.TabIndex = 15;
+            this.label5.Text = "Columns";
+            // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(1029, 129);
+            this.label6.Location = new System.Drawing.Point(514, 67);
+            this.label6.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(71, 25);
+            this.label6.Size = new System.Drawing.Size(37, 13);
             this.label6.TabIndex = 16;
             this.label6.Text = "Rows:";
             // 
             // lblRowCount
             // 
             this.lblRowCount.AutoSize = true;
-            this.lblRowCount.Location = new System.Drawing.Point(1106, 129);
+            this.lblRowCount.Location = new System.Drawing.Point(553, 67);
+            this.lblRowCount.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblRowCount.Name = "lblRowCount";
-            this.lblRowCount.Size = new System.Drawing.Size(24, 25);
+            this.lblRowCount.Size = new System.Drawing.Size(13, 13);
             this.lblRowCount.TabIndex = 17;
             this.lblRowCount.Text = "0";
             // 
+            // exportToolStripMenuItem
+            // 
+            this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exportToolStripMenuItem.Text = "Export...";
+            this.exportToolStripMenuItem.Click += new System.EventHandler(this.exportToolStripMenuItem_Click);
+            // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1238, 737);
+            this.ClientSize = new System.Drawing.Size(619, 383);
             this.Controls.Add(this.lblRowCount);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
@@ -224,7 +245,6 @@
             this.Controls.Add(this.tableList);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
-            this.Margin = new System.Windows.Forms.Padding(6);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "Form1";
@@ -257,6 +277,7 @@
         private System.Windows.Forms.ColumnHeader colSize;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label lblRowCount;
+        private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
     }
 }
 
