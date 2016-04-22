@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Windows.Forms;
+
 
 namespace DMS_Viewer
 {
@@ -29,7 +29,6 @@ namespace DMS_Viewer
         public DMSFile ParseFile(string filename)
         {
             _file = new DMSFile();
-            _file.FileName = new FileInfo(filename).Name;
             using (StreamReader reader = new StreamReader(filename))
             {
                 this.reader = reader;

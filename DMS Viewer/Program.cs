@@ -16,10 +16,6 @@ namespace DMS_Viewer
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
-            DMSParser parser = new DMSParser();
-            
-
             
             Application.Run(new Form1());
         }
