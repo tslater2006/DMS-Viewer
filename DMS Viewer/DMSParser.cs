@@ -19,7 +19,7 @@ namespace DMS_Viewer
         Regex startedRegex = new Regex(@"REM Started: (.*)");
 
         Regex tableNameRegex = new Regex(@"EXPORT\s+(.*?)\.(.*?)\s+(WHERE)?");
-        Regex columnRegex = new Regex(@"(([A-Z0-9_]+):(2?[A-Z]+)\((\d+)\)~~~).*?");
+        Regex columnRegex = new Regex(@"(([A-Z0-9_]+):(\d?[A-Z]+)\((\d+)(,\d*)?\)~~~).*?");
         int lineNumber = 0;
 
         string previousLine = "";
