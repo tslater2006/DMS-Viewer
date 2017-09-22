@@ -65,30 +65,30 @@ namespace DMS_Viewer
 
         private void dataGridView1_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (IsRunningMono == false)
+            if (!IsRunningMono)
             {
-                var content = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
-                new LongDataViewer(content).ShowDialog(this);
+                if (e.RowIndex >= 0)
+                {
+                    var content = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
+                    new LongDataViewer(content).ShowDialog(this);
+                }
             }
         }
 
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            /*if (e.RowIndex < 0 || e.ColumnIndex !=
-            dataGridView1.Columns["Copy Row"].Index) return;
 
-            var row = dataGridView1.Rows[e.RowIndex];
-
-
-            int i = 9;*/
         }
 
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             if (IsRunningMono)
             {
-                var content = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
-                new LongDataViewer(content).ShowDialog(this);
+                if (e.RowIndex >= 0)
+                {
+                    var content = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
+                    new LongDataViewer(content).ShowDialog(this);
+                }
             }
             
         }
