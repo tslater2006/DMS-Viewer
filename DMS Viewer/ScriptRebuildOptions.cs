@@ -62,11 +62,11 @@ namespace DMS_Viewer
 
         private void button3_Click(object sender, EventArgs e)
         {
-            folderBrowserDialog1.SelectedPath = textBox3.Text;
+            folderBrowserDialog1.SelectedPath = textBox4.Text;
             var result = folderBrowserDialog1.ShowDialog(this);
             if (result == DialogResult.OK)
             {
-                textBox3.Text = folderBrowserDialog1.SelectedPath;
+                textBox4.Text = folderBrowserDialog1.SelectedPath;
             }
         }
 
