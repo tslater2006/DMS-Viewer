@@ -31,6 +31,7 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateSQLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -77,6 +78,7 @@
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openToolStripMenuItem,
+            this.saveAsToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 22);
@@ -88,6 +90,14 @@
             this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
+            // 
+            // saveAsToolStripMenuItem
+            // 
+            this.saveAsToolStripMenuItem.Enabled = false;
+            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveAsToolStripMenuItem.Text = "Save As...";
+            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
@@ -109,14 +119,14 @@
             // 
             this.generateSQLToolStripMenuItem.Enabled = false;
             this.generateSQLToolStripMenuItem.Name = "generateSQLToolStripMenuItem";
-            this.generateSQLToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.generateSQLToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
             this.generateSQLToolStripMenuItem.Text = "Generate SQL";
             this.generateSQLToolStripMenuItem.Click += new System.EventHandler(this.generateSQLToolStripMenuItem_Click);
             // 
             // rebuildScriptToolStripMenuItem
             // 
             this.rebuildScriptToolStripMenuItem.Name = "rebuildScriptToolStripMenuItem";
-            this.rebuildScriptToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.rebuildScriptToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
             this.rebuildScriptToolStripMenuItem.Text = "Rebuild Script";
             this.rebuildScriptToolStripMenuItem.Click += new System.EventHandler(this.rebuildScriptToolStripMenuItem_Click);
             // 
@@ -335,7 +345,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "Form1";
-            this.Text = "DMS Viewer";
+            this.Text = "DMS Explorer";
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -374,6 +384,7 @@
         private System.Windows.Forms.Button dataViewer;
         private System.Windows.Forms.Button copyTables;
         private System.Windows.Forms.Button copyWhereClause;
+        private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
     }
 }
 

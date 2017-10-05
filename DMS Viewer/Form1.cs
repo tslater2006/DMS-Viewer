@@ -64,6 +64,7 @@ namespace DMS_Viewer
                 tableList.Items.Add(table);
             }
             tableList.SelectedIndex = 0;
+            saveAsToolStripMenuItem.Enabled = true;
         }
 
         private void tableList_SelectedIndexChanged(object sender, EventArgs e)
@@ -148,6 +149,22 @@ namespace DMS_Viewer
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
+        }
+
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(this, "Saving of DAT files is currently in testing.\r\n\r\nPlease do not rely on this feature yet as there may be bugs or DAT format issues that haven't been accounted for. \r\n\r\nIf you feel like being adventureous please go ahead and give this feature a try!", "Modifed DAT is in BETA", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+            saveFileDialog1.FileName = currentDmsPath;
+            saveFileDialog1.Filter = "Data Mover Data Files|*.dat;*.DAT";
+
+            var dlgResult = saveFileDialog1.ShowDialog();
+
+            if (dlgResult == DialogResult.OK)
+            {
+                DMSWriter writer = new DMSWriter(dmsFile);
+                writer.Write(saveFileDialog1.FileName);
+            }
         }
     }
 }

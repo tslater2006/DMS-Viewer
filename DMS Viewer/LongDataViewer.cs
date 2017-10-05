@@ -15,6 +15,20 @@ namespace DMS_Viewer
     {
         private bool IsRunningMono = false;
         private bool IsRunningOSX = false;
+
+        private DMSTableRow tableRow;
+        private int colIndex;
+        private DataViewer viewerForm;
+        public LongDataViewer(string content, DataViewer viewerForm, DMSTableRow row, int columnIndex): this(content)
+        {
+            tableRow = row;
+            colIndex = columnIndex;
+            this.viewerForm = viewerForm;
+            textBox1.ReadOnly = false;
+            this.Text = "Data Editor";
+            button1.Text = "Save Changes";
+        }
+
         public LongDataViewer(string content)
         {
             InitializeComponent();
@@ -35,6 +49,12 @@ namespace DMS_Viewer
 
         private void button1_Click(object sender, EventArgs e)
         {
+            if (tableRow != null)
+            {
+                tableRow.Values[colIndex] = textBox1.Text;
+                viewerForm.DrawDataTable();
+                this.Close();
+            }
             if (IsRunningOSX)
             {
                 OSXClipboard.CopyToClipboard(textBox1.Text);

@@ -17,6 +17,7 @@ namespace DMS_Viewer
         Regex versionRegex = new Regex(@"SET VERSION_DAM\s+(.*)");
         Regex databaseRegex = new Regex(@"REM Database: (.*)");
         Regex startedRegex = new Regex(@"REM Started: (.*)");
+        Regex endedRegex = new Regex(@"REM Ended: (.*)");
 
         Regex tableNameRegex = new Regex(@"EXPORT\s+(.*?)\.(.*?)\s+(WHERE)?");
         Regex columnRegex = new Regex(@"(([A-Z0-9_]+):(\d?[A-Z]+)\((\d+)(,\d*)?\)~~~).*?");
@@ -25,6 +26,7 @@ namespace DMS_Viewer
         string previousLine = "";
         string currentLine = "";
         StreamReader reader;
+        bool captureHeader = true;
 
         public DMSFile ParseFile(string filename)
         {
@@ -48,12 +50,26 @@ namespace DMS_Viewer
 
         private void ProcessLine()
         {
+            if (captureHeader)
+            {
+                _file.HeaderLines.Add(currentLine);
+            }
+
+
             if (state == ParserState.BASE_INFO)
             {
                 ProcessBaseInfoLine();
             } else if (state == ParserState.LOOKING_EXPORT)
             {
-                ProcessExportLine();
+                var match = endedRegex.Match(currentLine);
+                if (match.Success)
+                {
+                    _file.Ended = match.Groups[1].Value;
+                }
+                else
+                {
+                    ProcessExportLine();
+                }
             } else if (state == ParserState.LOOKING_COLUMNS)
             {
                 ProcessColumnsLine();
@@ -61,6 +77,7 @@ namespace DMS_Viewer
             {
                 ProcessRowData();
             }
+
         }
         int leftOverValue = 0; 
         private string DecodeBinaryData(string data)
@@ -205,14 +222,15 @@ namespace DMS_Viewer
                 {
                     /* we have columns, read them all */
                     columnText += currentLine;
-                    while (reader.Peek() != '/') {
+                    while (reader.Peek() != '/')
+                    {
                         currentLine = GetNextLine();
                         if (currentLine[0] != '/')
                         {
                             columnText += currentLine;
                         }
                     }
-                    columnText = columnText.Replace("\r", "").Replace("\n","");
+                    columnText = columnText.Replace("\r", "").Replace("\n", "");
                     var matches = columnRegex.Matches(columnText);
 
                     foreach (Match m in matches)
@@ -227,7 +245,17 @@ namespace DMS_Viewer
                     /* eat the final / currentLine and set update state */
                     GetNextLine();
                     state = ParserState.LOOKING_ROW_DATA;
-                    
+
+                } else
+                {
+                    _file.Tables.Last().Metadata.Add(currentLine);
+                }
+            }
+            else
+            {
+                if (currentLine != "/")
+                {
+                    _file.Tables.Last().Metadata.Add(currentLine);
                 }
             }
         }
@@ -235,6 +263,10 @@ namespace DMS_Viewer
         {
             if (state == ParserState.LOOKING_EXPORT && previousLine.Equals("/") && currentLine.StartsWith("EXPORT"))
             {
+                captureHeader = false;
+                /* remove the last 2 lines, which are not part of the header */
+                _file.HeaderLines.RemoveAt(_file.HeaderLines.Count - 1);
+                _file.HeaderLines.RemoveAt(_file.HeaderLines.Count - 1);
                 /* here is the start of an export statement */
 
                 var match = tableNameRegex.Match(currentLine);
@@ -302,7 +334,9 @@ namespace DMS_Viewer
         public string Version;
         public string Database;
         public string Started;
+        public string Ended;
         public string FileName;
+        public List<string> HeaderLines = new List<string>();
         public List<DMSTable> Tables = new List<DMSTable>();
 
     }
@@ -312,7 +346,7 @@ namespace DMS_Viewer
         public string Name;
         public string DBName;
         public string WhereClause;
-
+        public List<string> Metadata = new List<string>();
         public List<DMSTableColumn> Columns = new List<DMSTableColumn>();
         public List<DMSTableRow> Rows = new List<DMSTableRow>();
         public override string ToString()

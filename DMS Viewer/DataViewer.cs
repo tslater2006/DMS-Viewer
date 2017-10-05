@@ -13,24 +13,36 @@ namespace DMS_Viewer
     public partial class DataViewer : Form
     {
         private bool IsRunningMono = false;
+        private DMSTable viewerTable;
         public DataViewer(DMSTable table)
         {
             InitializeComponent();
+            viewerTable = table;
             this.Text = "Data Viewer: " + table.DBName;
-            dataGridView1.DataSource = BuildDataTable(table);
+            DrawDataTable();
 
-            DataGridViewButtonColumn copyCol = new DataGridViewButtonColumn();
+            IsRunningMono = Type.GetType("Mono.Runtime") != null;
+        }
+
+        public void DrawDataTable()
+        {
+            dataGridView1.DataSource = null;
+            dataGridView1.Rows.Clear();
+
+            dataGridView1.DataSource = BuildDataTable(viewerTable);
+
+            /* DataGridViewButtonColumn copyCol = new DataGridViewButtonColumn();
             copyCol.Text = "Copy Row";
             copyCol.HeaderText = "";
             copyCol.UseColumnTextForButtonValue = true;
             copyCol.Name = "Copy Row";
-            copyCol.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            copyCol.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;*/
             //dataGridView1.Columns.Add(copyCol);
 
             int colIndex = 0;
-            for (colIndex = 0; colIndex < table.Columns.Count ; colIndex++)
+            for (colIndex = 0; colIndex < viewerTable.Columns.Count; colIndex++)
             {
-                if (table.Columns[colIndex].Type.Equals("LONG"))
+                if (viewerTable.Columns[colIndex].Type.Equals("LONG"))
                 {
                     dataGridView1.Columns[colIndex].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
                 }
@@ -39,8 +51,6 @@ namespace DMS_Viewer
                     dataGridView1.Columns[colIndex].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
                 }
             }
-
-            IsRunningMono = Type.GetType("Mono.Runtime") != null;
         }
 
         private DataTable BuildDataTable(DMSTable tbl)
@@ -90,6 +100,44 @@ namespace DMS_Viewer
                     new LongDataViewer(content).ShowDialog(this);
                 }
             }
+            
+        }
+
+        private void dataGridView1_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+
+                var hitTest = dataGridView1.HitTest(e.X, e.Y);
+                int currentRow = hitTest.RowIndex;
+                int currentColumn = hitTest.ColumnIndex;
+                if (currentRow >= 0 && currentColumn >= 0)
+                {
+                    dataGridView1.CurrentCell = dataGridView1.Rows[currentRow].Cells[currentColumn];
+                    ContextMenu m = new ContextMenu();
+                    MenuItem editValue = new MenuItem("Edit Value");
+                    editValue.Tag = hitTest;
+                    editValue.Click += EditValue_Click;
+                    m.MenuItems.Add(editValue);
+                    m.Show(dataGridView1, new Point(e.X, e.Y));
+
+                }
+
+                
+
+            }
+        }
+
+        private void EditValue_Click(object sender, EventArgs e)
+        {
+            var menuItem = (MenuItem)sender;
+            var hitTest = (DataGridView.HitTestInfo)menuItem.Tag;
+
+            var content = dataGridView1.Rows[hitTest.RowIndex].Cells[hitTest.ColumnIndex].Value.ToString();
+
+            DMSTableRow curRow = viewerTable.Rows[hitTest.RowIndex];
+
+            new LongDataViewer(content, this, curRow, hitTest.ColumnIndex).ShowDialog(this);
             
         }
     }
