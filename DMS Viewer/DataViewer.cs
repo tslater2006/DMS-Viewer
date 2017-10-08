@@ -123,9 +123,34 @@ namespace DMS_Viewer
 
                 }
 
+                if (currentRow >= 0 && currentColumn == -1)
+                {
+                    /* Right clicked on row header */
+                    dataGridView1.Rows[currentRow].Selected = true;
+                    ContextMenu m = new ContextMenu();
+                    MenuItem deleteRow = new MenuItem("Delete Row");
+                    deleteRow.Tag = hitTest;
+                    deleteRow.Click += DeleteRow_Click;
+                    m.MenuItems.Add(deleteRow);
+                    m.Show(dataGridView1, new Point(e.X, e.Y));
+                }
                 
 
             }
+        }
+
+        private void DeleteRow_Click(object sender, EventArgs e)
+        {
+            var menuItem = (MenuItem)sender;
+            var hitTest = (DataGridView.HitTestInfo)menuItem.Tag;
+
+            var result = MessageBox.Show(this, "Are you sure you want to remove this row?", "Confirm Row Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result == DialogResult.Yes)
+            {
+                DMSTableRow curRow = viewerTable.Rows[hitTest.RowIndex];
+                viewerTable.Rows.Remove(curRow);
+                DrawDataTable();
+            } 
         }
 
         private void EditValue_Click(object sender, EventArgs e)

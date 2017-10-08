@@ -128,7 +128,6 @@ namespace DMS_Viewer
         private void DecodeRowData(DMSTableRow row, string data)
         {
             var curIndex = 0;
-            Match match = null;
             var columnValue = "";
             while (curIndex < data.Length - 1)
             {
