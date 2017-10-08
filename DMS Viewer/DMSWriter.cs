@@ -35,7 +35,7 @@ namespace DMS_Viewer
                     stream.WriteLine("/");
 
                     /* Write table metadata */
-                    foreach(var metadataLine in table.Metadata)
+                    foreach(var metadataLine in table.MetadataLines)
                     {
                         stream.WriteLine(metadataLine);
                     }

@@ -44,6 +44,20 @@ namespace DMS_Viewer
                     ProcessLine();
                 }
             }
+
+            /* Decode the metadata for the records */
+            foreach (var table in _file.Tables)
+            {
+                StringBuilder sb = new StringBuilder();
+                foreach(var line in table.MetadataLines)
+                {
+                    sb.Append(line);
+                }
+
+                var f = DecodeMetadata(sb.ToString());
+                table.Metadata = new DMSRecordMetadata(f);
+            }
+
             return _file;
         }
 
@@ -80,6 +94,53 @@ namespace DMS_Viewer
 
         }
         int leftOverValue = 0; 
+
+        private byte[] DecodeMetadata(string data)
+        {
+            MemoryStream ms = new MemoryStream();
+            var curIndex = 0;
+            while (curIndex < data.Length - 1)
+            {
+                if (data[curIndex] == 'A' && data[curIndex + 1] == '(')
+                {
+                    curIndex += 2;
+                    /* ascii */
+                    while (data[curIndex] != ')')
+                    {
+                        if (data[curIndex] == '\\')
+                        {
+                            /* escape char */
+                            curIndex++;
+                            ms.WriteByte((byte)data[curIndex++]);
+                        }
+                        else
+                        {
+                            ms.WriteByte((byte)data[curIndex++]);
+                        }
+                    }
+                    /* skip closing paren */
+                    curIndex++;
+                    continue;
+                }
+                if (data[curIndex] == 'B' && data[curIndex + 1] == '(')
+                {
+                    curIndex += 2;
+                    /* binary */
+                    StringBuilder sb = new StringBuilder();
+                    while (data[curIndex] != ')')
+                    {
+                        sb.Append(data[curIndex++]);
+                    }
+                    curIndex++;
+                    var foo = DecodeBinaryData(sb.ToString());
+                    var bytes = UTF8Encoding.UTF8.GetBytes(foo);
+                    ms.Write(bytes,0,bytes.Length);
+                }
+            }
+
+            return ms.ToArray();
+        }
+
         private string DecodeBinaryData(string data)
         {
             bool isUsingLeftover = leftOverValue != 0;
@@ -247,14 +308,14 @@ namespace DMS_Viewer
 
                 } else
                 {
-                    _file.Tables.Last().Metadata.Add(currentLine);
+                    _file.Tables.Last().MetadataLines.Add(currentLine);
                 }
             }
             else
             {
                 if (currentLine != "/")
                 {
-                    _file.Tables.Last().Metadata.Add(currentLine);
+                    _file.Tables.Last().MetadataLines.Add(currentLine);
                 }
             }
         }
@@ -345,7 +406,8 @@ namespace DMS_Viewer
         public string Name;
         public string DBName;
         public string WhereClause;
-        public List<string> Metadata = new List<string>();
+        public List<string> MetadataLines = new List<string>();
+        public DMSRecordMetadata Metadata;
         public List<DMSTableColumn> Columns = new List<DMSTableColumn>();
         public List<DMSTableRow> Rows = new List<DMSTableRow>();
         public override string ToString()
@@ -371,4 +433,67 @@ namespace DMS_Viewer
         public List<string> Values = new List<string>();
     }
     
+    public class DMSRecordMetadata
+    {
+        public string RecordLanguage;
+        public string OwnerID;
+        public string AnalyticDeleteRecord;
+        public string ParentRecord;
+        public string RecordName;
+        public string RelatedLanguageRecord;
+        public string RecordDBName;
+        /* Unknown 76 bytes, seems to be all 0's */
+        public string OptimizationTriggers;
+        /* 10 bytes unknown 00 00 01 00 00 00 00 00 00 00 */
+        public int VersionNumber;
+        public int FieldCount;
+        public int BuildSequence;
+        public int IndexCount;
+        /* 4 bytes unknown */
+        public int VersionNumber2;
+        /* 22 bytes unknown*/
+
+        /* List of Field Info structures */
+
+        private string FromUnicodeBytes(byte[] data)
+        {
+            var str = Encoding.Unicode.GetString(data);
+            var nullIndex = str.IndexOf('\0');
+            str = str.Substring(0, nullIndex);
+
+            return str;
+        }
+
+        public DMSRecordMetadata(byte[] data)
+        {
+            BinaryReader br = new BinaryReader(new MemoryStream(data));
+            RecordLanguage = FromUnicodeBytes(br.ReadBytes(8));
+            OwnerID = FromUnicodeBytes(br.ReadBytes(10));
+            AnalyticDeleteRecord = FromUnicodeBytes(br.ReadBytes(32));
+            ParentRecord = FromUnicodeBytes(br.ReadBytes(32));
+            RecordName = FromUnicodeBytes(br.ReadBytes(32));
+            RelatedLanguageRecord = FromUnicodeBytes(br.ReadBytes(32));
+            RecordDBName = FromUnicodeBytes(br.ReadBytes(38));
+
+            /* Unknwon 76 bytes */
+            br.ReadBytes(76);
+            OptimizationTriggers = FromUnicodeBytes(br.ReadBytes(4));
+
+            /* Unknown 10 bytes */
+            br.ReadBytes(10);
+
+            VersionNumber = BitConverter.ToInt32(br.ReadBytes(4), 0);
+            FieldCount = BitConverter.ToInt32(br.ReadBytes(4), 0);
+            BuildSequence = BitConverter.ToInt32(br.ReadBytes(4), 0);
+            IndexCount = BitConverter.ToInt32(br.ReadBytes(4), 0);
+
+            /* Unknown 8 bytes */
+            br.ReadBytes(4);
+            
+            VersionNumber2 = BitConverter.ToInt32(br.ReadBytes(4), 0);
+
+            /* Unknown 22 bytes */
+            br.ReadBytes(22);
+        }
+    }
 }
