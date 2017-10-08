@@ -44,6 +44,8 @@ namespace DMS_Viewer
                 currentDmsPath = openFileDialog1.FileName;
                 dmsFile = parser.ParseFile(currentDmsPath);
                 UpdateUI();
+
+                DMSLib.DMSReader.Read(currentDmsPath);
             }
         }
 
