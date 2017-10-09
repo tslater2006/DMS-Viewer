@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DMSLib;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -50,7 +51,7 @@ namespace DMS_Viewer
                 var columnNames = new StringBuilder();
                 var columnValues = new StringBuilder();
                 Console.WriteLine("    Writing " + table.Rows.Count + " rows.");
-                foreach (DMSTableRow row in table.Rows)
+                foreach (DMSRow row in table.Rows)
                 {
                     columnNames.Clear();
                     columnValues.Clear();

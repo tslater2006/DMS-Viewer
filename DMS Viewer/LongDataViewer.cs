@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DMSLib;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -16,10 +17,10 @@ namespace DMS_Viewer
         private bool IsRunningMono = false;
         private bool IsRunningOSX = false;
 
-        private DMSTableRow tableRow;
+        private DMSRow tableRow;
         private int colIndex;
         private DataViewer viewerForm;
-        public LongDataViewer(string content, DataViewer viewerForm, DMSTableRow row, int columnIndex): this(content)
+        public LongDataViewer(string content, DataViewer viewerForm, DMSRow row, int columnIndex): this(content)
         {
             tableRow = row;
             colIndex = columnIndex;

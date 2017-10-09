@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DMSLib;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -40,10 +41,12 @@ namespace DMS_Viewer
             var result = openFileDialog1.ShowDialog();
             if (result == DialogResult.OK)
             {
-                DMSParser parser = new DMSParser();
+                
                 currentDmsPath = openFileDialog1.FileName;
-                dmsFile = parser.ParseFile(currentDmsPath);
+                dmsFile = DMSReader.Read(currentDmsPath);
                 UpdateUI();
+
+                DMSLib.DMSReader.Read(currentDmsPath);
             }
         }
 
@@ -77,7 +80,7 @@ namespace DMS_Viewer
             }
             columnList.Items.Clear();
             
-            foreach (DMSTableColumn col in value.Columns)
+            foreach (DMSColumn col in value.Columns)
             {
                 ListViewItem item = new ListViewItem(col.Name);
                 item.Tag = col;
@@ -162,8 +165,7 @@ namespace DMS_Viewer
 
             if (dlgResult == DialogResult.OK)
             {
-                DMSWriter writer = new DMSWriter(dmsFile);
-                writer.Write(saveFileDialog1.FileName);
+                DMSWriter.Write(saveFileDialog1.FileName, dmsFile);
             }
         }
     }

@@ -52,9 +52,7 @@
     <Compile Include="DataViewer.Designer.cs">
       <DependentUpon>DataViewer.cs</DependentUpon>
     </Compile>
-    <Compile Include="DMSParser.cs" />
     <Compile Include="DMSRebuilder.cs" />
-    <Compile Include="DMSWriter.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -120,6 +118,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DMSLib\DMSLib.csproj">
+      <Project>{008c8f3f-ef1b-48c1-a670-9a71ccadcd11}</Project>
+      <Name>DMSLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

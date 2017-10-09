@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DMSLib;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -147,7 +148,7 @@ namespace DMS_Viewer
             var result = MessageBox.Show(this, "Are you sure you want to remove this row?", "Confirm Row Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
             {
-                DMSTableRow curRow = viewerTable.Rows[hitTest.RowIndex];
+                DMSRow curRow = viewerTable.Rows[hitTest.RowIndex];
                 viewerTable.Rows.Remove(curRow);
                 DrawDataTable();
             } 
@@ -160,7 +161,7 @@ namespace DMS_Viewer
 
             var content = dataGridView1.Rows[hitTest.RowIndex].Cells[hitTest.ColumnIndex].Value.ToString();
 
-            DMSTableRow curRow = viewerTable.Rows[hitTest.RowIndex];
+            DMSRow curRow = viewerTable.Rows[hitTest.RowIndex];
 
             new LongDataViewer(content, this, curRow, hitTest.ColumnIndex).ShowDialog(this);
             
