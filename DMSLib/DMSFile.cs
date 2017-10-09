@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,6 +23,37 @@ namespace DMSLib
         public List<DMSTable> Tables = new List<DMSTable>();
         public string Ended;
 
-        
+        public void WriteToStream(StreamWriter sw)
+        {
+            /* Write out the header */
+            sw.WriteLine($"SET VERSION_DAM  {Version}");
+            sw.WriteLine();
+            sw.WriteLine($"SET ENDIAN {Endian}");
+            sw.WriteLine($"SET BASE_LANGUAGE {BaseLanguage}");
+            sw.WriteLine($"REM Database: {Database}");
+            sw.WriteLine($"REM Started: {Started}");
+
+            /* Write out the namespaces */
+            sw.WriteLine("EXPORT  RECORD/SPACE.x");
+            foreach (var space in Namespaces)
+            {
+                sw.WriteLine(space);
+            }
+            sw.WriteLine("/");
+
+            var metadataLines = DMSEncoder.EncodeDataToLines(FileMetadata);
+            foreach(var line in metadataLines)
+            {
+                sw.WriteLine(line);
+            }
+
+            foreach (var table in Tables)
+            {
+                table.WriteToStream(sw);
+            }
+            sw.WriteLine($"REM Ended: {Ended}");
+
+        }
+
     }
 }

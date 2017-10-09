@@ -80,8 +80,9 @@ namespace DMSLib
                     var decodedValue = 0;
                     decodedValue = (Contents[x] - 'A') << 4 | (Contents[x + 1] - 'A');
 
-                    if (decodedValue >= 194)
+                    /*if (decodedValue >= 194)
                     {
+                        x += 2;
                         var secondValue = (Contents[x] - 'A') << 4 | (Contents[x + 1] - 'A');
 
                         if (decodedValue > 194)
@@ -89,7 +90,7 @@ namespace DMSLib
                             secondValue += (64 * (decodedValue - 194));
                         }
                         decodedValue = secondValue;
-                    }
+                    }*/
                     ms.WriteByte((byte)decodedValue);
                 }
                 return ms.ToArray();

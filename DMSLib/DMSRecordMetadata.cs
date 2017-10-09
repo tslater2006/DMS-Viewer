@@ -29,6 +29,16 @@ namespace DMSLib
         public int BuildSequence;
         public int IndexCount;
 
+        internal void WriteToStream(StreamWriter sw)
+        {
+
+            var lines = DMSEncoder.EncodeDataToLines(GetBytes());
+            foreach(var line in lines)
+            {
+                sw.WriteLine(line);
+            }
+        }
+
         /* 4 bytes unknown */
         public int Unknown3;
 
@@ -47,6 +57,87 @@ namespace DMSLib
 
         /* This contains the "indexes" for the record (if any), as well as tablespace info for the record */
         public byte[] LeftoverData;
+
+        private byte[] GetBytes()
+        {
+            MemoryStream ms = new MemoryStream();
+
+            byte[] recordLang = new byte[8];
+            Encoding.Unicode.GetBytes(RecordLanguage, 0, RecordLanguage.Length, recordLang, 0);
+
+            byte[] ownerId = new byte[10];
+            Encoding.Unicode.GetBytes(OwnerID, 0, OwnerID.Length, ownerId, 0);
+
+            byte[] analyticDelete = new byte[32];
+            Encoding.Unicode.GetBytes(AnalyticDeleteRecord, 0, AnalyticDeleteRecord.Length, analyticDelete, 0);
+
+            byte[] parentRecord = new byte[32];
+            Encoding.Unicode.GetBytes(ParentRecord, 0, ParentRecord.Length, parentRecord, 0);
+
+            byte[] recName = new byte[32];
+            Encoding.Unicode.GetBytes(RecordName, 0, RecordName.Length, recName, 0);
+
+            byte[] relLang = new byte[32];
+            Encoding.Unicode.GetBytes(RelatedLanguageRecord, 0, RelatedLanguageRecord.Length, relLang, 0);
+
+            byte[] recDbName = new byte[38];
+            Encoding.Unicode.GetBytes(DBName, 0, DBName.Length, recDbName, 0);
+
+            byte[] optTriggers = new byte[4];
+            Encoding.Unicode.GetBytes(OptimizationTriggers, 0, OptimizationTriggers.Length, optTriggers, 0);
+
+            ms.Write(recordLang, 0, recordLang.Length);
+            ms.Write(ownerId, 0, ownerId.Length);
+            ms.Write(analyticDelete, 0, analyticDelete.Length);
+            ms.Write(parentRecord, 0, parentRecord.Length);
+            ms.Write(recName, 0, recName.Length);
+            ms.Write(relLang, 0, relLang.Length);
+            ms.Write(recDbName, 0, recDbName.Length);
+
+            ms.Write(Unknown1, 0, Unknown1.Length);
+            ms.Write(optTriggers, 0, optTriggers.Length);
+            ms.Write(Unknown2, 0, Unknown2.Length);
+
+            ms.Write(BitConverter.GetBytes(VersionNumber), 0, 4);
+            ms.Write(BitConverter.GetBytes(FieldCount), 0, 4);
+            ms.Write(BitConverter.GetBytes(BuildSequence), 0, 4);
+            ms.Write(BitConverter.GetBytes(IndexCount), 0, 4);
+            ms.Write(BitConverter.GetBytes(Unknown3), 0, 4);
+            ms.Write(BitConverter.GetBytes(VersionNumber2), 0, 4);
+            ms.Write(Unknown4, 0, Unknown4.Length);
+
+            foreach (DMSRecordFieldMetadata fieldmeta in FieldMetadata)
+            {
+                byte[] data = fieldmeta.GetBytes();
+                ms.Write(data, 0, data.Length);
+            }
+
+            foreach(DMSRecordIndexMetadata idx in Indexes)
+            {
+                byte[] headerBytes = idx.GetHeaderBytes();
+                ms.Write(headerBytes, 0, headerBytes.Length);
+            }
+
+            foreach (DMSRecordIndexMetadata idx in Indexes)
+            {
+                byte[] fieldsBytes = idx.GetFieldsBytes();
+                ms.Write(fieldsBytes, 0, fieldsBytes.Length);
+            }
+
+            //TableSpaceName = FromUnicodeBytes(br.ReadBytes(64));
+            //DBName = FromUnicodeBytes(br.ReadBytes(18));
+
+            byte[] tableSpaceName = new byte[64];
+            byte[] dbName = new byte[18];
+
+            Encoding.Unicode.GetBytes(TableSpaceName, 0, TableSpaceName.Length, tableSpaceName, 0);
+            Encoding.Unicode.GetBytes(DBName, 0, DBName.Length, dbName, 0);
+
+            ms.Write(tableSpaceName, 0, tableSpaceName.Length);
+            ms.Write(dbName, 0, dbName.Length);
+
+            return ms.ToArray();
+        }
 
         private string FromUnicodeBytes(byte[] data)
         {
@@ -116,8 +207,6 @@ namespace DMSLib
             TableSpaceName = FromUnicodeBytes(br.ReadBytes(64));
             DBName = FromUnicodeBytes(br.ReadBytes(18));
 
-            var leftOverCount = data.Length - br.BaseStream.Position;
-
             br.Close();
         }
     }
@@ -166,6 +255,33 @@ namespace DMSLib
             br.Close();
         }
 
+        internal byte[] GetBytes()
+        {
+            MemoryStream ms = new MemoryStream();
+
+            byte[] fieldName = new byte[38];
+            byte[] recordName = new byte[32];
+
+            Encoding.Unicode.GetBytes(FieldName, 0, FieldName.Length, fieldName, 0);
+            Encoding.Unicode.GetBytes(RecordName, 0, RecordName.Length, recordName, 0);
+
+            ms.Write(fieldName, 0, fieldName.Length);
+            ms.Write(recordName, 0, recordName.Length);
+
+            ms.Write(BitConverter.GetBytes(Unknown1), 0, 4);
+            ms.Write(BitConverter.GetBytes(VersionNumber), 0, 4);
+            ms.Write(BitConverter.GetBytes(DecimalPositions), 0, 4);
+            ms.Write(BitConverter.GetBytes((int)UseEditMask), 0, 4);
+            ms.Write(BitConverter.GetBytes(Unknown2), 0, 2);
+            ms.Write(BitConverter.GetBytes((short)FieldType), 0, 2);
+            ms.Write(BitConverter.GetBytes((short)FieldFormat), 0, 2);
+            ms.Write(BitConverter.GetBytes(FieldLength), 0, 4);
+            ms.Write(BitConverter.GetBytes((int)DefaultGUIControl), 0, 4);
+            ms.Write(BitConverter.GetBytes(Unknown5), 0, 4);
+            ms.Write(BitConverter.GetBytes(Unknown6), 0, 2);
+
+            return ms.ToArray();
+        }
 
         private string FromUnicodeBytes(byte[] data)
         {
@@ -224,6 +340,45 @@ namespace DMSLib
 
             br.Close();
         }
+
+        internal byte[] GetHeaderBytes()
+        {
+            MemoryStream ms = new MemoryStream();
+            ms.Write(Encoding.Unicode.GetBytes(IndexID), 0, 2);
+            ms.Write(BitConverter.GetBytes(FieldCount), 0, 2);
+            ms.Write(BitConverter.GetBytes(Unknown1), 0, 4);
+            ms.Write(BitConverter.GetBytes(Unknown2), 0, 2);
+            ms.Write(BitConverter.GetBytes((short)IndexType), 0, 2);
+            ms.Write(BitConverter.GetBytes(Unique), 0, 2);
+            ms.Write(BitConverter.GetBytes(Cluster), 0, 2);
+            ms.Write(BitConverter.GetBytes(Active), 0, 2);
+            ms.Write(BitConverter.GetBytes(PlatformSBS), 0, 2);
+            ms.Write(BitConverter.GetBytes(PlatformDB2), 0, 2);
+            ms.Write(BitConverter.GetBytes(PlatformORA), 0, 2);
+            ms.Write(BitConverter.GetBytes(PlatformINF), 0, 2);
+            ms.Write(BitConverter.GetBytes(PlatformDBX), 0, 2);
+            ms.Write(BitConverter.GetBytes(PlatformALB), 0, 2);
+            ms.Write(BitConverter.GetBytes(PlatformSYB), 0, 2);
+            ms.Write(BitConverter.GetBytes(PlatformMSS), 0, 2);
+            ms.Write(BitConverter.GetBytes(PlatformDB4), 0, 2);
+            ms.Write(BitConverter.GetBytes(Unknown3), 0, 4);
+
+            return ms.ToArray();
+        }
+
+        internal byte[] GetFieldsBytes()
+        {
+            MemoryStream ms = new MemoryStream();
+
+
+            foreach(DMSRecordIndexField field in Fields)
+            {
+                byte[] fieldBytes = field.GetBytes();
+                ms.Write(fieldBytes, 0, fieldBytes.Length);
+            }
+
+            return ms.ToArray();
+        }
     }
 
     public class DMSRecordIndexField
@@ -243,6 +398,21 @@ namespace DMSLib
             Unknown3 = BitConverter.ToInt16(br.ReadBytes(2), 0);
 
             br.Close();
+        }
+
+        internal byte[] GetBytes()
+        {
+            MemoryStream ms = new MemoryStream();
+
+            byte[] fieldName = new byte[38];
+            Encoding.Unicode.GetBytes(FieldName, 0, FieldName.Length, fieldName, 0);
+
+            ms.Write(fieldName, 0, fieldName.Length);
+            ms.Write(BitConverter.GetBytes(KeyPosition), 0, 4);
+            ms.Write(BitConverter.GetBytes(Ascending), 0, 4);
+            ms.Write(BitConverter.GetBytes(Unknown3), 0, 2);
+
+            return ms.ToArray();
         }
 
         private string FromUnicodeBytes(byte[] data)

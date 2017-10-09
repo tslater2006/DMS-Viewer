@@ -169,7 +169,7 @@ namespace DMSLib
                     }
 
                     /* Parse "Ended" */
-                    file.Ended = currentLine.Replace("REM Started: ", "");
+                    file.Ended = currentLine.Replace("REM Ended: ", "");
 
                 }
             }

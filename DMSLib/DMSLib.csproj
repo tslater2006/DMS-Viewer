@@ -43,11 +43,13 @@
   <ItemGroup>
     <Compile Include="DMSColumn.cs" />
     <Compile Include="DMSDecoder.cs" />
+    <Compile Include="DMSEncoder.cs" />
     <Compile Include="DMSFile.cs" />
     <Compile Include="DMSReader.cs" />
     <Compile Include="DMSRecordMetadata.cs" />
     <Compile Include="DMSRow.cs" />
     <Compile Include="DMSTable.cs" />
+    <Compile Include="DMSWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
