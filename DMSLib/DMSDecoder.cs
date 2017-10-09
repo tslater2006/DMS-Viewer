@@ -66,7 +66,10 @@ namespace DMSLib
         {
             if (Type == EncodedBlockType.ASCII)
             {
-                return ASCIIEncoding.ASCII.GetBytes(Contents);
+                var unescaped = Contents.Replace("\\(", "(");
+                unescaped = unescaped.Replace("\\)", ")");
+
+                return ASCIIEncoding.ASCII.GetBytes(unescaped);
             }
 
             else
