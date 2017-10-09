@@ -15,7 +15,7 @@ namespace DMSLib
             /* We need to get a list of Encoding blocks from the string */
 
             /* Regex: [A]\(([^\(\)\\]|\\\(|\\\))*\)|[B]\([A-Z]*\) */
-            Regex encodingGroup = new Regex("[A]\\(([^\\(\\)\\\\]|\\\\\\(|\\\\\\))*\\)|[B]\\([A-Z]*\\)");
+            Regex encodingGroup = new Regex("[A]\\(([^\\(\\)\\\\]|\\\\\\(|\\\\\\)|\\\\\\\\)*\\)|[B]\\([A-Z]*\\)");
             var matchList = encodingGroup.Matches(str);
 
             List<DMSEncodedBlock> encodedBlocks = new List<DMSEncodedBlock>();
@@ -68,6 +68,7 @@ namespace DMSLib
             {
                 var unescaped = Contents.Replace("\\(", "(");
                 unescaped = unescaped.Replace("\\)", ")");
+                unescaped = unescaped.Replace("\\\\", "\\");
 
                 return ASCIIEncoding.ASCII.GetBytes(unescaped);
             }

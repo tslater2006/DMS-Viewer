@@ -148,7 +148,12 @@ namespace DMSLib
                     if ((char)b == ')' || (char)b == '(')
                     {
                         sb.Append($"\\{(char)b}");
-                    }else
+                    }
+                    else if ((char)b == '\\')
+                    {
+                        sb.Append("\\\\");
+                    }
+                    else
                     {
                         sb.Append((char)b);
                     }
