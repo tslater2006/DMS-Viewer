@@ -37,6 +37,61 @@ namespace DMSLib
             {
                 sw.WriteLine(line);
             }
+            MemoryStream ms = new MemoryStream();
+            foreach (DMSRecordFieldMetadata fieldmeta in FieldMetadata)
+            {
+                byte[] data = fieldmeta.GetBytes();
+                ms.Write(data, 0, data.Length);
+            }
+
+            lines = DMSEncoder.EncodeDataToLines(ms.ToArray());
+            foreach (var line in lines)
+            {
+                sw.WriteLine(line);
+            }
+
+            ms = new MemoryStream();
+            foreach (DMSRecordIndexMetadata idx in Indexes)
+            {
+                byte[] headerBytes = idx.GetHeaderBytes();
+                ms.Write(headerBytes, 0, headerBytes.Length);
+            }
+
+            lines = DMSEncoder.EncodeDataToLines(ms.ToArray());
+            foreach (var line in lines)
+            {
+                sw.WriteLine(line);
+            }
+
+            foreach (DMSRecordIndexMetadata idx in Indexes)
+            {
+                byte[] fieldsBytes = idx.GetFieldsBytes();
+
+                lines = DMSEncoder.EncodeDataToLines(fieldsBytes);
+                foreach (var line in lines)
+                {
+                    sw.WriteLine(line);
+                }
+            }
+
+            
+
+            ms = new MemoryStream();
+
+            byte[] tableSpaceName = new byte[64];
+            byte[] dbName = new byte[18];
+
+            Encoding.Unicode.GetBytes(TableSpaceName, 0, TableSpaceName.Length, tableSpaceName, 0);
+            Encoding.Unicode.GetBytes(DBName, 0, DBName.Length, dbName, 0);
+
+            ms.Write(tableSpaceName, 0, tableSpaceName.Length);
+            ms.Write(dbName, 0, dbName.Length);
+
+            lines = DMSEncoder.EncodeDataToLines(ms.ToArray());
+            foreach (var line in lines)
+            {
+                sw.WriteLine(line);
+            }
         }
 
         /* 4 bytes unknown */
@@ -81,7 +136,7 @@ namespace DMSLib
             Encoding.Unicode.GetBytes(RelatedLanguageRecord, 0, RelatedLanguageRecord.Length, relLang, 0);
 
             byte[] recDbName = new byte[38];
-            Encoding.Unicode.GetBytes(DBName, 0, DBName.Length, recDbName, 0);
+            Encoding.Unicode.GetBytes(RecordDBName, 0, RecordDBName.Length, recDbName, 0);
 
             byte[] optTriggers = new byte[4];
             Encoding.Unicode.GetBytes(OptimizationTriggers, 0, OptimizationTriggers.Length, optTriggers, 0);
@@ -106,35 +161,6 @@ namespace DMSLib
             ms.Write(BitConverter.GetBytes(VersionNumber2), 0, 4);
             ms.Write(Unknown4, 0, Unknown4.Length);
 
-            foreach (DMSRecordFieldMetadata fieldmeta in FieldMetadata)
-            {
-                byte[] data = fieldmeta.GetBytes();
-                ms.Write(data, 0, data.Length);
-            }
-
-            foreach(DMSRecordIndexMetadata idx in Indexes)
-            {
-                byte[] headerBytes = idx.GetHeaderBytes();
-                ms.Write(headerBytes, 0, headerBytes.Length);
-            }
-
-            foreach (DMSRecordIndexMetadata idx in Indexes)
-            {
-                byte[] fieldsBytes = idx.GetFieldsBytes();
-                ms.Write(fieldsBytes, 0, fieldsBytes.Length);
-            }
-
-            //TableSpaceName = FromUnicodeBytes(br.ReadBytes(64));
-            //DBName = FromUnicodeBytes(br.ReadBytes(18));
-
-            byte[] tableSpaceName = new byte[64];
-            byte[] dbName = new byte[18];
-
-            Encoding.Unicode.GetBytes(TableSpaceName, 0, TableSpaceName.Length, tableSpaceName, 0);
-            Encoding.Unicode.GetBytes(DBName, 0, DBName.Length, dbName, 0);
-
-            ms.Write(tableSpaceName, 0, tableSpaceName.Length);
-            ms.Write(dbName, 0, dbName.Length);
 
             return ms.ToArray();
         }
@@ -463,7 +489,6 @@ namespace DMSLib
         CHECKBOX = 7,
         RADIO_BTN = 8,
         DEFAULT = 99,
-
     }
 
     [Flags]

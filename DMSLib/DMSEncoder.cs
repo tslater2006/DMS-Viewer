@@ -17,83 +17,103 @@ namespace DMSLib
         {
             StringBuilder sb = new StringBuilder(data);
             var LINE_LENGTH = 70;
-
+            
             /* Split this into lines of LINE_LENGTH */
             string fixedLine = "";
             List<string> lines = new List<string>();
+
             while (sb.Length > LINE_LENGTH)
             {
                 LINE_LENGTH = 70;
 
                 var lineLength = LINE_LENGTH;
-                /* Need to find if we are in an A tag or a B tag */
+            
                 var startPos = LINE_LENGTH - 1;
 
                 var endingChar = sb[startPos];
 
+                /* Ending Char can either be a ',' for column data
+                 * a '(' that is the start of a block 
+                 * a ')' for the end of an encoded block
+                 * a 'A' or 'B' for the start of an encoded block
+                 * anything else for in the middle of a block 
+                 */
+
                 if (endingChar == ',')
                 {
-                    fixedLine = sb.ToString(0, LINE_LENGTH);
+                    /* If we are on a comma, include it on the current line and then break */
+                    fixedLine = sb.ToString(0, lineLength);
+                    sb.Remove(0, lineLength);
                     lines.Add(fixedLine);
-                    sb.Remove(0, LINE_LENGTH);
                 }
-                else if (endingChar == ')')
+                else if (endingChar == '(' && (sb[startPos-1] == 'A' || sb[startPos - 1] == 'B'))
                 {
-                    fixedLine = sb.ToString(0, LINE_LENGTH + 1);
+                    lineLength -= 2;
+                    fixedLine = sb.ToString(0, lineLength);
+                    sb.Remove(0, lineLength);
                     lines.Add(fixedLine);
-                    sb.Remove(0, LINE_LENGTH + 1);
                 }
-                else if (endingChar == '(')
+                else if (endingChar == ')' && sb[startPos - 1] != '\\')
                 {
-                    fixedLine = sb.ToString(0, LINE_LENGTH - 2);
+                    /* We are on a ) that isn't escaped, include it and then break */
+                    fixedLine = sb.ToString(0, lineLength);
+                    sb.Remove(0, lineLength);
                     lines.Add(fixedLine);
-                    sb.Remove(0, LINE_LENGTH - 2);
                 }
-                else
+                else if ((endingChar == 'A' || endingChar == 'B') && sb[startPos + 1] == '(')
                 {
-                    if ((endingChar == 'A' || endingChar == 'B') && (sb[startPos - 1] == ',' || sb[startPos-1] == ')'))
+                    /* We are on an A or a B which is the start of a new block, we know this since ( is right after us, just cut the the line */
+                    lineLength--;
+                    fixedLine = sb.ToString(0, lineLength);
+                    sb.Remove(0, lineLength);
+                    lines.Add(fixedLine);
+                } else
+                {
+                    /* We are inside a block, lets see if 1 more char ends the block or not */
+                    if (sb[startPos + 1] == ')')
                     {
-                        fixedLine = sb.ToString(0, LINE_LENGTH - 1);
+                        lineLength++;
+                        fixedLine = sb.ToString(0, lineLength);
+                        sb.Remove(0, lineLength);
                         lines.Add(fixedLine);
-                        sb.Remove(0, LINE_LENGTH - 1);
                     }
                     else
                     {
-                        while (sb[startPos] != '(')
+
+                        /* If not, we need to figure out if we are in a A() or a B() so we can determine how to split */
+                        var lookingSpot = startPos;
+                        while (sb[lookingSpot] != '(' && (sb[lookingSpot - 1] != 'A' || sb[lookingSpot - 1] != 'B'))
                         {
-                            startPos--;
+                            lookingSpot--;
                         }
 
-                        var tagType = sb[startPos - 1] == 'A' ? EncodeTags.ASCII : EncodeTags.BINARY;
-                        var lengthAdd = 0;
-                        if (sb[LINE_LENGTH - 2] == '(')
-                        {
-                            /* we dont want to end with A() */
-                            lengthAdd = (tagType == EncodeTags.ASCII ? 1 : 2);
-                        }
-                        if (sb[LINE_LENGTH] == ')')
-                        {
-                            /* Allow it to close the encoding */
-                            lengthAdd++;
-                            tagType = EncodeTags.NONE;
-                        }
-                        if (sb.Length > LINE_LENGTH + 1 && sb[LINE_LENGTH + 1] == ',')
-                        {
-                            /* Allow trailing commas on the line */
-                            lengthAdd++;
-                            tagType = EncodeTags.NONE;
-                        }
+                        var tagType = sb[lookingSpot - 1] == 'A' ? EncodeTags.ASCII : EncodeTags.BINARY;
 
-                        LINE_LENGTH += lengthAdd;
-                        fixedLine = sb.ToString(0, LINE_LENGTH - 1) + (tagType != EncodeTags.NONE ? ")" : "");
-                        lines.Add(fixedLine);
-                        sb.Remove(0, LINE_LENGTH - 1);
-                        if (tagType != EncodeTags.NONE)
+                        if (tagType == EncodeTags.ASCII)
                         {
-                            sb.Insert(0, tagType == EncodeTags.ASCII ? "A(" : "B(");
+                            /* if its ASCII, cut, terminate, and reopen */
+                            fixedLine = sb.ToString(0, lineLength) + ")";
+                            sb.Remove(0, lineLength);
+                            sb.Insert(0, "A(");
+                            lines.Add(fixedLine);
+                        }
+                        else if (tagType == EncodeTags.BINARY)
+                        {
+                            /* its Binary, we need to cut but on an even # of letters */
+                            var binLength = startPos - lookingSpot;
+                            if (binLength % 2 == 1)
+                            {
+                                lineLength++;
+                            }
+
+                            fixedLine = sb.ToString(0, lineLength) + ")";
+                            sb.Remove(0, lineLength);
+                            sb.Insert(0, "B(");
+                            lines.Add(fixedLine);
                         }
                     }
                 }
+
 
             }
             lines.Add(sb.ToString());
