@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DMSLib;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -29,11 +30,10 @@ namespace DMS_Viewer
             Dictionary<string, List<string>> results = new Dictionary<string, List<string>>();
             FileStream fs = new FileStream(outputFolder + Path.DirectorySeparatorChar + scriptName + "_EXP.dms", FileMode.Create, FileAccess.Write, FileShare.None);
             StreamWriter sw = new StreamWriter(fs);
-            DMSParser parser = new DMSParser();
             foreach (var file in files)
             {
 
-                var dmsFile = parser.ParseFile(file);
+                var dmsFile = DMSReader.Read(file);
                 Console.WriteLine("  Processing file: " + dmsFile.FileName);
                 Console.WriteLine("    Table count: " + dmsFile.Tables.Count);
                 Console.WriteLine("    Total rows: " + dmsFile.Tables.Sum(t => t.Rows.Count));

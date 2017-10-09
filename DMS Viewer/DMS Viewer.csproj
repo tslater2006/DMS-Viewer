@@ -52,9 +52,7 @@
     <Compile Include="DataViewer.Designer.cs">
       <DependentUpon>DataViewer.cs</DependentUpon>
     </Compile>
-    <Compile Include="DMSParser.cs" />
     <Compile Include="DMSRebuilder.cs" />
-    <Compile Include="DMSWriter.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
