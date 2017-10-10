@@ -20,6 +20,36 @@ namespace DMSLib
             return Name;
         }
 
+        public void AddColumn(DMSNewColumn newColumn, DMSColumn colBefore, string defaultValue)
+        {
+            /* Update DMSRecord metadata */
+            Metadata.FieldCount++;
+
+            /* Add the field metadata */
+            var colIndex = Columns.IndexOf(colBefore) + 1;
+            var newFieldMeta = new DMSRecordFieldMetadata(newColumn, this);
+            Metadata.FieldMetadata.Insert(colIndex, newFieldMeta);
+
+            /* Add the DMSColumn */
+            var newDMSCol = new DMSColumn();
+            newDMSCol.Name = newColumn.FieldName;
+            if (newColumn.DecimalPositions > 0)
+            {
+                newDMSCol.Size = newColumn.FieldLength +"," + newColumn.DecimalPositions;
+            }
+            newDMSCol.Size = newColumn.FieldLength.ToString();
+
+            newDMSCol.Type = "CHAR";
+
+            Columns.Insert(colIndex, newDMSCol);
+
+            foreach(var row in Rows)
+            {
+                row.Values.Insert(colIndex, defaultValue);
+            }
+
+        }
+
         public void WriteToStream(StreamWriter sw)
         {
             sw.WriteLine("/");
@@ -72,5 +102,34 @@ namespace DMSLib
             stream.WriteLine();
             stream.WriteLine("/");
         }
+
+
+    }
+
+    public class DMSNewColumn
+    {
+        public string FieldName;
+        public int VersionNumber;
+        public int DecimalPositions;
+
+        public UseEditFlags UseEditMask;
+        public FieldTypes FieldType;
+        public FieldFormats FieldFormat;
+        public int FieldLength;
+        public GUIControls DefaultGUIControl;
+
+        public DMSNewColumn(string fieldName, int version, int length, int decPositions, UseEditFlags useEdit, FieldTypes type, FieldFormats format, GUIControls gui = GUIControls.DEFAULT)
+        {
+            FieldName = fieldName;
+            VersionNumber = version;
+            FieldLength = length;
+            DecimalPositions = decPositions;
+            UseEditMask = useEdit;
+            FieldType = type;
+            FieldFormat = format;
+            DefaultGUIControl = gui;
+        }
+
+
     }
 }
