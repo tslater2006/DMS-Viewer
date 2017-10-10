@@ -160,11 +160,14 @@ namespace DMS_Viewer
             opts.ShowDialog(this);
 
             DMSNewColumn newCol = opts.newColumn;
-            var defVal = opts.defaultValue;
+            if (newCol != null)
+            {
+                var defVal = opts.defaultValue;
 
-            viewerTable.AddColumn(newCol, viewerTable.Columns[hitTest.ColumnIndex], defVal);
-            DrawDataTable();
-            
+                viewerTable.AddColumn(newCol, viewerTable.Columns[hitTest.ColumnIndex], defVal);
+                DrawDataTable();
+            }
+
         }
 
         private void DeleteRow_Click(object sender, EventArgs e)
