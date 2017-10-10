@@ -136,8 +136,35 @@ namespace DMS_Viewer
                     m.Show(dataGridView1, new Point(e.X, e.Y));
                 }
                 
+                if (currentRow == -1 && currentColumn >= 0)
+                {
+                    /* Right clicked a column header */
+                    dataGridView1.Columns[currentColumn].Selected = true;
+                    ContextMenu m = new ContextMenu();
+                    MenuItem addColMenu = new MenuItem("Add Column After...");
+                    addColMenu.Tag = hitTest;
+                    addColMenu.Click += AddColMenu_Click;
+                    m.MenuItems.Add(addColMenu);
+                    m.Show(dataGridView1, new Point(e.X, e.Y));
+                }
 
             }
+        }
+
+        private void AddColMenu_Click(object sender, EventArgs e)
+        {
+            var menuItem = (MenuItem)sender;
+            var hitTest = (DataGridView.HitTestInfo)menuItem.Tag;
+
+            AddColumnOptions opts = new AddColumnOptions();
+            opts.ShowDialog(this);
+
+            DMSNewColumn newCol = opts.newColumn;
+            var defVal = opts.defaultValue;
+
+            viewerTable.AddColumn(newCol, viewerTable.Columns[hitTest.ColumnIndex], defVal);
+            DrawDataTable();
+            
         }
 
         private void DeleteRow_Click(object sender, EventArgs e)

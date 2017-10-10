@@ -281,6 +281,27 @@ namespace DMSLib
             br.Close();
         }
 
+        public DMSRecordFieldMetadata(DMSNewColumn newColumn, DMSTable table)
+        {
+            FieldName = newColumn.FieldName;
+            RecordName = table.Name;
+            Unknown1 = 0;
+            VersionNumber = newColumn.VersionNumber;
+            DecimalPositions = newColumn.DecimalPositions;
+
+            UseEditMask = newColumn.UseEditMask;
+
+            Unknown2 = 0;
+
+            FieldType = newColumn.FieldType;
+            FieldFormat = newColumn.FieldFormat;
+            FieldLength = newColumn.FieldLength;
+            DefaultGUIControl = newColumn.DefaultGUIControl;
+
+            Unknown5 = 0;
+            Unknown6 = 0;
+        }
+
         internal byte[] GetBytes()
         {
             MemoryStream ms = new MemoryStream();

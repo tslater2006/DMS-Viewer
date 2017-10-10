@@ -44,6 +44,7 @@ namespace DMS_Viewer
                 
                 currentDmsPath = openFileDialog1.FileName;
                 dmsFile = DMSReader.Read(currentDmsPath);
+
                 UpdateUI();
 
                 DMSLib.DMSReader.Read(currentDmsPath);
@@ -72,6 +73,11 @@ namespace DMS_Viewer
 
         private void tableList_SelectedIndexChanged(object sender, EventArgs e)
         {
+            DrawColumns();
+        }
+
+        private void DrawColumns()
+        {
             var value = tableList.SelectedItem as DMSTable;
             whereClause.Text = value.WhereClause;
             if (value == null)
@@ -79,7 +85,7 @@ namespace DMS_Viewer
                 return;
             }
             columnList.Items.Clear();
-            
+
             foreach (DMSColumn col in value.Columns)
             {
                 ListViewItem item = new ListViewItem(col.Name);
@@ -119,6 +125,7 @@ namespace DMS_Viewer
         {
             var viewer = new DataViewer(tableList.SelectedItem as DMSTable);
             viewer.ShowDialog(this);
+            DrawColumns();
         }
 
         private void copyTables_Click(object sender, EventArgs e)
