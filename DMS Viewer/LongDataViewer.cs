@@ -34,7 +34,7 @@ namespace DMS_Viewer
         {
             InitializeComponent();
             textBox1.ReadOnly = true;
-            textBox1.Text = content;
+            textBox1.Text = content.Replace("\n","\r\n");
 
             IsRunningMono = Type.GetType("Mono.Runtime") != null;
             if (IsRunningMono)
@@ -52,7 +52,7 @@ namespace DMS_Viewer
         {
             if (tableRow != null)
             {
-                tableRow.Values[colIndex] = textBox1.Text;
+                tableRow.Values[colIndex] = textBox1.Text.Replace("\r\n","\n");
                 viewerForm.DrawDataTable();
                 this.Close();
             }
