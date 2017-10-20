@@ -39,7 +39,8 @@ namespace DMSLib
                  * anything else for in the middle of a block 
                  */
 
-                if (endingChar == ',' && sb[startPos-1] == ')')
+                /* Accept ), but not \), */
+                if (endingChar == ',' && sb[startPos-1] == ')' && (startPos-2 < 0 || sb[startPos-2] != '\\'))
                 {
                     /* If we are on a comma, include it on the current line and then break */
                     fixedLine = sb.ToString(0, lineLength);
