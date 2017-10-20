@@ -116,7 +116,10 @@ namespace DMSLib
 
 
             }
-            lines.Add(sb.ToString());
+            if (sb.Length > 0)
+            {
+                lines.Add(sb.ToString());
+            }
 
             return lines;
         }

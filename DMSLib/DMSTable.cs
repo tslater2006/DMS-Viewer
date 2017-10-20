@@ -103,7 +103,26 @@ namespace DMSLib
             stream.WriteLine("/");
         }
 
+        public void DropColumn(DMSColumn selectedColumn)
+        {
+            /* Update DMSRecord metadata */
+            Metadata.FieldCount--;
 
+            /* Add the field metadata */
+            var colIndex = Columns.IndexOf(selectedColumn);
+
+            /* Remove column from metadata */
+            Metadata.FieldMetadata.Remove(Metadata.FieldMetadata.Where(p => p.FieldName == selectedColumn.Name).First());
+
+            /* Remove the DMSColumn */
+            Columns.Remove(selectedColumn);
+
+            /* remove the value from the rows */
+            foreach (var row in Rows)
+            {
+                row.Values.RemoveAt(colIndex);
+            }
+        }
     }
 
     public class DMSNewColumn

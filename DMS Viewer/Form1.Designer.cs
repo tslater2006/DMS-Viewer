@@ -58,6 +58,8 @@
             this.dataViewer = new System.Windows.Forms.Button();
             this.copyTables = new System.Windows.Forms.Button();
             this.copyWhereClause = new System.Windows.Forms.Button();
+            this.btnRecordMeta = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -318,11 +320,35 @@
             this.copyWhereClause.UseVisualStyleBackColor = true;
             this.copyWhereClause.Click += new System.EventHandler(this.copyWhereClause_Click);
             // 
+            // btnRecordMeta
+            // 
+            this.btnRecordMeta.Enabled = false;
+            this.btnRecordMeta.Location = new System.Drawing.Point(634, 153);
+            this.btnRecordMeta.Name = "btnRecordMeta";
+            this.btnRecordMeta.Size = new System.Drawing.Size(90, 23);
+            this.btnRecordMeta.TabIndex = 23;
+            this.btnRecordMeta.Text = "View Metadata";
+            this.btnRecordMeta.UseVisualStyleBackColor = true;
+            this.btnRecordMeta.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(634, 266);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(90, 23);
+            this.button3.TabIndex = 25;
+            this.button3.Text = "Pwn";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Visible = false;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(736, 487);
+            this.Controls.Add(this.button3);
+            this.Controls.Add(this.btnRecordMeta);
             this.Controls.Add(this.copyWhereClause);
             this.Controls.Add(this.copyTables);
             this.Controls.Add(this.dataViewer);
@@ -385,6 +411,8 @@
         private System.Windows.Forms.Button copyTables;
         private System.Windows.Forms.Button copyWhereClause;
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
+        private System.Windows.Forms.Button btnRecordMeta;
+        private System.Windows.Forms.Button button3;
     }
 }
 

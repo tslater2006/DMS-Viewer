@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -41,9 +42,12 @@ namespace DMS_Viewer
             var result = openFileDialog1.ShowDialog();
             if (result == DialogResult.OK)
             {
-                
                 currentDmsPath = openFileDialog1.FileName;
+
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
                 dmsFile = DMSReader.Read(currentDmsPath);
+                sw.Stop();
 
                 UpdateUI();
 
@@ -63,6 +67,7 @@ namespace DMS_Viewer
             tableList.Items.Clear();
             generateSQLToolStripMenuItem.Enabled = true;
             dataViewer.Enabled = true;
+            btnRecordMeta.Enabled = true;
             foreach(var table in dmsFile.Tables)
             {
                 tableList.Items.Add(table);
@@ -174,6 +179,29 @@ namespace DMS_Viewer
             {
                 DMSWriter.Write(saveFileDialog1.FileName, dmsFile);
             }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            DMSTable curTable = tableList.SelectedItem as DMSTable;
+
+
+            /* Reduce fields by 1 */
+            byte[] fakeData = new byte[40];
+            for (var x = 0; x < fakeData.Length; x++)
+            {
+                fakeData[x] = 65;
+            }
+            curTable.Metadata.Indexes.Add(new DMSRecordIndexMetadata(fakeData));
+            //curTable.Columns.Remove(curTable.Columns.Last());
+            DMSWriter.Write(@"C:\Users\tslat\Downloads\IHUB\Windows\pwn.dat", dmsFile);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            DMSTable curTable = tableList.SelectedItem as DMSTable;
+            RecordMetadataViewer viewer = new RecordMetadataViewer(curTable.Metadata);
+            viewer.ShowDialog(this);
         }
     }
 }

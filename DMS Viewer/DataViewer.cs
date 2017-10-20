@@ -141,6 +141,12 @@ namespace DMS_Viewer
                     /* Right clicked a column header */
                     dataGridView1.Columns[currentColumn].Selected = true;
                     ContextMenu m = new ContextMenu();
+
+                    MenuItem deleteColumn = new MenuItem("Delete Column...");
+                    deleteColumn.Tag = hitTest;
+                    deleteColumn.Click += DeleteColumn_Click;
+                    m.MenuItems.Add(deleteColumn);
+
                     MenuItem addColMenu = new MenuItem("Add Column After...");
                     addColMenu.Tag = hitTest;
                     addColMenu.Click += AddColMenu_Click;
@@ -149,6 +155,15 @@ namespace DMS_Viewer
                 }
 
             }
+        }
+
+        private void DeleteColumn_Click(object sender, EventArgs e)
+        {
+            var menuItem = (MenuItem)sender;
+            var hitTest = (DataGridView.HitTestInfo)menuItem.Tag;
+            var selectedColumn = viewerTable.Columns[hitTest.ColumnIndex];
+            viewerTable.DropColumn(selectedColumn);
+            DrawDataTable();
         }
 
         private void AddColMenu_Click(object sender, EventArgs e)
