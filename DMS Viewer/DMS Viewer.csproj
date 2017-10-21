@@ -59,6 +59,12 @@
       <DependentUpon>DataViewer.cs</DependentUpon>
     </Compile>
     <Compile Include="DMSRebuilder.cs" />
+    <Compile Include="FieldMetadataViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FieldMetadataViewer.Designer.cs">
+      <DependentUpon>FieldMetadataViewer.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -98,6 +104,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DataViewer.resx">
       <DependentUpon>DataViewer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FieldMetadataViewer.resx">
+      <DependentUpon>FieldMetadataViewer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>

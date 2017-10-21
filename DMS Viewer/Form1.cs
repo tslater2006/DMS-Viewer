@@ -203,5 +203,36 @@ namespace DMS_Viewer
             RecordMetadataViewer viewer = new RecordMetadataViewer(curTable.Metadata);
             viewer.ShowDialog(this);
         }
+
+        private void columnList_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                var hitTest = columnList.HitTest(e.X, e.Y);
+
+                ContextMenu m = new ContextMenu();
+                MenuItem editField = new MenuItem("Edit Field...");
+                editField.Tag = hitTest;
+                editField.Click += EditField_Click;
+                m.MenuItems.Add(editField);
+                m.Show(columnList, new Point(e.X, e.Y));
+            }
+        }
+
+        private void EditField_Click(object sender, EventArgs e)
+        {
+            var menuItem = (MenuItem)sender;
+            var hitTest = (ListViewHitTestInfo)menuItem.Tag;
+
+            var column = (DMSColumn)hitTest.Item.Tag;
+            DMSTable curTable = tableList.SelectedItem as DMSTable;
+            var columnMetadata = curTable.Metadata.FieldMetadata.Where(p => p.FieldName == column.Name).First();
+
+            FieldMetadataViewer viewer = new FieldMetadataViewer(column, columnMetadata);
+            viewer.ShowDialog(this);
+
+
+
+        }
     }
 }
