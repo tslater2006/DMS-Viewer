@@ -216,6 +216,7 @@ namespace DMS_Viewer
                 editField.Click += EditField_Click;
                 m.MenuItems.Add(editField);
                 m.Show(columnList, new Point(e.X, e.Y));
+
             }
         }
 
@@ -231,7 +232,7 @@ namespace DMS_Viewer
             FieldMetadataViewer viewer = new FieldMetadataViewer(column, columnMetadata);
             viewer.ShowDialog(this);
 
-
+            DrawColumns();
 
         }
     }
