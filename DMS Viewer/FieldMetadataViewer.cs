@@ -15,6 +15,8 @@ namespace DMS_Viewer
     {
         private DMSRecordFieldMetadata meta;
         private DMSColumn col;
+        private bool updatingSelection = false;
+        private bool updatingText = false;
         public FieldMetadataViewer(DMSColumn column, DMSRecordFieldMetadata metadata)
         {
             InitializeComponent();
@@ -27,6 +29,11 @@ namespace DMS_Viewer
             cmbFieldFormat.Items.AddRange(Enum.GetNames(typeof(FieldFormats)));
             cmbGuiControl.Items.AddRange(Enum.GetNames(typeof(GUIControls)));
 
+            foreach (var value in Enum.GetValues(typeof(UseEditFlags)))
+            {
+                listBox1.Items.Add(value);
+            }
+
             txtFieldName.Text = metadata.FieldName;
             txtFieldLength.Text = metadata.FieldLength.ToString();
             txtDecPos.Text = metadata.DecimalPositions.ToString();
@@ -36,19 +43,16 @@ namespace DMS_Viewer
             cmbFieldFormat.Text = metadata.FieldFormat.ToString();
             cmbGuiControl.Text = metadata.DefaultGUIControl.ToString();
 
-            foreach (var value in Enum.GetValues(typeof(UseEditFlags)))
-            {
-                listBox1.Items.Add(value);
-                if (metadata.UseEditMask.HasFlag((Enum)value))
-                {
-                    listBox1.SetSelected(listBox1.Items.Count-1,true);
-                }
-            }
         }
 
         private void listBox1_SelectedValueChanged(object sender, EventArgs e)
         {
             /* Update UseEditFlags value */
+            if (updatingSelection)
+            {
+                return;
+            }
+            updatingText = true;
 
             UseEditFlags newValue = 0;
             
@@ -61,7 +65,7 @@ namespace DMS_Viewer
             }
 
             txtUseEdit.Text = ((int)newValue).ToString();
-
+            updatingText = false;
         }
 
         private void btnOK_Click(object sender, EventArgs e)
@@ -120,6 +124,31 @@ namespace DMS_Viewer
             }
             catch (Exception ex) { }
             this.Hide();
+        }
+
+        private void txtUseEdit_TextChanged(object sender, EventArgs e)
+        {
+            if (updatingText)
+            {
+                return;
+            }
+
+            updatingSelection = true;
+            for (var x = 0; x < listBox1.Items.Count; x++)
+            {
+                listBox1.SetSelected(x, false);
+            }
+
+            var newValue = (UseEditFlags)int.Parse(txtUseEdit.Text);
+
+            foreach (var value in Enum.GetValues(typeof(UseEditFlags)))
+            {
+                if (newValue.HasFlag((Enum)value))
+                {
+                    listBox1.SetSelected(listBox1.Items.Count - 1, true);
+                }
+            }
+            updatingSelection = false;
         }
     }
 }

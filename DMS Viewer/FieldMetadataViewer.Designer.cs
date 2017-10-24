@@ -52,10 +52,10 @@
             // 
             this.txtUseEdit.Location = new System.Drawing.Point(110, 193);
             this.txtUseEdit.Name = "txtUseEdit";
-            this.txtUseEdit.ReadOnly = true;
             this.txtUseEdit.Size = new System.Drawing.Size(89, 20);
             this.txtUseEdit.TabIndex = 38;
             this.txtUseEdit.Text = "0";
+            this.txtUseEdit.TextChanged += new System.EventHandler(this.txtUseEdit_TextChanged);
             // 
             // label9
             // 
