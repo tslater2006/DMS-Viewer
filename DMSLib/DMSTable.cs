@@ -52,7 +52,6 @@ namespace DMSLib
 
         public void WriteToStream(StreamWriter sw)
         {
-            sw.WriteLine("/");
             sw.WriteLine($"EXPORT  {Name}.{DBName} WHERE ");
             WriteWhereClause(sw, WhereClause);
             sw.WriteLine("/");

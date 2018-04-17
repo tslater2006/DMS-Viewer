@@ -46,7 +46,7 @@ namespace DMSLib
             {
                 sw.WriteLine(line);
             }
-
+            sw.WriteLine("/");
             foreach (var table in Tables)
             {
                 table.WriteToStream(sw);
