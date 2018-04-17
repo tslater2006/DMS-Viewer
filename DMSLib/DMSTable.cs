@@ -45,7 +45,7 @@ namespace DMSLib
 
             foreach(var row in Rows)
             {
-                row.Values.Insert(colIndex, defaultValue);
+                row.Values.Insert(colIndex, Encoding.UTF8.GetBytes(defaultValue));
             }
 
         }

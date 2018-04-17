@@ -67,7 +67,8 @@ namespace DMS_Viewer
             foreach(var r in tbl.Rows)
             {
                 var dr = dt.NewRow();
-                dr.ItemArray = r.Values.ToArray();
+                // dr.ItemArray = r.Values.ToArray();
+                dr.ItemArray = r.GetValuesAsString();
                 dt.Rows.Add(dr);
             }
 

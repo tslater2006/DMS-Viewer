@@ -150,9 +150,15 @@ namespace DMSLib
                                     }
                                 }
 
+                                if (sb.Length > 0)
+                                {
+                                    fieldData.Add(sb.ToString());
+                                }
+
                                 foreach (var str in fieldData)
                                 {
-                                    row.Values.Add(Encoding.UTF8.GetString(DMSDecoder.DecodeString(str)));
+                                    byte[] data = DMSDecoder.DecodeString(str);
+                                    row.Values.Add(data);
                                 }
 
                                 table.Rows.Add(row);

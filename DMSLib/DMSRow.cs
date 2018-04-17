@@ -9,7 +9,30 @@ namespace DMSLib
 {
     public class DMSRow
     {
-        public List<string> Values = new List<string>();
+        public List<byte[]> Values = new List<byte[]>();
+        public string GetStringValue(int index)
+        {
+            return Encoding.UTF8.GetString(Values[index]);
+        }
+
+        public string[] GetValuesAsString()
+        {
+            List<string> returnValues = new List<string>();
+            foreach(var data in Values)
+            {
+                var utf8Enc = Encoding.UTF8.GetString(data);
+                if (Encoding.UTF8.GetBytes(utf8Enc).Length == data.Length)
+                {
+                    /* UTF8 encoding seems to match original data */
+                    returnValues.Add(utf8Enc);
+                } else
+                {
+                    /* UTF8 doesn't seem to work, present as hex encoded binary */
+                    returnValues.Add("{" + BitConverter.ToString(data).Replace("-", "") + "}");
+                }
+            }
+            return returnValues.ToArray();
+        }
 
         internal void WriteToStream(StreamWriter sw)
         {
@@ -17,7 +40,7 @@ namespace DMSLib
             foreach (var v in Values)
             {
                 /* For now, assume everything is "string" */
-                var strEnc = DMSEncoder.EncodeData(Encoding.UTF8.GetBytes(v));
+                var strEnc = DMSEncoder.EncodeData(v);
                 sb.Append(strEnc).Append(",");
             }
 

@@ -65,26 +65,26 @@ namespace DMS_Viewer
                         switch (colType)
                         {
                             case "CHAR":
-                                printValue = SafeString(row.Values[x]);
+                                printValue = SafeString(row.GetStringValue(x));
                                 break;
                             case "LONG":
-                                printValue = SafeString(row.Values[x]);
+                                printValue = SafeString(row.GetStringValue(x));
                                 if (extractLongs)
                                 {
                                     var longFilePath = outputFolder + Path.DirectorySeparatorChar + "Long Chars" + Path.DirectorySeparatorChar + table.DBName + Path.DirectorySeparatorChar + "row_" + (table.Rows.IndexOf(row) + 1) + ".txt";
                                     Directory.CreateDirectory(outputFolder + Path.DirectorySeparatorChar + "Long Chars" + Path.DirectorySeparatorChar + table.DBName);
-                                    File.WriteAllText(longFilePath, row.Values[x]);
+                                    File.WriteAllText(longFilePath, row.GetStringValue(x));
                                     printValue = "NULL /* See LongChar File */";
                                 }
                                 break;
                             case "DATE":
-                                printValue = String.Format("TO_DATE('{0}','YYYY-MM-DD')", row.Values[x]);
+                                printValue = String.Format("TO_DATE('{0}','YYYY-MM-DD')", row.GetStringValue(x));
                                 break;
                             case "DATETIME":
-                                printValue = String.Format("TO_DATE('{0}','YYYY-MM-DD-HH24:MI:SS')", row.Values[x].Replace(".000000", ""));
+                                printValue = String.Format("TO_DATE('{0}','YYYY-MM-DD-HH24:MI:SS')", row.GetStringValue(x).Replace(".000000", ""));
                                 break;
                             default:
-                                printValue = row.Values[x] == null ? "NULL" : row.Values[x].ToString();
+                                printValue = row.GetStringValue(x) == null ? "NULL" : row.GetStringValue(x).ToString();
                                 break;
                         }
                         if (printValue.Equals("\0"))
