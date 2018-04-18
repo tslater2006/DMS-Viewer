@@ -79,15 +79,18 @@ namespace DMSLib
 
             ms = new MemoryStream();
 
-            byte[] tableSpaceName = new byte[64];
+            byte[] dbType = new byte[2];
+            byte[] tableSpaceName = new byte[62];
             byte[] dbName = new byte[18];
             foreach (var tablespace in Tablespaces)
             {
                 var TableSpaceName = tablespace.TablespaceName;
                 var DBName = tablespace.DatabaseName;
+                var DBType = tablespace.DatabaseType;
+                Encoding.Unicode.GetBytes(DBType, 0, DBType.Length, dbType, 0);
                 Encoding.Unicode.GetBytes(TableSpaceName, 0, TableSpaceName.Length, tableSpaceName, 0);
                 Encoding.Unicode.GetBytes(DBName, 0, DBName.Length, dbName, 0);
-
+                ms.Write(dbType, 0, dbType.Length);
                 ms.Write(tableSpaceName, 0, tableSpaceName.Length);
                 ms.Write(dbName, 0, dbName.Length);
             }
@@ -171,8 +174,10 @@ namespace DMSLib
         {
             var str = Encoding.Unicode.GetString(data);
             var nullIndex = str.IndexOf('\0');
-            str = str.Substring(0, nullIndex);
-
+            if (nullIndex >= 0)
+            {
+                str = str.Substring(0, nullIndex);
+            }
             return str;
         }
 
@@ -233,9 +238,10 @@ namespace DMSLib
             }
             while (br.BaseStream.Position < br.BaseStream.Length - 1)
             {
-                var TableSpaceName = FromUnicodeBytes(br.ReadBytes(64));
+                var DatabaseType = FromUnicodeBytes(br.ReadBytes(2));
+                var TableSpaceName = FromUnicodeBytes(br.ReadBytes(62));
                 var DBName = FromUnicodeBytes(br.ReadBytes(18));
-                Tablespaces.Add(new DMSRecordTablespaceMetadata() { TablespaceName = TableSpaceName, DatabaseName = DBName });
+                Tablespaces.Add(new DMSRecordTablespaceMetadata() { DatabaseType = DatabaseType, TablespaceName = TableSpaceName, DatabaseName = DBName });
             }
 
             br.Close();
@@ -345,6 +351,7 @@ namespace DMSLib
     }
     public class DMSRecordTablespaceMetadata
     {
+        public string DatabaseType;
         public string TablespaceName;
         public string DatabaseName;
     }

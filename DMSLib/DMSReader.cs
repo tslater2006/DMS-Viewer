@@ -129,37 +129,22 @@ namespace DMSLib
                             if (currentLine == "//")
                             {
                                 /* Parse the row */
+                                
                                 var rowText = sb.ToString();
-
+                                BlockStack stack = new BlockStack(rowText);
                                 List<string> fieldData = new List<string>();
-                                var openParens = 0;
                                 sb.Clear();
-                                foreach (char c in rowText)
+                                while (stack.Count > 0)
                                 {
-                                    if (c == '(' && sb[sb.Length - 1] != '\\')
+                                    var curBlock = stack.Pop();
+                                    if (curBlock.Type != EncodeTags.COMMA)
                                     {
-                                        openParens++;
-                                        sb.Append(c);
-                                    }
-                                    else if (c == ')' && sb[sb.Length - 1] != '\\')
-                                    {
-                                        openParens--;
-                                        sb.Append(c);
-                                    }
-                                    else if (c == ',' && openParens == 0)
+                                        sb.Append(curBlock.ToString());
+                                    } else
                                     {
                                         fieldData.Add(sb.ToString());
                                         sb.Clear();
                                     }
-                                    else
-                                    {
-                                        sb.Append(c);
-                                    }
-                                }
-
-                                if (sb.Length > 0)
-                                {
-                                    fieldData.Add(sb.ToString());
                                 }
 
                                 foreach (var str in fieldData)

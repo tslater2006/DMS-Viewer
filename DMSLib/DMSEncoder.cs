@@ -255,6 +255,22 @@ namespace DMSLib
         public EncodeTags Type;
         public string Contents;
 
+        public override string ToString()
+        {
+
+            switch (Type)
+            {
+                case EncodeTags.ASCII:
+                    return "A" + Contents;
+                case EncodeTags.BINARY:
+                    return "B" + Contents;
+                case EncodeTags.COMMA:
+                    return Contents;
+                default:
+                    return "";
+            }
+        }
+
         public int Length
         {
             get
