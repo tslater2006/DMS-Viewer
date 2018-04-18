@@ -52,8 +52,8 @@ namespace DMSLib
                 byte[] blockBytes = block.GetBytes();
                 ms.Write(blockBytes, 0, blockBytes.Length);
             }
-
-            return ms.ToArray();
+            var bytes = ms.ToArray();
+            return bytes;
         }
     }
 

@@ -80,7 +80,7 @@ namespace DMSLib
 
         private void WriteColumns(StreamWriter stream, List<DMSColumn> columns)
         {
-            var maxLength = 70;
+            var maxLength = 68;
             var curLineLength = 0;
             stream.WriteLine("/");
             foreach (DMSColumn col in columns)

@@ -77,7 +77,11 @@ namespace DMSLib
                         currentLine = sr.ReadLine();
                         while (currentLine != "/")
                         {
-                            table.WhereClause += currentLine.Trim() + " ";
+                            if (table.WhereClause.Length > 0)
+                            {
+                                table.WhereClause += "\r\n";
+                            }
+                            table.WhereClause += currentLine ;
                             currentLine = sr.ReadLine();
                         }
 
