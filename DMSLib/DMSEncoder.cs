@@ -135,10 +135,6 @@ namespace DMSLib
                     line.Append(block.Contents);
                 }
                 var lineText = line.ToString();
-                if (lineText == "A()")
-                {
-                    
-                }
                 lines.Add(lineText);
                 line.Clear();
                 line = null;
@@ -219,26 +215,9 @@ namespace DMSLib
         private static string EncodeByte(byte b)
         {
             StringBuilder sb = new StringBuilder();
-            /*if (b < 194)
-            {*/
-                var lowerHalf = (char)((b & 0xF) + 65);
-                var upperHalf = (char)(((b & 0xF0) >> 4) + 65);
-                sb.Append(upperHalf).Append(lowerHalf);
-            /*}
-            else
-            {
-                var firstNumber = 194 + (b / 64);
-                var secondNumber = b - (64 * (firstNumber - 194));
-
-                var firstLower = (char)((firstNumber & 0xF) + 65);
-                var firstUpper = (char)(((firstNumber & 0xF0) >> 4) + 65);
-
-                var secondLower = (char)((secondNumber & 0xF) + 65);
-                var secondUpper = (char)(((secondNumber & 0xF0) >> 4) + 65);
-
-                sb.Append(firstUpper).Append(firstLower).Append(secondUpper).Append(secondLower);
-            }*/
-
+            var lowerHalf = (char)((b & 0xF) + 65);
+            var upperHalf = (char)(((b & 0xF0) >> 4) + 65);
+            sb.Append(upperHalf).Append(lowerHalf);
             return sb.ToString();
         }
 
@@ -312,7 +291,8 @@ namespace DMSLib
             left.Contents = Contents.Substring(0, leftSize - 2) + ")";
 
             /* We may have split on an escape character */
-            if (Type == EncodeTags.ASCII && left.Contents[left.Contents.Length - 2] == '\\' && left.Contents[left.Contents.Length - 3] != '\\')
+            /* left.Contents[left.Contents.Length - 2] == '\\' && left.Contents[left.Contents.Length - 3] != '\\'*/
+            if (Type == EncodeTags.ASCII && HasIncompleteEscape(left.Contents.Substring(1,left.Contents.Length - 2)))
             {
                 leftSize++;
                 left.Contents = Contents.Substring(0, leftSize - 2) + ")";
@@ -323,6 +303,25 @@ namespace DMSLib
                 right = null;
             }
             return Tuple.Create(left, right);
+        }
+
+        private bool HasIncompleteEscape(string content)
+        {
+            var escapeFound = false;
+            foreach(var c in content)
+            {
+                if (c == '\\' && escapeFound)
+                {
+                    escapeFound = false;
+                } else if (c == '\\' && escapeFound == false)
+                {
+                    escapeFound = true;
+                } else if (escapeFound)
+                {
+                    escapeFound = false;
+                }
+            }
+            return escapeFound;
         }
     }
 
@@ -342,7 +341,7 @@ namespace DMSLib
                 {
                     case 'A':
                         /* We're at an ascii block */
-                        curBlockType = EncodeTags.ASCII;
+            curBlockType = EncodeTags.ASCII;
                         break;
                     case 'B':
                         curBlockType = EncodeTags.BINARY;
@@ -375,6 +374,7 @@ namespace DMSLib
                         if (foundEscape)
                         {
                             foundEscape = false;
+                            continue;
                         }
                         if (curChar == '\\')
                         {
@@ -390,7 +390,10 @@ namespace DMSLib
                 {
                     dataBlock.Contents = ",";
                 }
+
                 pieces.Add(dataBlock);
+
+                
             }
             pieces.Reverse();
             foreach (var block in pieces)
