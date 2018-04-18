@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,117 +16,140 @@ namespace DMSLib
 
         public static List<string> FormatEncodedData(string data)
         {
-            StringBuilder sb = new StringBuilder(data);
-            var LINE_LENGTH = 70;
-            
-            /* Split this into lines of LINE_LENGTH */
-            string fixedLine = "";
             List<string> lines = new List<string>();
 
-            while (sb.Length > LINE_LENGTH)
+            /* Tokenize the string into "blocks" */
+            BlockStack stack = new BlockStack(data);
+            List<DataBlock> BlocksForLine = new List<DataBlock>();
+            EncodeTags lastTypeOnLine = EncodeTags.NONE;
+
+            while (stack.Count > 0)
             {
-                LINE_LENGTH = 70;
+                BlocksForLine.Clear();
+                int lineLength = 0;
+                DataBlock currentBlock;
 
-                var lineLength = LINE_LENGTH;
-            
-                var startPos = LINE_LENGTH - 1;
-
-                var endingChar = sb[startPos];
-
-                /* Ending Char can either be a ',' for column data
-                 * a '(' that is the start of a block 
-                 * a ')' for the end of an encoded block
-                 * a 'A' or 'B' for the start of an encoded block
-                 * anything else for in the middle of a block 
-                 */
-
-                /* Accept ), but not \), */
-                if (endingChar == ',' && sb[startPos-1] == ')' && (startPos-2 < 0 || sb[startPos-2] != '\\'))
+                if (lines.Count > 0)
                 {
-                    /* If we are on a comma, include it on the current line and then break */
-                    fixedLine = sb.ToString(0, lineLength);
-                    sb.Remove(0, lineLength);
-                    lines.Add(fixedLine);
+                    if (lastTypeOnLine != EncodeTags.COMMA && stack.Peek().Type != EncodeTags.COMMA && stack.Peek().Type != lastTypeOnLine)
+                    {
+                        /* different types, inject an empty of the previous type */
+                        DataBlock dummy = new DataBlock() { Type = lastTypeOnLine, Contents = "()" };
+                        BlocksForLine.Add(dummy);
+                        lineLength += dummy.Length;
+                    }
                 }
-                else if (endingChar == '(' && (sb[startPos-1] == 'A' || sb[startPos - 1] == 'B'))
+                
+                while (stack.Count > 0)
                 {
-                    lineLength -= 2;
-                    fixedLine = sb.ToString(0, lineLength);
-                    sb.Remove(0, lineLength);
-                    lines.Add(fixedLine);
+                    currentBlock = stack.Pop();
+                    if (lineLength + currentBlock.Length <= 70)
+                    {
+                        BlocksForLine.Add(currentBlock);
+                        lineLength += currentBlock.Length;
+                    } else
+                    {
+                        stack.Push(currentBlock);
+                        break;
+                    }
                 }
-                else if (endingChar == ')' && sb[startPos - 1] != '\\')
-                {
-                    /* We are on a ) that isn't escaped, include it and then break */
-                    fixedLine = sb.ToString(0, lineLength);
-                    sb.Remove(0, lineLength);
-                    lines.Add(fixedLine);
-                }
-                else if ((endingChar == 'A' || endingChar == 'B') && sb[startPos + 1] == '(')
-                {
-                    /* We are on an A or a B which is the start of a new block, we know this since ( is right after us, just cut the the line */
-                    lineLength--;
-                    fixedLine = sb.ToString(0, lineLength);
-                    sb.Remove(0, lineLength);
-                    lines.Add(fixedLine);
+
+                /* We've filled the line with as many full blocks as we can */
+
+                /* If next block is a length of 4 for ASCII or 5 for BINARY, add it */
+                if (lineLength < 70 && stack.Count > 0) {
+                    var needsSplit = true;
+                    switch (stack.Peek().Type)
+                    {
+                        case EncodeTags.ASCII:
+                            if (stack.Peek().Length == 4)
+                            {
+                                BlocksForLine.Add(stack.Pop());
+                                needsSplit = false;
+                            }
+                            break;
+                        case EncodeTags.BINARY:
+                            if (stack.Peek().Length == 5)
+                            {
+                                BlocksForLine.Add(stack.Pop());
+                                needsSplit = false;
+                            }
+                            break;
+                        case EncodeTags.COMMA:
+                            BlocksForLine.Add(stack.Pop());
+                            needsSplit = false;
+                            break;
+                    }
+
+
+                    if (needsSplit)
+                    {
+                        /* determine if we can split it */
+
+                        var blockToSplit = stack.Pop();
+                        Tuple<DataBlock, DataBlock> splitParts = blockToSplit.Split(70 - lineLength);
+                        if (splitParts.Item2 != null)
+                        {
+                            stack.Push(splitParts.Item2);
+                        }
+                        BlocksForLine.Add(splitParts.Item1);
+                    }
                 } else
                 {
-                    /* We are inside a block, lets see if 1 more char ends the block or not */
-                    if (sb[startPos + 1] == ')')
+                    if (BlocksForLine.Sum(b => b.Length) == 70)
                     {
-                        lineLength++;
-                        fixedLine = sb.ToString(0, lineLength);
-                        sb.Remove(0, lineLength);
-                        lines.Add(fixedLine);
-                    }
-                    else
-                    {
-
-                        /* If not, we need to figure out if we are in a A() or a B() so we can determine how to split */
-                        var lookingSpot = startPos;
-                        while (sb[lookingSpot] != '(' && (sb[lookingSpot - 1] != 'A' || sb[lookingSpot - 1] != 'B'))
+                        if (stack.Count > 0 && BlocksForLine.Last().Type == EncodeTags.COMMA)
                         {
-                            lookingSpot--;
-                        }
-
-                        var tagType = sb[lookingSpot - 1] == 'A' ? EncodeTags.ASCII : EncodeTags.BINARY;
-
-                        if (tagType == EncodeTags.ASCII)
-                        {
-                            /* if its ASCII, cut, terminate, and reopen */
-                            fixedLine = sb.ToString(0, lineLength) + ")";
-                            sb.Remove(0, lineLength);
-                            sb.Insert(0, "A(");
-                            lines.Add(fixedLine);
-                        }
-                        else if (tagType == EncodeTags.BINARY)
-                        {
-                            /* its Binary, we need to cut but on an even # of letters */
-                            var binLength = startPos - lookingSpot;
-                            if (binLength % 2 == 1)
+                            var blockToSplit = stack.Pop();
+                            Tuple<DataBlock, DataBlock> splitParts = blockToSplit.Split(70 - lineLength);
+                            if (splitParts.Item2 != null)
                             {
-                                lineLength++;
+                                stack.Push(splitParts.Item2);
                             }
-
-                            fixedLine = sb.ToString(0, lineLength) + ")";
-                            sb.Remove(0, lineLength);
-                            sb.Insert(0, "B(");
-                            lines.Add(fixedLine);
+                            BlocksForLine.Add(splitParts.Item1);
                         }
                     }
                 }
+                lastTypeOnLine = BlocksForLine.Last().Type;
+
+                /* if the next token happens to be a comma, just add it?*/
+                if (stack.Count > 0 && stack.Peek().Type == EncodeTags.COMMA)
+                {
+                    BlocksForLine.Add(stack.Pop());
+                    lastTypeOnLine = EncodeTags.COMMA;
+                }
+
+                /* Process all blocks to string */
+                StringBuilder line = new StringBuilder();
+                foreach(DataBlock block in BlocksForLine)
+                {
+                    switch(block.Type)
+                    {
+                        case EncodeTags.ASCII:
+                            line.Append("A");
+                            break;
+                        case EncodeTags.BINARY:
+                            line.Append("B");
+                            break;
+                    }
+                    line.Append(block.Contents);
+                }
+                var lineText = line.ToString();
+                if (lineText == "A()")
+                {
+                    
+                }
+                lines.Add(lineText);
+                line.Clear();
+                line = null;
+            }
 
 
-            }
-            if (sb.Length > 0)
-            {
-                lines.Add(sb.ToString());
-            }
 
             return lines;
         }
 
-
+        
         public static string EncodeData(byte[] data)
         {
             StringBuilder sb = new StringBuilder();
@@ -133,7 +157,7 @@ namespace DMSLib
 
             foreach (byte b in data)
             {
-                if (b >= 32 && b <= 127 && (char)b != ']' && (char)b != '[')
+                if (b >= 32 && b < 127 && (char)b != ']' && (char)b != '[')
                 {
                     /* we'll treat this as an ascii character */
                     switch (currentTag)
@@ -218,10 +242,145 @@ namespace DMSLib
             return sb.ToString();
         }
 
-        enum EncodeTags
+        
+
+    }
+    enum EncodeTags
+    {
+        ASCII, BINARY, NONE, COMMA
+    }
+
+    class DataBlock
+    {
+        public EncodeTags Type;
+        public string Contents;
+
+        public int Length
         {
-            ASCII, BINARY, NONE
+            get
+            {
+                if (Type != EncodeTags.COMMA)
+                {
+                    return (Contents?.Length).GetValueOrDefault() + 1;
+                } else
+                {
+                    return 1;
+                }
+            }
         }
 
+        internal Tuple<DataBlock, DataBlock> Split(int leftSize)
+        {
+            /* ensure we split on even block */
+            if (Type == EncodeTags.BINARY)
+            {
+                if (leftSize < 5)
+                {
+                    leftSize = 5;
+                }
+                else if ((leftSize - 1) % 2 == 1)
+                {
+                    leftSize++;
+                }
+            }
+
+            if (Type == EncodeTags.ASCII)
+            {
+                if (leftSize < 4)
+                {
+                    leftSize = 4;
+                }
+            }
+            DataBlock left = new DataBlock() { Type = Type };
+            DataBlock right = new DataBlock() { Type = Type };
+            left.Contents = Contents.Substring(0, leftSize - 2) + ")";
+
+            /* We may have split on an escape character */
+            if (Type == EncodeTags.ASCII && left.Contents[left.Contents.Length - 2] == '\\' && left.Contents[left.Contents.Length - 3] != '\\')
+            {
+                leftSize++;
+                left.Contents = Contents.Substring(0, leftSize - 2) + ")";
+            }
+            right.Contents = "(" + Contents.Substring(leftSize - 2);
+            if (right.Contents == "()")
+            {
+                right = null;
+            }
+            return Tuple.Create(left, right);
+        }
+    }
+
+    class BlockStack : Stack<DataBlock>
+    {
+
+
+        public BlockStack(string data)
+        {
+            List<DataBlock> pieces = new List<DataBlock>();
+            for(var x = 0; x < data.Length;x++)
+            {
+                var curChar = data[x];
+                DataBlock dataBlock = null;
+                EncodeTags curBlockType;
+                switch (curChar)
+                {
+                    case 'A':
+                        /* We're at an ascii block */
+                        curBlockType = EncodeTags.ASCII;
+                        break;
+                    case 'B':
+                        curBlockType = EncodeTags.BINARY;
+                        break;
+                    case ',':
+                        curBlockType = EncodeTags.COMMA;
+                        break;
+                    default:
+                        curBlockType = EncodeTags.NONE;
+                        break;
+                }
+
+                dataBlock = new DataBlock() { Type = curBlockType };
+
+                if (dataBlock.Type == EncodeTags.ASCII || dataBlock.Type == EncodeTags.BINARY)
+                {
+                    StringBuilder sb = new StringBuilder();
+                    /* read the contents of this block */
+                    var isOpen = true;
+                    var foundEscape = false;
+                    while (isOpen)
+                    {
+                        x++;
+                        curChar = data[x];
+                        sb.Append(curChar);
+                        if (curChar == ')' && foundEscape == false)
+                        {
+                            isOpen = false;
+                        }
+                        if (foundEscape)
+                        {
+                            foundEscape = false;
+                        }
+                        if (curChar == '\\')
+                        {
+                            foundEscape = true;
+                        }
+                    }
+
+                    dataBlock.Contents = sb.ToString();
+                    sb.Clear();
+                    sb = null;
+                }
+                else if (dataBlock.Type == EncodeTags.COMMA)
+                {
+                    dataBlock.Contents = ",";
+                }
+                pieces.Add(dataBlock);
+            }
+            pieces.Reverse();
+            foreach (var block in pieces)
+            {
+                Push(block);
+            }
+        }
     }
 }

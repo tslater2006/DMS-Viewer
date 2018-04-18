@@ -27,7 +27,7 @@ namespace DMSLib
         {
             /* Write out the header */
             sw.WriteLine($"SET VERSION_DAM  {Version}");
-            sw.WriteLine();
+            sw.WriteLine("     ");
             sw.WriteLine($"SET ENDIAN {Endian}");
             sw.WriteLine($"SET BASE_LANGUAGE {BaseLanguage}");
             sw.WriteLine($"REM Database: {Database}");
