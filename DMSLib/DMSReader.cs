@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -133,12 +134,12 @@ namespace DMSLib
                                 sb.Clear();
                                 foreach (char c in rowText)
                                 {
-                                    if (c == '(')
+                                    if (c == '(' && sb[sb.Length - 1] != '\\')
                                     {
                                         openParens++;
                                         sb.Append(c);
                                     }
-                                    else if (c == ')')
+                                    else if (c == ')' && sb[sb.Length - 1] != '\\')
                                     {
                                         openParens--;
                                         sb.Append(c);

@@ -68,7 +68,8 @@ namespace DMS_Viewer
             {
                 var dr = dt.NewRow();
                 // dr.ItemArray = r.Values.ToArray();
-                dr.ItemArray = r.GetValuesAsString();
+                var items = r.GetValuesAsString();
+                dr.ItemArray = items;
                 dt.Rows.Add(dr);
             }
 
@@ -77,14 +78,14 @@ namespace DMS_Viewer
 
         private void dataGridView1_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (!IsRunningMono)
+        /*    if (!IsRunningMono)
             {
                 if (e.RowIndex >= 0)
                 {
                     var content = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
                     new LongDataViewer(content).ShowDialog(this);
                 }
-            }
+            }*/
         }
 
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -94,14 +95,14 @@ namespace DMS_Viewer
 
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (IsRunningMono)
-            {
+            //if (IsRunningMono)
+            //{
                 if (e.RowIndex >= 0)
                 {
                     var content = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
                     new LongDataViewer(content).ShowDialog(this);
                 }
-            }
+            //}
             
         }
 
