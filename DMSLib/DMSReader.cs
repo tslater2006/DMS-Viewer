@@ -25,7 +25,7 @@ namespace DMSLib
                     file.Version = sr.ReadLine().Split(new char[] { ' ' },StringSplitOptions.RemoveEmptyEntries)[2];
 
                     /* Blank line */
-                    sr.ReadLine();
+                    file.BlankLine = sr.ReadLine();
 
                     file.Endian = sr.ReadLine().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[2];
                     file.BaseLanguage = sr.ReadLine().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[2];
@@ -96,7 +96,6 @@ namespace DMSLib
                         }
 
                         table.Metadata = new DMSRecordMetadata(DMSDecoder.DecodeString(sb.ToString()));
-
                         /* Record Columns */
                         currentLine = sr.ReadLine();
                         sb.Clear();
@@ -115,7 +114,10 @@ namespace DMSLib
                             col.Name = m.Groups[2].Value;
                             col.Type = m.Groups[3].Value;
                             col.Size = m.Groups[4].Value;
-
+                            if (m.Groups.Count == 6)
+                            {
+                                col.Size += m.Groups[5].Value;
+                            }
                             table.Columns.Add(col);
                         }
 

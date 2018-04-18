@@ -29,6 +29,7 @@ namespace DMSLib
         public int BuildSequence;
         public int IndexCount;
 
+        public List<DMSRecordTablespaceMetadata> Tablespaces = new List<DMSRecordTablespaceMetadata>();
         internal void WriteToStream(StreamWriter sw)
         {
 
@@ -80,13 +81,16 @@ namespace DMSLib
 
             byte[] tableSpaceName = new byte[64];
             byte[] dbName = new byte[18];
+            foreach (var tablespace in Tablespaces)
+            {
+                var TableSpaceName = tablespace.TablespaceName;
+                var DBName = tablespace.DatabaseName;
+                Encoding.Unicode.GetBytes(TableSpaceName, 0, TableSpaceName.Length, tableSpaceName, 0);
+                Encoding.Unicode.GetBytes(DBName, 0, DBName.Length, dbName, 0);
 
-            Encoding.Unicode.GetBytes(TableSpaceName, 0, TableSpaceName.Length, tableSpaceName, 0);
-            Encoding.Unicode.GetBytes(DBName, 0, DBName.Length, dbName, 0);
-
-            ms.Write(tableSpaceName, 0, tableSpaceName.Length);
-            ms.Write(dbName, 0, dbName.Length);
-
+                ms.Write(tableSpaceName, 0, tableSpaceName.Length);
+                ms.Write(dbName, 0, dbName.Length);
+            }
             lines = DMSEncoder.EncodeDataToLines(ms.ToArray());
             foreach (var line in lines)
             {
@@ -107,8 +111,6 @@ namespace DMSLib
 
         public List<DMSRecordIndexMetadata> Indexes = new List<DMSRecordIndexMetadata>();
 
-        public string TableSpaceName;
-        public string DBName;
 
         /* This contains the "indexes" for the record (if any), as well as tablespace info for the record */
         public byte[] LeftoverData;
@@ -229,9 +231,12 @@ namespace DMSLib
                     index.Fields.Add(fieldInfo);
                 }
             }
-
-            TableSpaceName = FromUnicodeBytes(br.ReadBytes(64));
-            DBName = FromUnicodeBytes(br.ReadBytes(18));
+            while (br.BaseStream.Position < br.BaseStream.Length - 1)
+            {
+                var TableSpaceName = FromUnicodeBytes(br.ReadBytes(64));
+                var DBName = FromUnicodeBytes(br.ReadBytes(18));
+                Tablespaces.Add(new DMSRecordTablespaceMetadata() { TablespaceName = TableSpaceName, DatabaseName = DBName });
+            }
 
             br.Close();
         }
@@ -338,7 +343,11 @@ namespace DMSLib
             return str;
         }
     }
-
+    public class DMSRecordTablespaceMetadata
+    {
+        public string TablespaceName;
+        public string DatabaseName;
+    }
     public class DMSRecordIndexMetadata
     {
         public string IndexID; /* 2 bytes */

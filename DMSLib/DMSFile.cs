@@ -10,7 +10,7 @@ namespace DMSLib
     public class DMSFile
     {
         public string FileName;
-
+        public string BlankLine;
         public string Version;
         public string Endian;
         public string BaseLanguage;
@@ -27,7 +27,7 @@ namespace DMSLib
         {
             /* Write out the header */
             sw.WriteLine($"SET VERSION_DAM  {Version}");
-            sw.WriteLine("     ");
+            sw.WriteLine(BlankLine);
             sw.WriteLine($"SET ENDIAN {Endian}");
             sw.WriteLine($"SET BASE_LANGUAGE {BaseLanguage}");
             sw.WriteLine($"REM Database: {Database}");

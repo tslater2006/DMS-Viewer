@@ -54,10 +54,6 @@
             this.label12 = new System.Windows.Forms.Label();
             this.txtVersion2 = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
-            this.txtTablespace = new System.Windows.Forms.TextBox();
-            this.label14 = new System.Windows.Forms.Label();
-            this.txtDBName = new System.Windows.Forms.TextBox();
-            this.label15 = new System.Windows.Forms.Label();
             this.btnSave = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
@@ -284,43 +280,9 @@
             this.label13.TabIndex = 24;
             this.label13.Text = "Version 2:";
             // 
-            // txtTablespace
-            // 
-            this.txtTablespace.Location = new System.Drawing.Point(170, 366);
-            this.txtTablespace.MaxLength = 31;
-            this.txtTablespace.Name = "txtTablespace";
-            this.txtTablespace.Size = new System.Drawing.Size(159, 20);
-            this.txtTablespace.TabIndex = 27;
-            // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(28, 369);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(99, 13);
-            this.label14.TabIndex = 26;
-            this.label14.Text = "TableSpace Name:";
-            // 
-            // txtDBName
-            // 
-            this.txtDBName.Location = new System.Drawing.Point(170, 392);
-            this.txtDBName.MaxLength = 8;
-            this.txtDBName.Name = "txtDBName";
-            this.txtDBName.Size = new System.Drawing.Size(159, 20);
-            this.txtDBName.TabIndex = 29;
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(28, 395);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(56, 13);
-            this.label15.TabIndex = 28;
-            this.label15.Text = "DB Name:";
-            // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(133, 430);
+            this.btnSave.Location = new System.Drawing.Point(127, 375);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(104, 23);
             this.btnSave.TabIndex = 30;
@@ -349,14 +311,10 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(371, 465);
+            this.ClientSize = new System.Drawing.Size(371, 410);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.btnSave);
-            this.Controls.Add(this.txtDBName);
-            this.Controls.Add(this.label15);
-            this.Controls.Add(this.txtTablespace);
-            this.Controls.Add(this.label14);
             this.Controls.Add(this.txtVersion2);
             this.Controls.Add(this.label13);
             this.Controls.Add(this.txtIndexCount);
@@ -422,10 +380,6 @@
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.TextBox txtVersion2;
         private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.TextBox txtTablespace;
-        private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.TextBox txtDBName;
-        private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;

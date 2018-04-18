@@ -52,8 +52,15 @@ namespace DMSLib
 
         public void WriteToStream(StreamWriter sw)
         {
-            sw.WriteLine($"EXPORT  {Name}.{DBName} WHERE ");
-            WriteWhereClause(sw, WhereClause);
+            if (WhereClause.Length > 0)
+            {
+                sw.WriteLine($"EXPORT  {Name}.{DBName} WHERE ");
+                WriteWhereClause(sw, WhereClause);
+            }
+            else
+            {
+                sw.WriteLine($"EXPORT  {Name}.{DBName} ");
+            }
             sw.WriteLine("/");
 
             /* Write table metadata */
