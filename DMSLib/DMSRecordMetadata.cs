@@ -73,9 +73,62 @@ namespace DMSLib
                 {
                     sw.WriteLine(line);
                 }
+
+                if (idx.ParameterGroups.Count > 0)
+                {
+                    MemoryStream ms2 = new MemoryStream();
+                    foreach (var group in idx.ParameterGroups)
+                    {
+                        byte[] headerBytes = group.GetHeaderBytes();
+                        ms2.Write(headerBytes, 0, headerBytes.Length);
+                    }
+
+                    lines = DMSEncoder.EncodeDataToLines(ms2.ToArray());
+                    foreach (var line in lines)
+                    {
+                        sw.WriteLine(line);
+                    }
+                }
+
+                foreach (var group in idx.ParameterGroups)
+                {
+                    byte[] paramBytes = group.GetParameterBytes();
+                    lines = DMSEncoder.EncodeDataToLines(paramBytes);
+                    foreach (var line in lines)
+                    {
+                        sw.WriteLine(line);
+                    }
+                }
             }
 
-            
+
+            /* Write out any DDL parameter groups */
+            if (ParameterGroups.Count > 0)
+            {
+                MemoryStream ms2 = new MemoryStream();
+                foreach (var group in ParameterGroups)
+                {
+                    byte[] headerBytes = group.GetHeaderBytes();
+                    ms2.Write(headerBytes, 0, headerBytes.Length);
+                }
+
+                lines = DMSEncoder.EncodeDataToLines(ms2.ToArray());
+                foreach (var line in lines)
+                {
+                    sw.WriteLine(line);
+                }
+            }
+
+            /* Write out each param group parameter bytes (each parameter entry in the group) */
+            foreach (var group in ParameterGroups)
+            {
+                byte[] paramBytes = group.GetParameterBytes();
+                lines = DMSEncoder.EncodeDataToLines(paramBytes);
+                foreach (var line in lines)
+                {
+                    sw.WriteLine(line);
+                }
+            }
 
             ms = new MemoryStream();
 
@@ -102,7 +155,7 @@ namespace DMSLib
         }
 
         /* 4 bytes unknown */
-        public int Unknown3;
+        public int DDLParamGroupCount;
 
         public int VersionNumber2;
 
@@ -114,6 +167,7 @@ namespace DMSLib
 
         public List<DMSRecordIndexMetadata> Indexes = new List<DMSRecordIndexMetadata>();
 
+        public List<DMSDDLParamGroup> ParameterGroups = new List<DMSDDLParamGroup>();
 
         /* This contains the "indexes" for the record (if any), as well as tablespace info for the record */
         public byte[] LeftoverData;
@@ -162,7 +216,7 @@ namespace DMSLib
             ms.Write(BitConverter.GetBytes(FieldCount), 0, 4);
             ms.Write(BitConverter.GetBytes(BuildSequence), 0, 4);
             ms.Write(BitConverter.GetBytes(IndexCount), 0, 4);
-            ms.Write(BitConverter.GetBytes(Unknown3), 0, 4);
+            ms.Write(BitConverter.GetBytes(DDLParamGroupCount), 0, 4);
             ms.Write(BitConverter.GetBytes(VersionNumber2), 0, 4);
             ms.Write(Unknown4, 0, Unknown4.Length);
 
@@ -205,7 +259,7 @@ namespace DMSLib
             IndexCount = BitConverter.ToInt32(br.ReadBytes(4), 0);
 
             /* Unknown 4 bytes */
-            Unknown3 = BitConverter.ToInt32(br.ReadBytes(4), 0);
+            DDLParamGroupCount = BitConverter.ToInt32(br.ReadBytes(4), 0);
 
             VersionNumber2 = BitConverter.ToInt32(br.ReadBytes(4), 0);
 
@@ -234,6 +288,37 @@ namespace DMSLib
                 {
                     var fieldInfo = new DMSRecordIndexField(br.ReadBytes(48));
                     index.Fields.Add(fieldInfo);
+                }
+
+                for(var x = 0; x < index.IndexParamGroupCount; x++)
+                {
+                    DMSDDLParamGroup parmList = new DMSDDLParamGroup();
+                    parmList.Header = new DMSDDLParamHeader(br.ReadBytes(16));
+                    index.ParameterGroups.Add(parmList);                    
+                }
+
+                foreach(var parmGroup in index.ParameterGroups)
+                {
+                    for (var y = 0; y < parmGroup.Header.Count; y++)
+                    {
+                        parmGroup.Parameters.Add(new DMSDDLParam(br.ReadBytes(276)));
+                    }
+                }
+
+            }
+
+            for (var x = 0; x < DDLParamGroupCount; x++)
+            {
+                DMSDDLParamGroup parmList = new DMSDDLParamGroup();
+                parmList.Header = new DMSDDLParamHeader(br.ReadBytes(16));
+                ParameterGroups.Add(parmList);
+            }
+
+            foreach (var parmGroup in ParameterGroups)
+            {
+                for (var y = 0; y < parmGroup.Header.Count; y++)
+                {
+                    parmGroup.Parameters.Add(new DMSDDLParam(br.ReadBytes(276)));
                 }
             }
             while (br.BaseStream.Position < br.BaseStream.Length - 1)
@@ -355,11 +440,88 @@ namespace DMSLib
         public string TablespaceName;
         public string DatabaseName;
     }
+    public class DMSDDLParamGroup
+    {
+        public DMSDDLParamHeader Header;
+        public List<DMSDDLParam> Parameters = new List<DMSDDLParam>();
+
+        internal byte[] GetHeaderBytes()
+        {
+            MemoryStream ms = new MemoryStream();
+            ms.Write(BitConverter.GetBytes(Header.DBType), 0, 4);
+            ms.Write(BitConverter.GetBytes(Header.SizingSet), 0, 4);
+            ms.Write(BitConverter.GetBytes(Header.Count), 0, 4);
+            ms.Write(BitConverter.GetBytes(Header.Unknown1), 0, 4);
+
+            return ms.ToArray();
+        }
+
+        internal byte[] GetParameterBytes()
+        {
+            MemoryStream ms = new MemoryStream();
+            byte[] name = new byte[18];
+            byte[] value = new byte[258];
+
+            foreach (var param in Parameters)
+            {
+                Array.Clear(name, 0, 18);
+                Array.Clear(value, 0, 258);
+                Encoding.Unicode.GetBytes(param.Name, 0, param.Name.Length, name, 0);
+                Encoding.Unicode.GetBytes(param.Value, 0, param.Value.Length, value, 0);
+
+                ms.Write(name, 0, 18);
+                ms.Write(value, 0, 258);
+            }
+
+            return ms.ToArray();
+        }
+    }
+    public class DMSDDLParamHeader
+    {
+        public int DBType;
+        public int SizingSet;
+        public int Count;
+        public int Unknown1;
+
+
+        public DMSDDLParamHeader(byte[] data)
+        {
+            BinaryReader br = new BinaryReader(new MemoryStream(data));
+            DBType = BitConverter.ToInt32(br.ReadBytes(4), 0);
+            SizingSet = BitConverter.ToInt32(br.ReadBytes(4), 0);
+            Count = BitConverter.ToInt32(br.ReadBytes(4), 0);
+            Unknown1 = BitConverter.ToInt32(br.ReadBytes(4), 0);
+            br.Close();
+        }
+
+    }
+    public class DMSDDLParam
+    {
+        public string Name;
+        public string Value;
+
+        public DMSDDLParam(byte[] data)
+        {
+            BinaryReader br = new BinaryReader(new MemoryStream(data));
+            Name = FromUnicodeBytes(br.ReadBytes(18));
+            Value = FromUnicodeBytes(br.ReadBytes(258));
+            br.Close();
+        }
+        private string FromUnicodeBytes(byte[] data)
+        {
+            var str = Encoding.Unicode.GetString(data);
+            var nullIndex = str.IndexOf('\0');
+            str = str.Substring(0, nullIndex);
+            return str;
+        }
+    }
+
     public class DMSRecordIndexMetadata
     {
         public string IndexID; /* 2 bytes */
         public short FieldCount; /* 2 bytes */
-        public int Unknown1; /* 4 bytes */
+        public int Unknown1; /* 2 bytes */
+        public int IndexParamGroupCount; /* 2 bytes */
         public short Unknown2; /* 2 bytes */
         public RecordIndexTypes IndexType; /* 2 bytes */
         public short Unique; /* 2 bytes */
@@ -377,14 +539,15 @@ namespace DMSLib
         public int Unknown3; /* 4 bytes */
 
         public List<DMSRecordIndexField> Fields = new List<DMSRecordIndexField>();
-
+        public List<DMSDDLParamGroup> ParameterGroups = new List<DMSDDLParamGroup>();
         public DMSRecordIndexMetadata(byte[] data)
         {
             BinaryReader br = new BinaryReader(new MemoryStream(data));
 
             IndexID = Encoding.Unicode.GetString(br.ReadBytes(2));
             FieldCount = BitConverter.ToInt16(br.ReadBytes(2), 0);
-            Unknown1 = BitConverter.ToInt32(br.ReadBytes(4), 0);
+            Unknown1 = BitConverter.ToInt16(br.ReadBytes(2), 0);
+            IndexParamGroupCount = BitConverter.ToInt16(br.ReadBytes(2), 0);
             Unknown2 = BitConverter.ToInt16(br.ReadBytes(2), 0);
             IndexType = (RecordIndexTypes)BitConverter.ToInt16(br.ReadBytes(2), 0);
             Unique = BitConverter.ToInt16(br.ReadBytes(2), 0);
@@ -409,7 +572,8 @@ namespace DMSLib
             MemoryStream ms = new MemoryStream();
             ms.Write(Encoding.Unicode.GetBytes(IndexID), 0, 2);
             ms.Write(BitConverter.GetBytes(FieldCount), 0, 2);
-            ms.Write(BitConverter.GetBytes(Unknown1), 0, 4);
+            ms.Write(BitConverter.GetBytes(Unknown1), 0, 2);
+            ms.Write(BitConverter.GetBytes(IndexParamGroupCount), 0, 2);
             ms.Write(BitConverter.GetBytes(Unknown2), 0, 2);
             ms.Write(BitConverter.GetBytes((short)IndexType), 0, 2);
             ms.Write(BitConverter.GetBytes(Unique), 0, 2);
