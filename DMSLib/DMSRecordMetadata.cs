@@ -137,6 +137,9 @@ namespace DMSLib
             byte[] dbName = new byte[18];
             foreach (var tablespace in Tablespaces)
             {
+                Array.Clear(dbType, 0, 2);
+                Array.Clear(tableSpaceName, 0, 62);
+                Array.Clear(dbName, 0, 18);
                 var TableSpaceName = tablespace.TablespaceName;
                 var DBName = tablespace.DatabaseName;
                 var DBType = tablespace.DatabaseType;
