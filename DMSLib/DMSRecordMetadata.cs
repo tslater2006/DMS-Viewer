@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -17,7 +18,8 @@ namespace DMSLib
         public string RelatedLanguageRecord;
         public string RecordDBName;
         /* Unknown 76 bytes, seems to be all 0's */
-        public byte[] Unknown1;
+        public string TimestampField; /* 38 bytes */
+        public string SystemIDField; /* 38 bytes */
 
         public string OptimizationTriggers;
 
@@ -211,7 +213,12 @@ namespace DMSLib
             ms.Write(relLang, 0, relLang.Length);
             ms.Write(recDbName, 0, recDbName.Length);
 
-            ms.Write(Unknown1, 0, Unknown1.Length);
+            byte[] timestampFieldBytes = new byte[38];
+            byte[] systemIDFieldBytes = new byte[38];
+            Encoding.Unicode.GetBytes(TimestampField, 0, TimestampField.Length, timestampFieldBytes, 0);
+            Encoding.Unicode.GetBytes(SystemIDField, 0, SystemIDField.Length, systemIDFieldBytes, 0);
+            ms.Write(timestampFieldBytes, 0, timestampFieldBytes.Length);
+            ms.Write(systemIDFieldBytes, 0, systemIDFieldBytes.Length);
             ms.Write(optTriggers, 0, optTriggers.Length);
             ms.Write(Unknown2, 0, Unknown2.Length);
 
@@ -249,13 +256,19 @@ namespace DMSLib
             RelatedLanguageRecord = FromUnicodeBytes(br.ReadBytes(32));
             RecordDBName = FromUnicodeBytes(br.ReadBytes(38));
 
-            /* Unknwon 76 bytes */
-            Unknown1 = br.ReadBytes(76);
+            var timeStampFieldBytes = br.ReadBytes(38);
+            var systemIDFieldBytes = br.ReadBytes(38);
+            TimestampField = FromUnicodeBytes(timeStampFieldBytes);
+            SystemIDField = FromUnicodeBytes(systemIDFieldBytes);
+
             OptimizationTriggers = FromUnicodeBytes(br.ReadBytes(4));
 
             /* Unknown 10 bytes */
             Unknown2 = br.ReadBytes(10);
-
+            if (Unknown2.Sum(b => b) != 1 && Unknown2[2] != 1)
+            {
+                //Debugger.Break();
+            }
             VersionNumber = BitConverter.ToInt32(br.ReadBytes(4), 0);
             FieldCount = BitConverter.ToInt32(br.ReadBytes(4), 0);
             BuildSequence = BitConverter.ToInt32(br.ReadBytes(4), 0);
@@ -362,13 +375,20 @@ namespace DMSLib
             FieldName = FromUnicodeBytes(br.ReadBytes(38));
             RecordName = FromUnicodeBytes(br.ReadBytes(32));
             Unknown1 = BitConverter.ToInt32(br.ReadBytes(4), 0);
+            if (Unknown1 != 0)
+            {
+                //Debugger.Break();
+            }
             VersionNumber = BitConverter.ToInt32(br.ReadBytes(4), 0);
             DecimalPositions = BitConverter.ToInt32(br.ReadBytes(4), 0);
 
             UseEditMask = (UseEditFlags)BitConverter.ToInt32(br.ReadBytes(4), 0);
 
             Unknown2 = BitConverter.ToInt16(br.ReadBytes(2), 0);
-            
+            if (Unknown2 != 0)
+            {
+                //Debugger.Break();
+            }
             FieldType = (FieldTypes)BitConverter.ToInt16(br.ReadBytes(2), 0);
             FieldFormat = (FieldFormats)BitConverter.ToInt16(br.ReadBytes(2), 0);
             FieldLength = BitConverter.ToInt32(br.ReadBytes(4), 0);
@@ -376,7 +396,10 @@ namespace DMSLib
 
             Unknown5 = BitConverter.ToInt32(br.ReadBytes(4), 0);
             Unknown6 = BitConverter.ToInt16(br.ReadBytes(2), 0);
-
+            if (Unknown5 != 0 || Unknown6 != 0)
+            {
+                //Debugger.Break();
+            }
             br.Close();
         }
 
@@ -494,6 +517,10 @@ namespace DMSLib
             SizingSet = BitConverter.ToInt32(br.ReadBytes(4), 0);
             Count = BitConverter.ToInt32(br.ReadBytes(4), 0);
             Unknown1 = BitConverter.ToInt32(br.ReadBytes(4), 0);
+            if (Unknown1 != 0)
+            {
+                //Debugger.Break();
+            }
             br.Close();
         }
 
@@ -550,8 +577,16 @@ namespace DMSLib
             IndexID = Encoding.Unicode.GetString(br.ReadBytes(2));
             FieldCount = BitConverter.ToInt16(br.ReadBytes(2), 0);
             Unknown1 = BitConverter.ToInt16(br.ReadBytes(2), 0);
+            if(Unknown1 != 0)
+            {
+                //Debugger.Break();
+            }
             IndexParamGroupCount = BitConverter.ToInt16(br.ReadBytes(2), 0);
             Unknown2 = BitConverter.ToInt16(br.ReadBytes(2), 0);
+            if (Unknown2 != 0)
+            {
+                //Debugger.Break();
+            }
             IndexType = (RecordIndexTypes)BitConverter.ToInt16(br.ReadBytes(2), 0);
             Unique = BitConverter.ToInt16(br.ReadBytes(2), 0);
             Cluster = BitConverter.ToInt16(br.ReadBytes(2), 0);
@@ -566,7 +601,10 @@ namespace DMSLib
             PlatformMSS = BitConverter.ToInt16(br.ReadBytes(2), 0);
             PlatformDB4 = BitConverter.ToInt16(br.ReadBytes(2), 0);
             Unknown3 = BitConverter.ToInt32(br.ReadBytes(4), 0);
-
+            if (Unknown3 != 0)
+            {
+                //Debugger.Break();
+            }
             br.Close();
         }
 
@@ -626,7 +664,10 @@ namespace DMSLib
             KeyPosition = BitConverter.ToInt32(br.ReadBytes(4), 0);
             Ascending = BitConverter.ToInt32(br.ReadBytes(4), 0);
             Unknown3 = BitConverter.ToInt16(br.ReadBytes(2), 0);
-
+            if (Unknown3 != 0)
+            {
+                //Debugger.Break();
+            }
             br.Close();
         }
 
