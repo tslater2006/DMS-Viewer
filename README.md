@@ -11,7 +11,7 @@ There are experimental features that allow you to modify DAT files such as:
 
 ## Installation
 
-The easiest way to install DMS Viewer is to grab the latest release from the releases page.
+The easiest way to install DMS Viewer is to grab the [latest release](https://github.com/tslater2006/DMS-Viewer/releases).
 
 Alternatively to run from source, clone the repository and open in Visual Studio (or MonoDevelop of OSX/Linux)
 
