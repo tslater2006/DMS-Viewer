@@ -59,7 +59,6 @@
             this.copyTables = new System.Windows.Forms.Button();
             this.copyWhereClause = new System.Windows.Forms.Button();
             this.btnRecordMeta = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -71,7 +70,8 @@
             this.toolsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1472, 40);
+            this.menuStrip1.Padding = new System.Windows.Forms.Padding(3, 1, 0, 1);
+            this.menuStrip1.Size = new System.Drawing.Size(736, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -82,13 +82,13 @@
             this.saveAsToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(64, 36);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 22);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(211, 38);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
@@ -96,14 +96,14 @@
             // 
             this.saveAsToolStripMenuItem.Enabled = false;
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(211, 38);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.saveAsToolStripMenuItem.Text = "Save As...";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(211, 38);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -113,21 +113,21 @@
             this.generateSQLToolStripMenuItem,
             this.rebuildScriptToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
-            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(82, 36);
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 22);
             this.toolsToolStripMenuItem.Text = "Tools";
             // 
             // generateSQLToolStripMenuItem
             // 
             this.generateSQLToolStripMenuItem.Enabled = false;
             this.generateSQLToolStripMenuItem.Name = "generateSQLToolStripMenuItem";
-            this.generateSQLToolStripMenuItem.Size = new System.Drawing.Size(261, 38);
+            this.generateSQLToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
             this.generateSQLToolStripMenuItem.Text = "Generate SQL";
             this.generateSQLToolStripMenuItem.Click += new System.EventHandler(this.generateSQLToolStripMenuItem_Click);
             // 
             // rebuildScriptToolStripMenuItem
             // 
             this.rebuildScriptToolStripMenuItem.Name = "rebuildScriptToolStripMenuItem";
-            this.rebuildScriptToolStripMenuItem.Size = new System.Drawing.Size(261, 38);
+            this.rebuildScriptToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
             this.rebuildScriptToolStripMenuItem.Text = "Rebuild Script";
             this.rebuildScriptToolStripMenuItem.Click += new System.EventHandler(this.rebuildScriptToolStripMenuItem_Click);
             // 
@@ -138,78 +138,77 @@
             // tableList
             // 
             this.tableList.FormattingEnabled = true;
-            this.tableList.ItemHeight = 25;
-            this.tableList.Location = new System.Drawing.Point(16, 158);
-            this.tableList.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tableList.Location = new System.Drawing.Point(8, 82);
+            this.tableList.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.tableList.Name = "tableList";
-            this.tableList.Size = new System.Drawing.Size(306, 654);
+            this.tableList.Size = new System.Drawing.Size(155, 342);
             this.tableList.TabIndex = 6;
             this.tableList.SelectedIndexChanged += new System.EventHandler(this.tableList_SelectedIndexChanged);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(16, 129);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label1.Location = new System.Drawing.Point(8, 67);
+            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(77, 25);
+            this.label1.Size = new System.Drawing.Size(39, 13);
             this.label1.TabIndex = 7;
             this.label1.Text = "Tables";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 62);
-            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label2.Location = new System.Drawing.Point(6, 32);
+            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(91, 25);
+            this.label2.Size = new System.Drawing.Size(45, 13);
             this.label2.TabIndex = 8;
             this.label2.Text = "Version:";
             // 
             // txtVersion
             // 
-            this.txtVersion.Location = new System.Drawing.Point(104, 62);
-            this.txtVersion.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtVersion.Location = new System.Drawing.Point(52, 32);
+            this.txtVersion.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.txtVersion.Name = "txtVersion";
             this.txtVersion.ReadOnly = true;
-            this.txtVersion.Size = new System.Drawing.Size(204, 31);
+            this.txtVersion.Size = new System.Drawing.Size(104, 20);
             this.txtVersion.TabIndex = 9;
             // 
             // txtDatabase
             // 
-            this.txtDatabase.Location = new System.Drawing.Point(444, 62);
-            this.txtDatabase.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtDatabase.Location = new System.Drawing.Point(222, 32);
+            this.txtDatabase.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.txtDatabase.Name = "txtDatabase";
             this.txtDatabase.ReadOnly = true;
-            this.txtDatabase.Size = new System.Drawing.Size(294, 31);
+            this.txtDatabase.Size = new System.Drawing.Size(149, 20);
             this.txtDatabase.TabIndex = 11;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(328, 65);
-            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label3.Location = new System.Drawing.Point(164, 34);
+            this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(110, 25);
+            this.label3.Size = new System.Drawing.Size(56, 13);
             this.label3.TabIndex = 10;
             this.label3.Text = "Database:";
             // 
             // txtStarted
             // 
-            this.txtStarted.Location = new System.Drawing.Point(876, 60);
-            this.txtStarted.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtStarted.Location = new System.Drawing.Point(438, 31);
+            this.txtStarted.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.txtStarted.Name = "txtStarted";
             this.txtStarted.ReadOnly = true;
-            this.txtStarted.Size = new System.Drawing.Size(294, 31);
+            this.txtStarted.Size = new System.Drawing.Size(149, 20);
             this.txtStarted.TabIndex = 13;
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(784, 62);
-            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label4.Location = new System.Drawing.Point(392, 32);
+            this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(87, 25);
+            this.label4.Size = new System.Drawing.Size(44, 13);
             this.label4.TabIndex = 12;
             this.label4.Text = "Started:";
             // 
@@ -219,10 +218,10 @@
             this.colName,
             this.colType,
             this.colSize});
-            this.columnList.Location = new System.Drawing.Point(364, 238);
-            this.columnList.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.columnList.Location = new System.Drawing.Point(182, 124);
+            this.columnList.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.columnList.Name = "columnList";
-            this.columnList.Size = new System.Drawing.Size(890, 631);
+            this.columnList.Size = new System.Drawing.Size(447, 330);
             this.columnList.TabIndex = 14;
             this.columnList.UseCompatibleStateImageBehavior = false;
             this.columnList.View = System.Windows.Forms.View.Details;
@@ -246,58 +245,56 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(358, 210);
-            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label5.Location = new System.Drawing.Point(179, 109);
+            this.label5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(96, 25);
+            this.label5.Size = new System.Drawing.Size(47, 13);
             this.label5.TabIndex = 15;
             this.label5.Text = "Columns";
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(1298, 208);
-            this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label6.Location = new System.Drawing.Point(649, 108);
+            this.label6.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(71, 25);
+            this.label6.Size = new System.Drawing.Size(37, 13);
             this.label6.TabIndex = 16;
             this.label6.Text = "Rows:";
             // 
             // lblRowCount
             // 
             this.lblRowCount.AutoSize = true;
-            this.lblRowCount.Location = new System.Drawing.Point(1380, 208);
-            this.lblRowCount.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblRowCount.Location = new System.Drawing.Point(690, 108);
+            this.lblRowCount.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblRowCount.Name = "lblRowCount";
-            this.lblRowCount.Size = new System.Drawing.Size(24, 25);
+            this.lblRowCount.Size = new System.Drawing.Size(13, 13);
             this.lblRowCount.TabIndex = 17;
             this.lblRowCount.Text = "0";
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(358, 158);
-            this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label7.Location = new System.Drawing.Point(179, 82);
+            this.label7.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(81, 25);
+            this.label7.Size = new System.Drawing.Size(42, 13);
             this.label7.TabIndex = 18;
             this.label7.Text = "Where:";
             // 
             // whereClause
             // 
-            this.whereClause.Location = new System.Drawing.Point(442, 152);
-            this.whereClause.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.whereClause.Location = new System.Drawing.Point(221, 79);
             this.whereClause.Name = "whereClause";
-            this.whereClause.Size = new System.Drawing.Size(694, 31);
+            this.whereClause.Size = new System.Drawing.Size(349, 20);
             this.whereClause.TabIndex = 19;
             // 
             // dataViewer
             // 
             this.dataViewer.Enabled = false;
-            this.dataViewer.Location = new System.Drawing.Point(1268, 238);
-            this.dataViewer.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.dataViewer.Location = new System.Drawing.Point(634, 124);
             this.dataViewer.Name = "dataViewer";
-            this.dataViewer.Size = new System.Drawing.Size(180, 44);
+            this.dataViewer.Size = new System.Drawing.Size(90, 23);
             this.dataViewer.TabIndex = 20;
             this.dataViewer.Text = "View Data";
             this.dataViewer.UseVisualStyleBackColor = true;
@@ -305,10 +302,9 @@
             // 
             // copyTables
             // 
-            this.copyTables.Location = new System.Drawing.Point(16, 829);
-            this.copyTables.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.copyTables.Location = new System.Drawing.Point(8, 431);
             this.copyTables.Name = "copyTables";
-            this.copyTables.Size = new System.Drawing.Size(310, 44);
+            this.copyTables.Size = new System.Drawing.Size(155, 23);
             this.copyTables.TabIndex = 21;
             this.copyTables.Text = "Copy Table List";
             this.copyTables.UseVisualStyleBackColor = true;
@@ -316,10 +312,9 @@
             // 
             // copyWhereClause
             // 
-            this.copyWhereClause.Location = new System.Drawing.Point(1152, 148);
-            this.copyWhereClause.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.copyWhereClause.Location = new System.Drawing.Point(576, 77);
             this.copyWhereClause.Name = "copyWhereClause";
-            this.copyWhereClause.Size = new System.Drawing.Size(106, 44);
+            this.copyWhereClause.Size = new System.Drawing.Size(53, 23);
             this.copyWhereClause.TabIndex = 22;
             this.copyWhereClause.Text = "Copy";
             this.copyWhereClause.UseVisualStyleBackColor = true;
@@ -328,33 +323,19 @@
             // btnRecordMeta
             // 
             this.btnRecordMeta.Enabled = false;
-            this.btnRecordMeta.Location = new System.Drawing.Point(1268, 294);
-            this.btnRecordMeta.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.btnRecordMeta.Location = new System.Drawing.Point(634, 153);
             this.btnRecordMeta.Name = "btnRecordMeta";
-            this.btnRecordMeta.Size = new System.Drawing.Size(180, 44);
+            this.btnRecordMeta.Size = new System.Drawing.Size(90, 23);
             this.btnRecordMeta.TabIndex = 23;
             this.btnRecordMeta.Text = "View Metadata";
             this.btnRecordMeta.UseVisualStyleBackColor = true;
             this.btnRecordMeta.Click += new System.EventHandler(this.button1_Click);
             // 
-            // button3
-            // 
-            this.button3.Location = new System.Drawing.Point(1268, 512);
-            this.button3.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(180, 44);
-            this.button3.TabIndex = 25;
-            this.button3.Text = "Pwn";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Visible = false;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
-            // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1472, 937);
-            this.Controls.Add(this.button3);
+            this.ClientSize = new System.Drawing.Size(736, 487);
             this.Controls.Add(this.btnRecordMeta);
             this.Controls.Add(this.copyWhereClause);
             this.Controls.Add(this.copyTables);
@@ -375,7 +356,6 @@
             this.Controls.Add(this.tableList);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
-            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "Form1";
@@ -420,7 +400,6 @@
         private System.Windows.Forms.Button copyWhereClause;
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
         private System.Windows.Forms.Button btnRecordMeta;
-        private System.Windows.Forms.Button button3;
     }
 }
 

@@ -181,22 +181,6 @@ namespace DMS_Viewer
             }
         }
 
-        private void button3_Click(object sender, EventArgs e)
-        {
-            DMSTable curTable = tableList.SelectedItem as DMSTable;
-
-
-            /* Reduce fields by 1 */
-            byte[] fakeData = new byte[40];
-            for (var x = 0; x < fakeData.Length; x++)
-            {
-                fakeData[x] = 65;
-            }
-            curTable.Metadata.Indexes.Add(new DMSRecordIndexMetadata(fakeData));
-            //curTable.Columns.Remove(curTable.Columns.Last());
-            DMSWriter.Write(@"C:\Users\tslat\Downloads\IHUB\Windows\pwn.dat", dmsFile);
-        }
-
         private void button1_Click(object sender, EventArgs e)
         {
             DMSTable curTable = tableList.SelectedItem as DMSTable;
