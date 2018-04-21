@@ -132,44 +132,16 @@ namespace DMSLib
                         sb.Clear();
                         while (currentLine != "/")
                         {
-
                             if (currentLine == "//")
                             {
                                 var nextRow = new DMSRow();
                                 rowDecoder.Finish(nextRow);
                                 table.Rows.Add(nextRow);
                                 rowDecoder.Reset();
-                                /* var rowText = sb.ToString();
-                                BlockStack stack = new BlockStack(rowText);
-                                List<string> fieldData = new List<string>();
-                                sb.Clear();
-                                while (stack.Count > 0)
-                                {
-                                    var curBlock = stack.Pop();
-                                    if (curBlock.Type != EncodeTags.COMMA)
-                                    {
-                                        sb.Append(curBlock.ToString());
-                                    } else
-                                    {
-                                        fieldData.Add(sb.ToString());
-                                        sb.Clear();
-                                    }
-                                }
-
-                                foreach (var str in fieldData)
-                                {
-                                    byte[] data = DMSDecoder.DecodeString(str);
-                                    row.Values.Add(data);
-                                }
-
-                                table.Rows.Add(row);
-                                row = new DMSRow();
-                                sb.Clear();*/
                             }
                             else
                             {
                                 rowDecoder.DecodeLine(currentLine);
-                                /* sb.Append(currentLine);*/
                             }
                             currentLine = sr.ReadLine();
                         }

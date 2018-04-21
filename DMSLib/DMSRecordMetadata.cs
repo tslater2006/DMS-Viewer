@@ -17,7 +17,6 @@ namespace DMSLib
         public string RecordName;
         public string RelatedLanguageRecord;
         public string RecordDBName;
-        /* Unknown 76 bytes, seems to be all 0's */
         public string TimestampField; /* 38 bytes */
         public string SystemIDField; /* 38 bytes */
 

@@ -18,7 +18,6 @@ namespace DMS_Viewer
             InitializeComponent();
 
             txtBuildSeq.Text = metadata.BuildSequence.ToString();
-            //txtDBName.Text = metadata.DBName;
             txtDeleteRecord.Text = metadata.AnalyticDeleteRecord;
             txtFieldCount.Text = metadata.FieldCount.ToString();
             txtIndexCount.Text = metadata.IndexCount.ToString();
@@ -29,7 +28,6 @@ namespace DMS_Viewer
             txtRecordLang.Text = metadata.RecordLanguage;
             txtRecordName.Text = metadata.RecordName;
             txtRelLang.Text = metadata.RelatedLanguageRecord;
-            //txtTablespace.Text = metadata.TableSpaceName;
             txtVersion2.Text = metadata.VersionNumber2.ToString();
             txtVersionNum.Text = metadata.VersionNumber.ToString();
 

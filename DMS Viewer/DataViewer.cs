@@ -32,14 +32,6 @@ namespace DMS_Viewer
 
             dataGridView1.DataSource = BuildDataTable(viewerTable);
 
-            /* DataGridViewButtonColumn copyCol = new DataGridViewButtonColumn();
-            copyCol.Text = "Copy Row";
-            copyCol.HeaderText = "";
-            copyCol.UseColumnTextForButtonValue = true;
-            copyCol.Name = "Copy Row";
-            copyCol.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;*/
-            //dataGridView1.Columns.Add(copyCol);
-
             int colIndex = 0;
             for (colIndex = 0; colIndex < viewerTable.Columns.Count; colIndex++)
             {
@@ -67,7 +59,6 @@ namespace DMS_Viewer
             foreach(var r in tbl.Rows)
             {
                 var dr = dt.NewRow();
-                // dr.ItemArray = r.Values.ToArray();
                 var items = r.GetValuesAsString();
                 dr.ItemArray = items;
                 dt.Rows.Add(dr);
@@ -75,35 +66,13 @@ namespace DMS_Viewer
 
             return dt;
         }
-
-        private void dataGridView1_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
-        {
-        /*    if (!IsRunningMono)
-            {
-                if (e.RowIndex >= 0)
-                {
-                    var content = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
-                    new LongDataViewer(content).ShowDialog(this);
-                }
-            }*/
-        }
-
-        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
-
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            //if (IsRunningMono)
-            //{
                 if (e.RowIndex >= 0)
                 {
                     var content = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
                     new LongDataViewer(content).ShowDialog(this);
-                }
-            //}
-            
+                }            
         }
 
         private void dataGridView1_MouseClick(object sender, MouseEventArgs e)

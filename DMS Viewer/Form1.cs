@@ -113,8 +113,6 @@ namespace DMS_Viewer
             var opts = new SQLGeneratorOptions(dmsFile);
             opts.ShowDialog(this);
             opts = null;
-
-            // SQLGenerator.GenerateSQLFile(dmsFile, @"out.sql",false);
         }
 
         private void rebuildScriptToolStripMenuItem_Click(object sender, EventArgs e)
