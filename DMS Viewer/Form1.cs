@@ -50,8 +50,6 @@ namespace DMS_Viewer
                 sw.Stop();
 
                 UpdateUI();
-
-                DMSLib.DMSReader.Read(currentDmsPath);
             }
         }
 

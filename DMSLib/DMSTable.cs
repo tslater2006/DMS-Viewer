@@ -22,6 +22,7 @@ namespace DMSLib
 
         public void AddColumn(DMSNewColumn newColumn, DMSColumn colBefore, string defaultValue)
         {
+            
             /* Update DMSRecord metadata */
             Metadata.FieldCount++;
 
@@ -45,7 +46,7 @@ namespace DMSLib
 
             foreach(var row in Rows)
             {
-                row.Values.Insert(colIndex, Encoding.UTF8.GetBytes(defaultValue));
+                row.InsertValueString(colIndex, defaultValue);
             }
 
         }
@@ -81,7 +82,6 @@ namespace DMSLib
 
         private void WriteWhereClause(StreamWriter stream, string where)
         {
-            /* TODO: Fix this? */
             stream.WriteLine(where);
         }
 
@@ -126,7 +126,7 @@ namespace DMSLib
             /* remove the value from the rows */
             foreach (var row in Rows)
             {
-                row.Values.RemoveAt(colIndex);
+                row.DeleteValue(colIndex);
             }
         }
     }

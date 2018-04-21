@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -14,8 +15,11 @@ namespace DMSLib
 
         public static DMSFile Read(string path)
         {
+            var memSizeBefore = Process.GetCurrentProcess().PrivateMemorySize64;
             DMSFile file = null;
-
+            DMSRowDecoder rowDecoder = new DMSRowDecoder();
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
             if (File.Exists(path))
             {
                 file = new DMSFile();
@@ -46,21 +50,20 @@ namespace DMSLib
                             file.Namespaces.Add(currentLine);
                         }
                     }
-
-                    /* Read big metadata blob */
                     StringBuilder sb = new StringBuilder();
+                    /* Read big metadata blob */
+                    MemoryStream ms = new MemoryStream();
+                    byte[] lineBytes = null;
                     currentLine = "";
                     while (currentLine != "/")
                     {
+                        lineBytes = DMSDecoder.DecodeString(currentLine);
+                        ms.Write(lineBytes, 0, lineBytes.Length);
                         currentLine = sr.ReadLine();
-                        if (currentLine != "/")
-                        {
-                            sb.Append(currentLine);
-                        }
                     }
-
-                    file.FileMetadata = DMSDecoder.DecodeString(sb.ToString());
-
+                    file.FileMetadata = ms.ToArray();
+                    ms.Close();
+                    
                     currentLine = sr.ReadLine();
 
                     while (currentLine.StartsWith("EXPORT"))
@@ -89,13 +92,16 @@ namespace DMSLib
                         /* Record metadata */
                         sb.Clear();
                         currentLine = sr.ReadLine();
+                        ms = new MemoryStream();
                         while (currentLine != "/")
                         {
-                            sb.Append(currentLine);
+                            lineBytes = DMSDecoder.DecodeString(currentLine);
+                            ms.Write(lineBytes, 0, lineBytes.Length);
                             currentLine = sr.ReadLine();
                         }
 
-                        table.Metadata = new DMSRecordMetadata(DMSDecoder.DecodeString(sb.ToString()));
+                        table.Metadata = new DMSRecordMetadata(ms.ToArray());
+                        ms.Close();
                         /* Record Columns */
                         currentLine = sr.ReadLine();
                         sb.Clear();
@@ -126,11 +132,14 @@ namespace DMSLib
                         sb.Clear();
                         while (currentLine != "/")
                         {
+
                             if (currentLine == "//")
                             {
-                                /* Parse the row */
-                                
-                                var rowText = sb.ToString();
+                                var nextRow = new DMSRow();
+                                rowDecoder.Finish(nextRow);
+                                table.Rows.Add(nextRow);
+                                rowDecoder.Reset();
+                                /* var rowText = sb.ToString();
                                 BlockStack stack = new BlockStack(rowText);
                                 List<string> fieldData = new List<string>();
                                 sb.Clear();
@@ -155,11 +164,12 @@ namespace DMSLib
 
                                 table.Rows.Add(row);
                                 row = new DMSRow();
-                                sb.Clear();
+                                sb.Clear();*/
                             }
                             else
                             {
-                                sb.Append(currentLine);
+                                rowDecoder.DecodeLine(currentLine);
+                                /* sb.Append(currentLine);*/
                             }
                             currentLine = sr.ReadLine();
                         }
@@ -167,11 +177,16 @@ namespace DMSLib
                     }
 
                     /* Parse "Ended" */
-                    file.Ended = currentLine.Replace("REM Ended: ", "");
+                     file.Ended = currentLine.Replace("REM Ended: ", "");
 
                 }
             }
-
+            sw.Stop();
+            Console.WriteLine("Total Read Time: " + sw.Elapsed.TotalSeconds + " seconds.");
+            Console.WriteLine("Time in Decoder: " + DMSDecoder.timer.Elapsed.TotalSeconds + " seconds.");
+            Console.WriteLine("DAT File Size: " + new FileInfo(path).Length / 1024.0 / 1024.0 + "MB");
+            Console.WriteLine("Memory Size Increase: " + ((Process.GetCurrentProcess().PrivateMemorySize64 - memSizeBefore) / 1024.0) / 1024.0 + "MB");
+            var totalRows = file.Tables.Sum(t => t.Rows.Count);
             return file;
         }
     }

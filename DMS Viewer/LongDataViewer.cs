@@ -52,7 +52,8 @@ namespace DMS_Viewer
         {
             if (tableRow != null)
             {
-                tableRow.Values[colIndex] = Encoding.UTF8.GetBytes(textBox1.Text.Replace("\r\n","\n"));
+                //TODO: Test this
+                tableRow.ChangeValue(colIndex,textBox1.Text.Replace("\r\n","\n"));
                 viewerForm.DrawDataTable();
                 this.Close();
             }

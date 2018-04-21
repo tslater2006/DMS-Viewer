@@ -49,6 +49,7 @@
     <Compile Include="DMSReader.cs" />
     <Compile Include="DMSRecordMetadata.cs" />
     <Compile Include="DMSRow.cs" />
+    <Compile Include="DMSRowDecoder.cs" />
     <Compile Include="DMSTable.cs" />
     <Compile Include="DMSWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

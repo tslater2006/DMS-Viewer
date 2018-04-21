@@ -143,7 +143,7 @@ namespace DMS_Viewer
                     /* Right clicked a column header */
                     dataGridView1.Columns[currentColumn].Selected = true;
                     ContextMenu m = new ContextMenu();
-
+                    
                     MenuItem deleteColumn = new MenuItem("Delete Column...");
                     deleteColumn.Tag = hitTest;
                     deleteColumn.Click += DeleteColumn_Click;
