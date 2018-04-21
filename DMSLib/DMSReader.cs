@@ -155,10 +155,10 @@ namespace DMSLib
             }
             sw.Stop();
             Console.WriteLine("Total Read Time: " + sw.Elapsed.TotalSeconds + " seconds.");
-            Console.WriteLine("Time in Decoder: " + DMSDecoder.timer.Elapsed.TotalSeconds + " seconds.");
             Console.WriteLine("DAT File Size: " + new FileInfo(path).Length / 1024.0 / 1024.0 + "MB");
             Console.WriteLine("Memory Size Increase: " + ((Process.GetCurrentProcess().PrivateMemorySize64 - memSizeBefore) / 1024.0) / 1024.0 + "MB");
             var totalRows = file.Tables.Sum(t => t.Rows.Count);
+            Console.WriteLine("Total Row Count: " + totalRows);
             return file;
         }
     }

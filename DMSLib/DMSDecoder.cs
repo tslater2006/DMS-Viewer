@@ -15,12 +15,9 @@ namespace DMSLib
     }
     public class DMSDecoder
     {
-        public static Stopwatch timer = new Stopwatch();
         static DecoderState currentState = DecoderState.NO_BLOCK;
         public static byte[] DecodeString(string str)
         {
-            timer.Start();
-
             char binChar1 = '\0';
             MemoryStream ms = new MemoryStream();
             for (var x = 0; x < str.Length; x++)
@@ -85,51 +82,6 @@ namespace DMSLib
                         break;
                 }
             }
-
-
-
-            /* We need to get a list of Encoding blocks from the string */
-
-
-            /*Regex encodingGroup = new Regex("[A]\\(([^\\(\\)\\\\]|\\\\\\(|\\\\\\)|\\\\\\\\)*\\)|[B]\\([A-Z]*\\)");
-            var matchList = encodingGroup.Matches(str);
-
-            List<DMSEncodedBlock> encodedBlocks = new List<DMSEncodedBlock>();
-
-            foreach( Match match in matchList)
-            {
-                DMSEncodedBlock encodingBlock = new DMSEncodedBlock();
-
-                if (match.Value.StartsWith("A"))
-                {
-                    encodingBlock.Type = EncodedBlockType.ASCII;                    
-                } else
-                {
-                    encodingBlock.Type = EncodedBlockType.BINARY;
-                }
-
-                encodingBlock.Contents = match.Value.Substring(2, match.Value.Length - 3);
-
-                if (encodedBlocks.Count > 0 && encodedBlocks.Last().Type == encodingBlock.Type)
-                {
-                    encodedBlocks.Last().Contents += encodingBlock.Contents;
-                } else
-                {
-                    encodedBlocks.Add(encodingBlock);
-                }
-            }
-
-            MemoryStream ms = new MemoryStream();
-
-            foreach (DMSEncodedBlock block in encodedBlocks)
-            {
-                byte[] blockBytes = block.GetBytes();
-                ms.Write(blockBytes, 0, blockBytes.Length);
-            }*/
-
-
-
-            timer.Stop();
             var bytes = ms.ToArray();
             return bytes;
         }
