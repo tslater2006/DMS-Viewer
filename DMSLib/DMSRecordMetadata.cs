@@ -270,7 +270,7 @@ namespace DMSLib
                     Unknown2 = br.ReadBytes(10);
                     if (Unknown2.Sum(b => b) != 1 && Unknown2[2] != 1)
                     {
-                        //Debugger.Break();
+                        Debugger.Break();
                     }
                     VersionNumber = BitConverter.ToInt32(br.ReadBytes(4), 0);
                     FieldCount = BitConverter.ToInt32(br.ReadBytes(4), 0);
@@ -383,7 +383,7 @@ namespace DMSLib
                     Unknown1 = BitConverter.ToInt32(br.ReadBytes(4), 0);
                     if (Unknown1 != 0)
                     {
-                        //Debugger.Break();
+                        Debugger.Break();
                     }
                     VersionNumber = BitConverter.ToInt32(br.ReadBytes(4), 0);
                     DecimalPositions = BitConverter.ToInt32(br.ReadBytes(4), 0);
@@ -393,7 +393,7 @@ namespace DMSLib
                     Unknown2 = BitConverter.ToInt16(br.ReadBytes(2), 0);
                     if (Unknown2 != 0)
                     {
-                        //Debugger.Break();
+                        Debugger.Break();
                     }
                     FieldType = (FieldTypes)BitConverter.ToInt16(br.ReadBytes(2), 0);
                     FieldFormat = (FieldFormats)BitConverter.ToInt16(br.ReadBytes(2), 0);
@@ -404,7 +404,7 @@ namespace DMSLib
                     Unknown6 = BitConverter.ToInt16(br.ReadBytes(2), 0);
                     if (Unknown5 != 0 || Unknown6 != 0)
                     {
-                        //Debugger.Break();
+                        Debugger.Break();
                     }
 
                 }
@@ -530,7 +530,7 @@ namespace DMSLib
                     Unknown1 = BitConverter.ToInt32(br.ReadBytes(4), 0);
                     if (Unknown1 != 0)
                     {
-                        //Debugger.Break();
+                        Debugger.Break();
                     }
                 }
             }
@@ -597,13 +597,13 @@ namespace DMSLib
                     Unknown1 = BitConverter.ToInt16(br.ReadBytes(2), 0);
                     if (Unknown1 != 0)
                     {
-                        //Debugger.Break();
+                        Debugger.Break();
                     }
                     IndexParamGroupCount = BitConverter.ToInt16(br.ReadBytes(2), 0);
                     Unknown2 = BitConverter.ToInt16(br.ReadBytes(2), 0);
                     if (Unknown2 != 0)
                     {
-                        //Debugger.Break();
+                        Debugger.Break();
                     }
                     IndexType = (RecordIndexTypes)BitConverter.ToInt16(br.ReadBytes(2), 0);
                     Unique = BitConverter.ToInt16(br.ReadBytes(2), 0);
@@ -621,7 +621,7 @@ namespace DMSLib
                     Unknown3 = BitConverter.ToInt32(br.ReadBytes(4), 0);
                     if (Unknown3 != 0)
                     {
-                        //Debugger.Break();
+                        Debugger.Break();
                     }
                 }
             }
@@ -688,7 +688,7 @@ namespace DMSLib
                     Unknown3 = BitConverter.ToInt16(br.ReadBytes(2), 0);
                     if (Unknown3 != 0)
                     {
-                        //Debugger.Break();
+                        Debugger.Break();
                     }
                 }
             }
