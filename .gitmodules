@@ -1,0 +1,3 @@
+[submodule "DMSLib"]
+	path = DMSLib
+	url = https://github.com/tslater2006/DMSLib.git
