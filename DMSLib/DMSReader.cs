@@ -61,7 +61,8 @@ namespace DMSLib
                         ms.Write(lineBytes, 0, lineBytes.Length);
                         currentLine = sr.ReadLine();
                     }
-                    file.FileMetadata = ms.ToArray();
+                    var ddlBlob = ms.ToArray();
+                    file.DDLs = new DDLDefaults(ddlBlob);
                     ms.Close();
                     
                     currentLine = sr.ReadLine();
