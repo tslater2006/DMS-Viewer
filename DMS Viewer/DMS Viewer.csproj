@@ -147,8 +147,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DMSLib\DMSLib.csproj">
-      <Project>{008c8f3f-ef1b-48c1-a670-9a71ccadcd11}</Project>
+    <ProjectReference Include="..\DMSLib\DMSLib\DMSLib.csproj">
+      <Project>{f9247363-0f85-4a31-95ee-4743cfbc8cf4}</Project>
       <Name>DMSLib</Name>
     </ProjectReference>
   </ItemGroup>

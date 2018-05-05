@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.26823.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DMS Viewer", "DMS Viewer\DMS Viewer.csproj", "{1D29CD27-3EBD-4B93-945A-9EE9F0D72D20}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DMSLib", "DMSLib\DMSLib.csproj", "{008C8F3F-EF1B-48C1-A670-9A71CCADCD11}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DMSLib", "DMSLib\DMSLib\DMSLib.csproj", "{008C8F3F-EF1B-48C1-A670-9A71CCADCD11}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
