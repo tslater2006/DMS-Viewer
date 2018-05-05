@@ -196,7 +196,6 @@ namespace DMSLib
             var valueLength = br.ReadInt32();
             Value = FromUnicodeBytes(br.ReadBytes(valueLength));
             Unknown2 = br.ReadInt32();
-            Console.WriteLine($"Found Parameter {Name} with value {Value}");
         }
 
         public void WriteBytes(BinaryWriter bw)
