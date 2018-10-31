@@ -153,7 +153,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(39, 13);
             this.label1.TabIndex = 7;
-            this.label1.Text = "Tables";
+            this.label1.Text = "Records";
             // 
             // label2
             // 
@@ -306,7 +306,7 @@
             this.copyTables.Name = "copyTables";
             this.copyTables.Size = new System.Drawing.Size(155, 23);
             this.copyTables.TabIndex = 21;
-            this.copyTables.Text = "Copy Table List";
+            this.copyTables.Text = "Copy Record List";
             this.copyTables.UseVisualStyleBackColor = true;
             this.copyTables.Click += new System.EventHandler(this.copyTables_Click);
             // 
