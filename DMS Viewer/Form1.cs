@@ -1,4 +1,5 @@
 ﻿using DMSLib;
+using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,7 +20,7 @@ namespace DMS_Viewer
         string currentDmsPath;
         private bool IsRunningMono = false;
         private bool IsRunningOSX = false;
-
+        OracleConnection dbConn = null;
         public Form1()
         {
             InitializeComponent();
@@ -66,6 +67,7 @@ namespace DMS_Viewer
             generateSQLToolStripMenuItem.Enabled = true;
             dataViewer.Enabled = true;
             btnRecordMeta.Enabled = true;
+            btnCompareToDB.Enabled = true;
             foreach(var table in dmsFile.Tables)
             {
                 tableList.Items.Add(table);
@@ -214,6 +216,32 @@ namespace DMS_Viewer
 
             DrawColumns();
 
+        }
+
+        private void btnCompareToDB_Click(object sender, EventArgs e)
+        {
+            if (dbConn != null)
+            {
+                if (MessageBox.Show("Would you like to reuse the existing database connection?","Reuse connection",MessageBoxButtons.YesNo,MessageBoxIcon.Question) == DialogResult.No)
+                {
+                    try
+                    {
+                        dbConn.Close();
+                    }
+                    catch (Exception ex) { }
+                    dbConn = null;
+                }
+            }
+            if (dbConn == null)
+            {
+                /* get a DB connection */
+                var dbConnForm = new DBLogin();
+                if (dbConnForm.ShowDialog() == DialogResult.OK)
+                {
+                    MessageBox.Show("Connected to the database!");
+                    dbConn = dbConnForm.Connection;
+                }
+            }
         }
     }
 }
