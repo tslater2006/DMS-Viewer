@@ -61,6 +61,12 @@
     <Compile Include="DataViewer.Designer.cs">
       <DependentUpon>DataViewer.cs</DependentUpon>
     </Compile>
+    <Compile Include="DBCompareDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DBCompareDialog.Designer.cs">
+      <DependentUpon>DBCompareDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="DBLogin.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -113,6 +119,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DataViewer.resx">
       <DependentUpon>DataViewer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DBCompareDialog.resx">
+      <DependentUpon>DBCompareDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DBLogin.resx">
       <DependentUpon>DBLogin.cs</DependentUpon>

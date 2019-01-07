@@ -37,7 +37,6 @@
             this.generateSQLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rebuildScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.tableList = new System.Windows.Forms.ListBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.txtVersion = new System.Windows.Forms.TextBox();
@@ -60,6 +59,7 @@
             this.copyWhereClause = new System.Windows.Forms.Button();
             this.btnRecordMeta = new System.Windows.Forms.Button();
             this.btnCompareToDB = new System.Windows.Forms.Button();
+            this.tableList = new System.Windows.Forms.ListView();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -135,17 +135,6 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
-            // tableList
-            // 
-            this.tableList.FormattingEnabled = true;
-            this.tableList.ItemHeight = 25;
-            this.tableList.Location = new System.Drawing.Point(16, 158);
-            this.tableList.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.tableList.Name = "tableList";
-            this.tableList.Size = new System.Drawing.Size(306, 654);
-            this.tableList.TabIndex = 6;
-            this.tableList.SelectedIndexChanged += new System.EventHandler(this.tableList_SelectedIndexChanged);
-            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -169,7 +158,7 @@
             // txtVersion
             // 
             this.txtVersion.Location = new System.Drawing.Point(104, 62);
-            this.txtVersion.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtVersion.Margin = new System.Windows.Forms.Padding(4);
             this.txtVersion.Name = "txtVersion";
             this.txtVersion.ReadOnly = true;
             this.txtVersion.Size = new System.Drawing.Size(204, 31);
@@ -178,7 +167,7 @@
             // txtDatabase
             // 
             this.txtDatabase.Location = new System.Drawing.Point(444, 62);
-            this.txtDatabase.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtDatabase.Margin = new System.Windows.Forms.Padding(4);
             this.txtDatabase.Name = "txtDatabase";
             this.txtDatabase.ReadOnly = true;
             this.txtDatabase.Size = new System.Drawing.Size(294, 31);
@@ -197,7 +186,7 @@
             // txtStarted
             // 
             this.txtStarted.Location = new System.Drawing.Point(876, 60);
-            this.txtStarted.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtStarted.Margin = new System.Windows.Forms.Padding(4);
             this.txtStarted.Name = "txtStarted";
             this.txtStarted.ReadOnly = true;
             this.txtStarted.Size = new System.Drawing.Size(294, 31);
@@ -220,7 +209,7 @@
             this.colType,
             this.colSize});
             this.columnList.Location = new System.Drawing.Point(364, 238);
-            this.columnList.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.columnList.Margin = new System.Windows.Forms.Padding(4);
             this.columnList.Name = "columnList";
             this.columnList.Size = new System.Drawing.Size(890, 631);
             this.columnList.TabIndex = 14;
@@ -286,7 +275,7 @@
             // whereClause
             // 
             this.whereClause.Location = new System.Drawing.Point(442, 152);
-            this.whereClause.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.whereClause.Margin = new System.Windows.Forms.Padding(6);
             this.whereClause.Name = "whereClause";
             this.whereClause.Size = new System.Drawing.Size(694, 31);
             this.whereClause.TabIndex = 19;
@@ -295,7 +284,7 @@
             // 
             this.dataViewer.Enabled = false;
             this.dataViewer.Location = new System.Drawing.Point(1268, 238);
-            this.dataViewer.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.dataViewer.Margin = new System.Windows.Forms.Padding(6);
             this.dataViewer.Name = "dataViewer";
             this.dataViewer.Size = new System.Drawing.Size(180, 44);
             this.dataViewer.TabIndex = 20;
@@ -306,7 +295,7 @@
             // copyTables
             // 
             this.copyTables.Location = new System.Drawing.Point(16, 829);
-            this.copyTables.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.copyTables.Margin = new System.Windows.Forms.Padding(6);
             this.copyTables.Name = "copyTables";
             this.copyTables.Size = new System.Drawing.Size(310, 44);
             this.copyTables.TabIndex = 21;
@@ -317,7 +306,7 @@
             // copyWhereClause
             // 
             this.copyWhereClause.Location = new System.Drawing.Point(1152, 148);
-            this.copyWhereClause.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.copyWhereClause.Margin = new System.Windows.Forms.Padding(6);
             this.copyWhereClause.Name = "copyWhereClause";
             this.copyWhereClause.Size = new System.Drawing.Size(106, 44);
             this.copyWhereClause.TabIndex = 22;
@@ -329,7 +318,7 @@
             // 
             this.btnRecordMeta.Enabled = false;
             this.btnRecordMeta.Location = new System.Drawing.Point(1268, 294);
-            this.btnRecordMeta.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.btnRecordMeta.Margin = new System.Windows.Forms.Padding(6);
             this.btnRecordMeta.Name = "btnRecordMeta";
             this.btnRecordMeta.Size = new System.Drawing.Size(180, 44);
             this.btnRecordMeta.TabIndex = 23;
@@ -349,11 +338,23 @@
             this.btnCompareToDB.UseVisualStyleBackColor = true;
             this.btnCompareToDB.Click += new System.EventHandler(this.btnCompareToDB_Click);
             // 
+            // tableList
+            // 
+            this.tableList.Location = new System.Drawing.Point(17, 158);
+            this.tableList.MultiSelect = false;
+            this.tableList.Name = "tableList";
+            this.tableList.Size = new System.Drawing.Size(309, 662);
+            this.tableList.TabIndex = 25;
+            this.tableList.UseCompatibleStateImageBehavior = false;
+            this.tableList.View = System.Windows.Forms.View.List;
+            this.tableList.SelectedIndexChanged += new System.EventHandler(this.tableList_SelectedIndexChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1472, 937);
+            this.Controls.Add(this.tableList);
             this.Controls.Add(this.btnCompareToDB);
             this.Controls.Add(this.btnRecordMeta);
             this.Controls.Add(this.copyWhereClause);
@@ -372,10 +373,9 @@
             this.Controls.Add(this.txtVersion);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.tableList);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
-            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.Margin = new System.Windows.Forms.Padding(6);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "Form1";
@@ -393,7 +393,6 @@
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
-        private System.Windows.Forms.ListBox tableList;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtVersion;
@@ -421,6 +420,7 @@
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
         private System.Windows.Forms.Button btnRecordMeta;
         private System.Windows.Forms.Button btnCompareToDB;
+        private System.Windows.Forms.ListView tableList;
     }
 }
 

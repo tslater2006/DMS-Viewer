@@ -70,20 +70,34 @@ namespace DMS_Viewer
             btnCompareToDB.Enabled = true;
             foreach(var table in dmsFile.Tables)
             {
-                tableList.Items.Add(table);
+                var backgroundColor = Color.White;
+                switch(table.CompareResult)
+                {
+                    case DMSCompareResult.NEW:
+                        backgroundColor = Color.LawnGreen;
+                        break;
+                    case DMSCompareResult.UPDATE:
+                        backgroundColor = Color.Yellow;
+                        break;
+                }
+                tableList.Items.Add(new ListViewItem() { Tag = table, Text = table.Name, BackColor = backgroundColor});
+               
             }
-            tableList.SelectedIndex = 0;
+            tableList.SelectedItems.Clear();
             saveAsToolStripMenuItem.Enabled = true;
         }
 
         private void tableList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            DrawColumns();
+            if (tableList.SelectedItems.Count > 0)
+            {
+                DrawColumns();
+            }
         }
 
         private void DrawColumns()
         {
-            var value = tableList.SelectedItem as DMSTable;
+            var value = tableList.SelectedItems[0].Tag as DMSTable;
             whereClause.Text = value.WhereClause;
             if (value == null)
             {
@@ -126,7 +140,7 @@ namespace DMS_Viewer
 
         private void dataViewer_Click(object sender, EventArgs e)
         {
-            var viewer = new DataViewer(tableList.SelectedItem as DMSTable);
+            var viewer = new DataViewer(tableList.SelectedItems[0].Tag as DMSTable);
             viewer.ShowDialog(this);
             DrawColumns();
         }
@@ -181,7 +195,7 @@ namespace DMS_Viewer
 
         private void button1_Click(object sender, EventArgs e)
         {
-            DMSTable curTable = tableList.SelectedItem as DMSTable;
+            DMSTable curTable = tableList.SelectedItems[0].Tag as DMSTable;
             RecordMetadataViewer viewer = new RecordMetadataViewer(curTable.Metadata);
             viewer.ShowDialog(this);
         }
@@ -208,7 +222,7 @@ namespace DMS_Viewer
             var hitTest = (ListViewHitTestInfo)menuItem.Tag;
 
             var column = (DMSColumn)hitTest.Item.Tag;
-            DMSTable curTable = tableList.SelectedItem as DMSTable;
+            DMSTable curTable = tableList.SelectedItems[0].Tag as DMSTable;
             var columnMetadata = curTable.Metadata.FieldMetadata.Where(p => p.FieldName == column.Name).First();
 
             FieldMetadataViewer viewer = new FieldMetadataViewer(column, columnMetadata);
@@ -242,6 +256,15 @@ namespace DMS_Viewer
                     dbConn = dbConnForm.Connection;
                 }
             }
+            if (dbConn != null)
+            {
+                /* create the compare dialog which runs the compare */
+                DMSTable curTable = tableList.SelectedItems[0].Tag as DMSTable;
+                new DBCompareDialog(dbConn, dmsFile, curTable).ShowDialog(this);
+                UpdateUI();
+            }
+            
         }
+        
     }
 }

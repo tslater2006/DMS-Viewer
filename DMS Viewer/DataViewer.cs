@@ -59,9 +59,11 @@ namespace DMS_Viewer
             foreach(var r in tbl.Rows)
             {
                 var dr = dt.NewRow();
+                
                 var items = r.GetValuesAsString();
                 dr.ItemArray = items;
                 dt.Rows.Add(dr);
+                
             }
 
             return dt;
@@ -181,6 +183,22 @@ namespace DMS_Viewer
 
             new LongDataViewer(content, this, curRow, hitTest.ColumnIndex).ShowDialog(this);
             
+        }
+
+        private void dataGridView1_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
+        {
+            Color backColor = Color.White;
+            switch (viewerTable.Rows[e.RowIndex].CompareResult)
+            {
+                case DMSCompareResult.NEW:
+                    backColor = Color.LawnGreen;
+                    break;
+                case DMSCompareResult.UPDATE:
+                    backColor = Color.Yellow;
+                    break;
+            }
+
+            dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = backColor;
         }
     }
 }
