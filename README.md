@@ -9,6 +9,9 @@ There are experimental features that allow you to modify DAT files such as:
 * Add/Remove Rows
 * Adjust Record Metadata
 
+## Build Status
+[![Build Status](https://travis-ci.com/tslater2006/DMS-Viewer.svg?branch=master)](https://travis-ci.com/tslater2006/DMS-Viewer)
+
 ## Installation
 
 The easiest way to install DMS Viewer is to grab the [latest release](https://github.com/tslater2006/DMS-Viewer/releases).
