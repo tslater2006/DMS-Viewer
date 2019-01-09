@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,13 +15,22 @@ namespace DMS_Viewer
     public partial class DBLogin : Form
     {
         public OracleConnection Connection;
+        string tnsFolder = "";
         public DBLogin()
         {
             InitializeComponent();
+            if (File.Exists("tns_admin.txt"))
+            {
+                tnsFolder = File.ReadAllText("tns_admin.txt");
+            }
         }
 
         private void btnDBConnect_Click(object sender, EventArgs e)
         {
+            if (tnsFolder.Length > 0)
+            {
+                Environment.SetEnvironmentVariable("TNS_ADMIN", tnsFolder);
+            }
             Connection = new OracleConnection($"Data Source={txtDBName.Text};User Id={txtDBUser.Text}; Password={txtDBPass.Text}");
             try
             {

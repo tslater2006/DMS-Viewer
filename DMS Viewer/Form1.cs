@@ -244,6 +244,15 @@ namespace DMS_Viewer
                     }
                     catch (Exception ex) { }
                     dbConn = null;
+                    /* reset all compare results */
+                    foreach (var table in dmsFile.Tables)
+                    {
+                        table.CompareResult = DMSCompareResult.NONE;
+                        foreach(var row in table.Rows)
+                        {
+                            row.CompareResult = DMSCompareResult.NONE;
+                        }
+                    }
                 }
             }
             if (dbConn == null)
@@ -261,7 +270,15 @@ namespace DMS_Viewer
                 /* create the compare dialog which runs the compare */
                 DMSTable curTable = tableList.SelectedItems[0].Tag as DMSTable;
                 new DBCompareDialog(dbConn, dmsFile, curTable).ShowDialog(this);
+                /* save off the saved index for the table */
+                if (curTable.CompareResult == DMSCompareResult.SAME)
+                {
+                    MessageBox.Show("The select table contains no update or new rows.");
+                    return;
+                }
+                var savedIndex = tableList.SelectedIndices[0];
                 UpdateUI();
+                tableList.Items[savedIndex].Selected = true;
             }
             
         }

@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -48,6 +49,7 @@ namespace DMS_Viewer
                     if (ex.Number == 942)
                     {
                         /* table doesn't exist */
+                        MessageBox.Show($"The table {table.Name} doesn't exist in the target database. It will be created at import time.");
                         foreach(var tbl in file.Tables.Where(t => t.Name == table.Name))
                         {
                             foreach(var row in tbl.Rows)
@@ -84,7 +86,14 @@ namespace DMS_Viewer
                     curTable.CompareResult = DMSCompareResult.UPDATE;
                 } else
                 {
-                    curTable.CompareResult = DMSCompareResult.NEW;
+                    if (curTable.Rows.Where(r => r.CompareResult == DMSCompareResult.NEW).Count() > 0)
+                    {
+                        curTable.CompareResult = DMSCompareResult.NEW;
+                    }
+                    else
+                    {
+                        curTable.CompareResult = DMSCompareResult.SAME;
+                    }
                 }
             }
             
@@ -112,15 +121,15 @@ namespace DMS_Viewer
                     break;
                 case FieldTypes.DATE:
                     param.OracleDbType = OracleDbType.Date;
-                    param.Value = DateTime.Parse(curRow.GetStringValue(index));
+                    param.Value = DateTime.ParseExact(curRow.GetStringValue(index),"yyyy-MM-dd",CultureInfo.InvariantCulture);
                     break;
                 case FieldTypes.DATETIME:
                     param.OracleDbType = OracleDbType.TimeStamp;
-                    param.Value = DateTime.Parse(curRow.GetStringValue(index));
+                    param.Value = DateTime.ParseExact(curRow.GetStringValue(index), "yyyy-MM-dd-HH.mm.ss.000000", CultureInfo.InvariantCulture);
                     break;
                 case FieldTypes.TIME:
                     param.OracleDbType = OracleDbType.TimeStamp;
-                    param.Value = DateTime.Parse(curRow.GetStringValue(index));
+                    param.Value = DateTime.ParseExact(curRow.GetStringValue(index), "HH.mm.ss.000000", CultureInfo.InvariantCulture);
                     break;
                 case FieldTypes.IMG_OR_ATTACH:
                     param.OracleDbType = OracleDbType.Blob;
