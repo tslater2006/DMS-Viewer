@@ -105,36 +105,35 @@ namespace DMS_Viewer
             {
                 case FieldTypes.CHAR:
                     param.OracleDbType = OracleDbType.Varchar2;
-                    param.Value = curRow.GetStringValue(index);
+                    param.Value = curRow.GetValue(index);
                     break;
                 case FieldTypes.LONG_CHAR:
                     param.OracleDbType = OracleDbType.Clob;
-                    param.Value = curRow.GetStringValue(index);
+                    param.Value = curRow.GetValue(index);
                     break;
                 case FieldTypes.NUMBER:
                     param.OracleDbType = OracleDbType.Int64;
-                    param.Value = Int64.Parse(curRow.GetStringValue(index));
+                    param.Value = curRow.GetValue(index);
                     break;
                 case FieldTypes.SIGNED_NUMBER:
                     param.OracleDbType = OracleDbType.Int64;
-                    param.Value = Int64.Parse(curRow.GetStringValue(index));
+                    param.Value = curRow.GetValue(index);
                     break;
                 case FieldTypes.DATE:
                     param.OracleDbType = OracleDbType.Date;
-                    param.Value = DateTime.ParseExact(curRow.GetStringValue(index),"yyyy-MM-dd",CultureInfo.InvariantCulture);
+                    param.Value = curRow.GetValue(index);
                     break;
                 case FieldTypes.DATETIME:
                     param.OracleDbType = OracleDbType.TimeStamp;
-                    param.Value = DateTime.ParseExact(curRow.GetStringValue(index), "yyyy-MM-dd-HH.mm.ss.000000", CultureInfo.InvariantCulture);
+                    param.Value = curRow.GetValue(index);
                     break;
                 case FieldTypes.TIME:
                     param.OracleDbType = OracleDbType.TimeStamp;
-                    param.Value = DateTime.ParseExact(curRow.GetStringValue(index), "HH.mm.ss.000000", CultureInfo.InvariantCulture);
+                    param.Value = curRow.GetValue(index);
                     break;
                 case FieldTypes.IMG_OR_ATTACH:
                     param.OracleDbType = OracleDbType.Blob;
-                    var val = curRow.GetStringValue(index);
-                    param.Value = HexStringToBytes(val.Substring(2, val.Length - 3));
+                    param.Value = curRow.GetValue(index);
                     break;
                 default:
                     Debugger.Break();
