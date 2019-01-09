@@ -15,6 +15,7 @@ namespace DMS_Viewer
     public partial class DBLogin : Form
     {
         public OracleConnection Connection;
+        public string DBName;
         string tnsFolder = "";
         public DBLogin()
         {
@@ -35,6 +36,7 @@ namespace DMS_Viewer
             try
             {
                 Connection.Open();
+                DBName = txtDBName.Text;
                 this.DialogResult = DialogResult.OK;
                 this.Hide();
             }catch(Exception ex)

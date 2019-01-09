@@ -20,6 +20,7 @@ namespace DMS_Viewer
         string currentDmsPath;
         private bool IsRunningMono = false;
         private bool IsRunningOSX = false;
+        private string ConnectedDBName = "";
         OracleConnection dbConn = null;
         public Form1()
         {
@@ -140,7 +141,7 @@ namespace DMS_Viewer
 
         private void dataViewer_Click(object sender, EventArgs e)
         {
-            var viewer = new DataViewer(tableList.SelectedItems[0].Tag as DMSTable);
+            var viewer = new DataViewer(tableList.SelectedItems[0].Tag as DMSTable,ConnectedDBName);
             viewer.ShowDialog(this);
             DrawColumns();
         }
@@ -236,7 +237,7 @@ namespace DMS_Viewer
         {
             if (dbConn != null)
             {
-                if (MessageBox.Show("Would you like to reuse the existing database connection?","Reuse connection",MessageBoxButtons.YesNo,MessageBoxIcon.Question) == DialogResult.No)
+                if (MessageBox.Show($"Would you like to reuse the existing database connection to {ConnectedDBName}?","Reuse connection",MessageBoxButtons.YesNo,MessageBoxIcon.Question) == DialogResult.No)
                 {
                     try
                     {
@@ -263,6 +264,8 @@ namespace DMS_Viewer
                 {
                     MessageBox.Show("Connected to the database!");
                     dbConn = dbConnForm.Connection;
+                    ConnectedDBName = dbConnForm.DBName;
+                    this.Text = "DMS Explorer - " + ConnectedDBName;
                 }
             }
             if (dbConn != null)

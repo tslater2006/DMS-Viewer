@@ -15,11 +15,15 @@ namespace DMS_Viewer
     {
         private bool IsRunningMono = false;
         private DMSTable viewerTable;
-        public DataViewer(DMSTable table)
+        public DataViewer(DMSTable table, string ConnectedDBName)
         {
             InitializeComponent();
             viewerTable = table;
             this.Text = "Data Viewer: " + table.DBName;
+            if (table.CompareResult!= DMSCompareResult.SAME && ConnectedDBName.Length > 0)
+            {
+                this.Text += " - " + ConnectedDBName;
+            }
             DrawDataTable();
 
             IsRunningMono = Type.GetType("Mono.Runtime") != null;
