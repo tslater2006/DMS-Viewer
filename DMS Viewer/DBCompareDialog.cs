@@ -269,16 +269,24 @@ namespace DMS_Viewer
                                 SetOracleParamValue(fieldParam, column.FieldType, curRow, x);
                                 diffCheckCmd.Parameters.Add(fieldParam);
                             }
-
-                            using (var diffCheckReader = diffCheckCmd.ExecuteReader())
+                            try
                             {
-                                if (diffCheckReader.Read())
+                                using (var diffCheckReader = diffCheckCmd.ExecuteReader())
                                 {
-                                    curRow.CompareResult = DMSCompareResult.SAME;
-                                } else
-                                {
-                                    curRow.CompareResult = DMSCompareResult.UPDATE;
+                                    if (diffCheckReader.Read())
+                                    {
+                                        curRow.CompareResult = DMSCompareResult.SAME;
+                                    }
+                                    else
+                                    {
+                                        curRow.CompareResult = DMSCompareResult.UPDATE;
+                                    }
                                 }
+                            } catch (Exception ex)
+                            {
+                                /* failed to do the diff, likely due to column changes */
+                                /* mark as an update */
+                                curRow.CompareResult = DMSCompareResult.UPDATE;
                             }
                         }
                     } else

@@ -52,6 +52,7 @@ namespace DMS_Viewer
                 sw.Stop();
 
                 UpdateUI();
+                tableList.Items[0].Selected = true;
             }
         }
 
