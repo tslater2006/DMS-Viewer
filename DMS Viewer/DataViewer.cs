@@ -34,8 +34,17 @@ namespace DMS_Viewer
             dataGridView1.DataSource = null;
             dataGridView1.Rows.Clear();
 
-            dataGridView1.DataSource = BuildDataTable(viewerTable);
-
+            foreach(var col in viewerTable.Columns)
+            {
+                dataGridView1.Columns.Add(col.Name, col.Name);
+            }
+            
+            foreach(var row in viewerTable.Rows)
+            {
+                dataGridView1.Rows.Add(row.GetValuesAsString());
+                dataGridView1.Rows[dataGridView1.Rows.Count - 1].Tag = row;
+            }
+            
             int colIndex = 0;
             for (colIndex = 0; colIndex < viewerTable.Columns.Count; colIndex++)
             {
@@ -50,28 +59,6 @@ namespace DMS_Viewer
             }
         }
 
-        private DataTable BuildDataTable(DMSTable tbl)
-        {
-            DataTable dt = new DataTable();
-
-            foreach (var c in tbl.Columns)
-            {
-                var dc = new DataColumn(c.Name);
-                dt.Columns.Add(dc);
-            }
-
-            foreach(var r in tbl.Rows)
-            {
-                var dr = dt.NewRow();
-                
-                var items = r.GetValuesAsString();
-                dr.ItemArray = items;
-                dt.Rows.Add(dr);
-                
-            }
-
-            return dt;
-        }
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
                 if (e.RowIndex >= 0)
@@ -192,7 +179,9 @@ namespace DMS_Viewer
         private void dataGridView1_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
         {
             Color backColor = Color.White;
-            switch (viewerTable.Rows[e.RowIndex].CompareResult)
+            //switch (viewerTable.Rows[e.RowIndex].CompareResult)
+            if (dataGridView1.Rows[e.RowIndex].Tag == null) { return; }
+            switch (((DMSRow)(dataGridView1.Rows[e.RowIndex].Tag)).CompareResult)
             {
                 case DMSCompareResult.NEW:
                     backColor = Color.LawnGreen;
@@ -203,6 +192,11 @@ namespace DMS_Viewer
             }
 
             dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = backColor;
+        }
+
+        private void dataGridView1_Sorted(object sender, EventArgs e)
+        {
+
         }
     }
 }
