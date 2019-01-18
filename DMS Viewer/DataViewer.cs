@@ -33,7 +33,7 @@ namespace DMS_Viewer
         {
             dataGridView1.DataSource = null;
             dataGridView1.Rows.Clear();
-
+            dataGridView1.Columns.Clear();
             foreach(var col in viewerTable.Columns)
             {
                 dataGridView1.Columns.Add(col.Name, col.Name);
