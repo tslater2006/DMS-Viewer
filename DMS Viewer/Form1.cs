@@ -286,6 +286,10 @@ namespace DMS_Viewer
             }
             
         }
-        
+
+        private void findAndReplaceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new FindAndReplace(dmsFile).ShowDialog(this);
+        }
     }
 }

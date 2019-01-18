@@ -67,6 +67,12 @@
     <Compile Include="DBCompareDialog.Designer.cs">
       <DependentUpon>DBCompareDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="FindAndReplace.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FindAndReplace.Designer.cs">
+      <DependentUpon>FindAndReplace.cs</DependentUpon>
+    </Compile>
     <Compile Include="DBLogin.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -122,6 +128,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DBCompareDialog.resx">
       <DependentUpon>DBCompareDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FindAndReplace.resx">
+      <DependentUpon>FindAndReplace.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DBLogin.resx">
       <DependentUpon>DBLogin.cs</DependentUpon>
