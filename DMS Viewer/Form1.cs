@@ -49,6 +49,10 @@ namespace DMS_Viewer
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
                 dmsFile = DMSReader.Read(currentDmsPath);
+
+                /* Set the file name */
+                dmsFile.FileName = new FileInfo(currentDmsPath).Name;
+
                 sw.Stop();
 
                 UpdateUI();
@@ -72,17 +76,20 @@ namespace DMS_Viewer
             btnCompareToDB.Enabled = true;
             foreach(var table in dmsFile.Tables)
             {
-                var backgroundColor = Color.White;
-                switch(table.CompareResult)
+                if (hideEmptyTablesToolStripMenuItem.Checked == false || (hideEmptyTablesToolStripMenuItem.Checked == true && table.Rows.Count > 0))
                 {
-                    case DMSCompareResult.NEW:
-                        backgroundColor = Color.LawnGreen;
-                        break;
-                    case DMSCompareResult.UPDATE:
-                        backgroundColor = Color.Yellow;
-                        break;
+                    var backgroundColor = Color.White;
+                    switch (table.CompareResult)
+                    {
+                        case DMSCompareResult.NEW:
+                            backgroundColor = Color.LawnGreen;
+                            break;
+                        case DMSCompareResult.UPDATE:
+                            backgroundColor = Color.Yellow;
+                            break;
+                    }
+                    tableList.Items.Add(new ListViewItem() { Tag = table, Text = table.Name, BackColor = backgroundColor });
                 }
-                tableList.Items.Add(new ListViewItem() { Tag = table, Text = table.Name, BackColor = backgroundColor});
                
             }
             tableList.SelectedItems.Clear();
@@ -290,6 +297,12 @@ namespace DMS_Viewer
         private void findAndReplaceToolStripMenuItem_Click(object sender, EventArgs e)
         {
             new FindAndReplace(dmsFile).ShowDialog(this);
+        }
+
+
+        private void hideEmptyTablesToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateUI();
         }
     }
 }

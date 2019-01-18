@@ -36,6 +36,7 @@
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateSQLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rebuildScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.findAndReplaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -60,7 +61,8 @@
             this.btnRecordMeta = new System.Windows.Forms.Button();
             this.btnCompareToDB = new System.Windows.Forms.Button();
             this.tableList = new System.Windows.Forms.ListView();
-            this.findAndReplaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hideEmptyTablesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -69,7 +71,8 @@
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(32, 32);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.toolsToolStripMenuItem});
+            this.toolsToolStripMenuItem,
+            this.viewToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(3, 1, 0, 1);
@@ -136,6 +139,13 @@
             this.rebuildScriptToolStripMenuItem.Text = "Rebuild Script";
             this.rebuildScriptToolStripMenuItem.Click += new System.EventHandler(this.rebuildScriptToolStripMenuItem_Click);
             // 
+            // findAndReplaceToolStripMenuItem
+            // 
+            this.findAndReplaceToolStripMenuItem.Name = "findAndReplaceToolStripMenuItem";
+            this.findAndReplaceToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.findAndReplaceToolStripMenuItem.Text = "Find and Replace";
+            this.findAndReplaceToolStripMenuItem.Click += new System.EventHandler(this.findAndReplaceToolStripMenuItem_Click);
+            // 
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
@@ -163,7 +173,7 @@
             // txtVersion
             // 
             this.txtVersion.Location = new System.Drawing.Point(52, 32);
-            this.txtVersion.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtVersion.Margin = new System.Windows.Forms.Padding(2);
             this.txtVersion.Name = "txtVersion";
             this.txtVersion.ReadOnly = true;
             this.txtVersion.Size = new System.Drawing.Size(104, 20);
@@ -172,7 +182,7 @@
             // txtDatabase
             // 
             this.txtDatabase.Location = new System.Drawing.Point(222, 32);
-            this.txtDatabase.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtDatabase.Margin = new System.Windows.Forms.Padding(2);
             this.txtDatabase.Name = "txtDatabase";
             this.txtDatabase.ReadOnly = true;
             this.txtDatabase.Size = new System.Drawing.Size(149, 20);
@@ -191,7 +201,7 @@
             // txtStarted
             // 
             this.txtStarted.Location = new System.Drawing.Point(438, 31);
-            this.txtStarted.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtStarted.Margin = new System.Windows.Forms.Padding(2);
             this.txtStarted.Name = "txtStarted";
             this.txtStarted.ReadOnly = true;
             this.txtStarted.Size = new System.Drawing.Size(149, 20);
@@ -214,7 +224,7 @@
             this.colType,
             this.colSize});
             this.columnList.Location = new System.Drawing.Point(182, 124);
-            this.columnList.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.columnList.Margin = new System.Windows.Forms.Padding(2);
             this.columnList.Name = "columnList";
             this.columnList.Size = new System.Drawing.Size(447, 330);
             this.columnList.TabIndex = 14;
@@ -340,7 +350,7 @@
             // tableList
             // 
             this.tableList.Location = new System.Drawing.Point(8, 82);
-            this.tableList.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tableList.Margin = new System.Windows.Forms.Padding(2);
             this.tableList.MultiSelect = false;
             this.tableList.Name = "tableList";
             this.tableList.Size = new System.Drawing.Size(156, 346);
@@ -349,12 +359,21 @@
             this.tableList.View = System.Windows.Forms.View.List;
             this.tableList.SelectedIndexChanged += new System.EventHandler(this.tableList_SelectedIndexChanged);
             // 
-            // findAndReplaceToolStripMenuItem
+            // viewToolStripMenuItem
             // 
-            this.findAndReplaceToolStripMenuItem.Name = "findAndReplaceToolStripMenuItem";
-            this.findAndReplaceToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
-            this.findAndReplaceToolStripMenuItem.Text = "Find and Replace";
-            this.findAndReplaceToolStripMenuItem.Click += new System.EventHandler(this.findAndReplaceToolStripMenuItem_Click);
+            this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.hideEmptyTablesToolStripMenuItem});
+            this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
+            this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 22);
+            this.viewToolStripMenuItem.Text = "View";
+            // 
+            // hideEmptyTablesToolStripMenuItem
+            // 
+            this.hideEmptyTablesToolStripMenuItem.CheckOnClick = true;
+            this.hideEmptyTablesToolStripMenuItem.Name = "hideEmptyTablesToolStripMenuItem";
+            this.hideEmptyTablesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.hideEmptyTablesToolStripMenuItem.Text = "Hide Empty Tables";
+            this.hideEmptyTablesToolStripMenuItem.CheckedChanged += new System.EventHandler(this.hideEmptyTablesToolStripMenuItem_CheckedChanged);
             // 
             // Form1
             // 
@@ -428,6 +447,8 @@
         private System.Windows.Forms.Button btnCompareToDB;
         private System.Windows.Forms.ListView tableList;
         private System.Windows.Forms.ToolStripMenuItem findAndReplaceToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem hideEmptyTablesToolStripMenuItem;
     }
 }
 
