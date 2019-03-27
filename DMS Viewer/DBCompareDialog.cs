@@ -110,6 +110,10 @@ namespace DMS_Viewer
                 case FieldTypes.LONG_CHAR:
                     param.OracleDbType = OracleDbType.Clob;
                     param.Value = curRow.GetValue(index);
+                    if ((string)param.Value == "\0")
+                    {
+                        param.Value = null;
+                    }
                     break;
                 case FieldTypes.NUMBER:
                     param.OracleDbType = OracleDbType.Int64;
@@ -250,7 +254,7 @@ namespace DMS_Viewer
                             if (column.FieldType == FieldTypes.LONG_CHAR || column.FieldType == FieldTypes.IMG_OR_ATTACH)
                             {
                                 /* dbms_lob.compare */
-                                diffCheck.Append($"dbms_lob.compare({column.FieldName},:{x + 1}) = 0 ");
+                                diffCheck.Append($"dbms_lob.compare(nvl({column.FieldName},'Null'),nvl(:{x + 1},'Null')) = 0 ");
                             } else
                             {
                                 diffCheck.Append($"{column.FieldName} = :{x + 1} ");
