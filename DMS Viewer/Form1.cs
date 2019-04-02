@@ -100,7 +100,16 @@ namespace DMS_Viewer
         {
             if (tableList.SelectedItems.Count > 0)
             {
+                dataViewer.Enabled = true;
+                btnRecordMeta.Enabled = true;
+                btnCompareToDB.Enabled = true;
                 DrawColumns();
+            } else
+            {
+                dataViewer.Enabled = false;
+                btnRecordMeta.Enabled = false;
+                btnCompareToDB.Enabled = false;
+                columnList.Items.Clear();
             }
         }
 
