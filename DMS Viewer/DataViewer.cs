@@ -61,7 +61,7 @@ namespace DMS_Viewer
 
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-                if (e.RowIndex >= 0)
+                if (e.RowIndex >= 0 && e.ColumnIndex >= 0)
                 {
                     var content = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
                     new LongDataViewer(content).ShowDialog(this);
