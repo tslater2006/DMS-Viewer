@@ -142,8 +142,13 @@ namespace DMS_Viewer
 
             foreach (DMSColumn col in value.Columns)
             {
-                ListViewItem item = new ListViewItem(col.Name);
+                var isKey = value.Metadata.FieldMetadata.Where(m => m.FieldName == col.Name).First().UseEditMask.HasFlag(UseEditFlags.KEY);
+                ListViewItem item = new ListViewItem(isKey ? "✓" : " ");
                 item.Tag = col;
+
+                /* is this item a key? */
+                
+                item.SubItems.Add(col.Name);
                 item.SubItems.Add(col.Type);
                 item.SubItems.Add(col.Size);
                 columnList.Items.Add(item);

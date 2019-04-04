@@ -66,6 +66,7 @@
             this.btnRecordMeta = new System.Windows.Forms.Button();
             this.btnCompareToDB = new System.Windows.Forms.Button();
             this.tableList = new System.Windows.Forms.ListView();
+            this.colKey = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -186,7 +187,7 @@
             // 
             this.hideEmptyTablesToolStripMenuItem.CheckOnClick = true;
             this.hideEmptyTablesToolStripMenuItem.Name = "hideEmptyTablesToolStripMenuItem";
-            this.hideEmptyTablesToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.hideEmptyTablesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.hideEmptyTablesToolStripMenuItem.Text = "Hide Empty Tables";
             this.hideEmptyTablesToolStripMenuItem.CheckedChanged += new System.EventHandler(this.hideEmptyTablesToolStripMenuItem_CheckedChanged);
             // 
@@ -264,6 +265,7 @@
             // columnList
             // 
             this.columnList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.colKey,
             this.colName,
             this.colType,
             this.colSize});
@@ -404,6 +406,11 @@
             this.tableList.View = System.Windows.Forms.View.List;
             this.tableList.SelectedIndexChanged += new System.EventHandler(this.tableList_SelectedIndexChanged);
             // 
+            // colKey
+            // 
+            this.colKey.Text = "Key";
+            this.colKey.Width = 34;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -481,6 +488,7 @@
         private System.Windows.Forms.ToolStripMenuItem databaseToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem connectToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem disconnectToolStripMenuItem;
+        private System.Windows.Forms.ColumnHeader colKey;
     }
 }
 
