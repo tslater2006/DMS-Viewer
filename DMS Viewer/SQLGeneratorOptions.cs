@@ -14,17 +14,26 @@ namespace DMS_Viewer
 {
     public partial class SQLGeneratorOptions : Form
     {
-        public DMSFile dmsFile;
-
+        private DMSFile dmsFile;
+        private string filePath;
         public SQLGeneratorOptions()
         {
             InitializeComponent();
         }
 
-        public SQLGeneratorOptions(DMSFile dmsFile) :this()
+        public SQLGeneratorOptions(DMSFile dmsFile, string filePath) :this()
         {
             /*bool padColumns, bool extractLongs, bool ignoreEmptyTables */
-            this.dmsFile = dmsFile;
+            UpdateDMSInfo(dmsFile, filePath);
+        }
+
+        public void UpdateDMSInfo(DMSFile file, string path)
+        {
+            dmsFile = file;
+            filePath = path;
+
+            var fi = new FileInfo(filePath);
+            textBox4.Text = fi.DirectoryName;
         }
 
         private void button1_Click(object sender, EventArgs e)

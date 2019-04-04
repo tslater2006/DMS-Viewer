@@ -169,11 +169,11 @@ namespace DMS_Viewer
             /* DMSFile dms, string outputFolder, bool padColumns, bool extractLongs, bool ignoreEmptyTables*/
             if (sqlOpts == null)
             {
-                sqlOpts = new SQLGeneratorOptions(dmsFile);
+                sqlOpts = new SQLGeneratorOptions(dmsFile, currentDmsPath);
             } else
             {
                 /* always make sure it has reference to current dmsFile */
-                sqlOpts.dmsFile = dmsFile;
+                sqlOpts.UpdateDMSInfo(dmsFile, currentDmsPath);
             }
 
             sqlOpts.ShowDialog(this);
