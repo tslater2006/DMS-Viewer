@@ -49,7 +49,7 @@ namespace DMS_Viewer
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
                 dmsFile = DMSReader.Read(currentDmsPath);
-
+                toolStripStatusLabel1.Text = "File: " + currentDmsPath;
                 /* Set the file name */
                 dmsFile.FileName = new FileInfo(currentDmsPath).Name;
 
@@ -317,7 +317,7 @@ namespace DMS_Viewer
                 MessageBox.Show("Connected to the database!");
                 dbConn = dbConnForm.Connection;
                 ConnectedDBName = dbConnForm.DBName;
-                this.Text = "DMS Explorer - " + ConnectedDBName;
+                toolStripStatusLabel2.Text = "Database: " + ConnectedDBName;
             }
             disconnectToolStripMenuItem.Visible = true;
             if (dmsFile != null && tableList.SelectedItems.Count > 0)
