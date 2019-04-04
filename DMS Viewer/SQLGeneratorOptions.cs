@@ -14,7 +14,7 @@ namespace DMS_Viewer
 {
     public partial class SQLGeneratorOptions : Form
     {
-        private DMSFile dmsFile;
+        public DMSFile dmsFile;
 
         public SQLGeneratorOptions()
         {

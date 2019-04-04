@@ -22,6 +22,8 @@ namespace DMS_Viewer
         private bool IsRunningOSX = false;
         private string ConnectedDBName = "";
         OracleConnection dbConn = null;
+        ScriptRebuildOptions scriptOpts = null;
+        SQLGeneratorOptions sqlOpts = null;
         public Form1()
         {
             InitializeComponent();
@@ -165,17 +167,31 @@ namespace DMS_Viewer
         private void generateSQLToolStripMenuItem_Click(object sender, EventArgs e)
         {
             /* DMSFile dms, string outputFolder, bool padColumns, bool extractLongs, bool ignoreEmptyTables*/
+            if (sqlOpts == null)
+            {
+                sqlOpts = new SQLGeneratorOptions(dmsFile);
+            } else
+            {
+                /* always make sure it has reference to current dmsFile */
+                sqlOpts.dmsFile = dmsFile;
+            }
 
-            var opts = new SQLGeneratorOptions(dmsFile);
-            opts.ShowDialog(this);
-            opts = null;
+            sqlOpts.ShowDialog(this);
         }
 
         private void rebuildScriptToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var opts = new ScriptRebuildOptions(currentDmsPath);
-            opts.ShowDialog(this);
-            opts = null;
+            if (scriptOpts == null)
+            {
+                scriptOpts = new ScriptRebuildOptions(currentDmsPath);
+            } else
+            {
+                /* make sure DMS path is always the latest */
+                scriptOpts.currentDmsPath = currentDmsPath;
+            }
+
+            scriptOpts.ShowDialog(this);
+
         }
 
         private void dataViewer_Click(object sender, EventArgs e)

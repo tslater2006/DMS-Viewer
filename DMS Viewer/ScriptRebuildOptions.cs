@@ -13,7 +13,7 @@ namespace DMS_Viewer
 {
     public partial class ScriptRebuildOptions : Form
     {
-        private string currentDmsPath;
+        public string currentDmsPath;
 
         public ScriptRebuildOptions()
         {
