@@ -13,7 +13,7 @@ namespace DMS_Viewer
 {
     public partial class ScriptRebuildOptions : Form
     {
-        public string currentDmsPath;
+        private string currentDmsPath;
 
         public ScriptRebuildOptions()
         {
@@ -34,6 +34,19 @@ namespace DMS_Viewer
             }
             var fi = new FileInfo(currentDmsPath);
             textBox3.Text = fi.Name.Replace(fi.Extension,"");
+            textBox4.Text = fi.DirectoryName;
+        }
+
+        public void UpdateDMSPath(string path)
+        {
+            currentDmsPath = path;
+            textBox1.Text = currentDmsPath;
+            if(currentDmsPath.Equals(""))
+            {
+                return;
+            }
+            var fi = new FileInfo(currentDmsPath);
+            textBox3.Text = fi.Name.Replace(fi.Extension, "");
             textBox4.Text = fi.DirectoryName;
         }
 

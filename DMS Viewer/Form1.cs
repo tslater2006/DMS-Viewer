@@ -187,7 +187,7 @@ namespace DMS_Viewer
             } else
             {
                 /* make sure DMS path is always the latest */
-                scriptOpts.currentDmsPath = currentDmsPath;
+                scriptOpts.UpdateDMSPath(currentDmsPath);
             }
 
             scriptOpts.ShowDialog(this);
