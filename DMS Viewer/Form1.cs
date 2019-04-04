@@ -188,9 +188,9 @@ namespace DMS_Viewer
         private void copyTables_Click(object sender, EventArgs e)
         {
             StringBuilder sb = new StringBuilder();
-            foreach(var i in tableList.Items)
+            foreach(ListViewItem i in tableList.Items)
             {
-                sb.AppendLine(i.ToString());
+                sb.AppendLine(((DMSTable)i.Tag).Name);
             }
             if (IsRunningOSX)
             {
