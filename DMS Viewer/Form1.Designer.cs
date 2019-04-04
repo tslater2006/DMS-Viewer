@@ -51,6 +51,7 @@
             this.txtStarted = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.columnList = new System.Windows.Forms.ListView();
+            this.colKey = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colSize = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -66,7 +67,6 @@
             this.btnRecordMeta = new System.Windows.Forms.Button();
             this.btnCompareToDB = new System.Windows.Forms.Button();
             this.tableList = new System.Windows.Forms.ListView();
-            this.colKey = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -167,14 +167,14 @@
             // connectToolStripMenuItem
             // 
             this.connectToolStripMenuItem.Name = "connectToolStripMenuItem";
-            this.connectToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.connectToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
             this.connectToolStripMenuItem.Text = "Connect...";
             this.connectToolStripMenuItem.Click += new System.EventHandler(this.ConnectToolStripMenuItem_Click);
             // 
             // disconnectToolStripMenuItem
             // 
             this.disconnectToolStripMenuItem.Name = "disconnectToolStripMenuItem";
-            this.disconnectToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.disconnectToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
             this.disconnectToolStripMenuItem.Text = "Disconnect";
             this.disconnectToolStripMenuItem.Visible = false;
             this.disconnectToolStripMenuItem.Click += new System.EventHandler(this.DisconnectToolStripMenuItem_Click);
@@ -191,7 +191,7 @@
             // 
             this.hideEmptyTablesToolStripMenuItem.CheckOnClick = true;
             this.hideEmptyTablesToolStripMenuItem.Name = "hideEmptyTablesToolStripMenuItem";
-            this.hideEmptyTablesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.hideEmptyTablesToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.hideEmptyTablesToolStripMenuItem.Text = "Hide Empty Tables";
             this.hideEmptyTablesToolStripMenuItem.CheckedChanged += new System.EventHandler(this.hideEmptyTablesToolStripMenuItem_CheckedChanged);
             // 
@@ -282,6 +282,11 @@
             this.columnList.UseCompatibleStateImageBehavior = false;
             this.columnList.View = System.Windows.Forms.View.Details;
             this.columnList.MouseClick += new System.Windows.Forms.MouseEventHandler(this.columnList_MouseClick);
+            // 
+            // colKey
+            // 
+            this.colKey.Text = "Key";
+            this.colKey.Width = 34;
             // 
             // colName
             // 
@@ -409,11 +414,7 @@
             this.tableList.UseCompatibleStateImageBehavior = false;
             this.tableList.View = System.Windows.Forms.View.List;
             this.tableList.SelectedIndexChanged += new System.EventHandler(this.tableList_SelectedIndexChanged);
-            // 
-            // colKey
-            // 
-            this.colKey.Text = "Key";
-            this.colKey.Width = 34;
+            this.tableList.MouseClick += new System.Windows.Forms.MouseEventHandler(this.TableList_MouseClick);
             // 
             // statusStrip1
             // 
@@ -429,7 +430,7 @@
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(690, 17);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(721, 17);
             this.toolStripStatusLabel1.Spring = true;
             this.toolStripStatusLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 

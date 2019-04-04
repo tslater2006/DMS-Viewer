@@ -1,4 +1,5 @@
 ﻿using DMSLib;
+using OfficeOpenXml;
 using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
@@ -76,7 +77,7 @@ namespace DMS_Viewer
             dataViewer.Enabled = true;
             btnRecordMeta.Enabled = true;
             btnCompareToDB.Enabled = true;
-            foreach(var table in dmsFile.Tables)
+            foreach (var table in dmsFile.Tables)
             {
                 if (hideEmptyTablesToolStripMenuItem.Checked == false || (hideEmptyTablesToolStripMenuItem.Checked == true && table.Rows.Count > 0))
                 {
@@ -92,7 +93,7 @@ namespace DMS_Viewer
                     }
                     tableList.Items.Add(new ListViewItem() { Tag = table, Text = table.Name, BackColor = backgroundColor });
                 }
-               
+
             }
             tableList.SelectedItems.Clear();
             saveAsToolStripMenuItem.Enabled = true;
@@ -107,7 +108,8 @@ namespace DMS_Viewer
                 if (dbConn != null)
                 {
                     btnCompareToDB.Enabled = true;
-                } else
+                }
+                else
                 {
                     btnCompareToDB.Enabled = false;
                 }
@@ -123,7 +125,8 @@ namespace DMS_Viewer
                 {
                     DrawColumns();
                 }
-            } else
+            }
+            else
             {
                 dataViewer.Enabled = false;
                 btnRecordMeta.Enabled = false;
@@ -149,7 +152,7 @@ namespace DMS_Viewer
                 item.Tag = col;
 
                 /* is this item a key? */
-                
+
                 item.SubItems.Add(col.Name);
                 item.SubItems.Add(col.Type);
                 item.SubItems.Add(col.Size);
@@ -170,7 +173,8 @@ namespace DMS_Viewer
             if (sqlOpts == null)
             {
                 sqlOpts = new SQLGeneratorOptions(dmsFile, currentDmsPath);
-            } else
+            }
+            else
             {
                 /* always make sure it has reference to current dmsFile */
                 sqlOpts.UpdateDMSInfo(dmsFile, currentDmsPath);
@@ -184,7 +188,8 @@ namespace DMS_Viewer
             if (scriptOpts == null)
             {
                 scriptOpts = new ScriptRebuildOptions(currentDmsPath);
-            } else
+            }
+            else
             {
                 /* make sure DMS path is always the latest */
                 scriptOpts.UpdateDMSPath(currentDmsPath);
@@ -196,7 +201,7 @@ namespace DMS_Viewer
 
         private void dataViewer_Click(object sender, EventArgs e)
         {
-            var viewer = new DataViewer(tableList.SelectedItems[0].Tag as DMSTable,ConnectedDBName);
+            var viewer = new DataViewer(tableList.SelectedItems[0].Tag as DMSTable, ConnectedDBName);
             viewer.ShowDialog(this);
             DrawColumns();
         }
@@ -204,14 +209,15 @@ namespace DMS_Viewer
         private void copyTables_Click(object sender, EventArgs e)
         {
             StringBuilder sb = new StringBuilder();
-            foreach(ListViewItem i in tableList.Items)
+            foreach (ListViewItem i in tableList.Items)
             {
                 sb.AppendLine(((DMSTable)i.Tag).Name);
             }
             if (IsRunningOSX)
             {
                 OSXClipboard.CopyToClipboard(sb.ToString());
-            } else
+            }
+            else
             {
                 Clipboard.SetText(sb.ToString());
             }
@@ -290,22 +296,22 @@ namespace DMS_Viewer
 
         private void btnCompareToDB_Click(object sender, EventArgs e)
         {
-            
+
             if (dbConn != null)
             {
-                /* create the compare dialog which runs the compare */                
+                /* create the compare dialog which runs the compare */
                 new DBCompareDialog(dbConn, dmsFile, tableList.SelectedItems.Cast<ListViewItem>().Select(i => (DMSTable)i.Tag).ToList()).ShowDialog(this);
                 /* save off the saved index for the table */
 
                 var savedIndexes = tableList.SelectedIndices;
                 UpdateUI();
-                foreach(var x  in savedIndexes.Cast<int>())
+                foreach (var x in savedIndexes.Cast<int>())
                 {
                     tableList.Items[x].Selected = true;
                 }
 
             }
-            
+
         }
 
         private void findAndReplaceToolStripMenuItem_Click(object sender, EventArgs e)
@@ -346,6 +352,71 @@ namespace DMS_Viewer
         private void DisconnectToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void TableList_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+
+                var selectedTables = tableList.SelectedItems.Cast<ListViewItem>().Select(i => (DMSTable)i.Tag).ToList();
+                if (selectedTables.Count > 0)
+                {
+                    ContextMenu m = new ContextMenu();
+                    MenuItem exportToExcel = new MenuItem("Export to Excel...");
+                    exportToExcel.Tag = selectedTables;
+                    exportToExcel.Click += ExportToExcel_Click; ;
+                    m.MenuItems.Add(exportToExcel);
+                    m.Show(tableList, new Point(e.X, e.Y));
+                }
+            }
+        }
+
+        private void ExportToExcel_Click(object sender, EventArgs e)
+        {
+            List<DMSTable> tables = (sender as MenuItem).Tag as List<DMSTable>;
+
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Filter = "Excel Workbook *.xlsx|*.xlsx";
+
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                string outFile = sfd.FileName;
+                WriteTablesToExcel(tables, outFile);
+            }
+        }
+
+        private void WriteTablesToExcel(List<DMSTable> tables, string path)
+        {
+            using (var package = new ExcelPackage())
+            {
+                foreach (var table in tables)
+                {
+                    ExcelWorksheet sheet = package.Workbook.Worksheets.Add(table.Name);
+
+                    /* add column names */
+                    for (var x = 0; x < table.Columns.Count; x++)
+                    {
+                        sheet.Cells[1, x + 1].Value = table.Columns[x].Name;
+                    }
+
+                    /* Auto fit columns w/ headers in place */
+                    sheet.Cells.AutoFitColumns(0);
+
+                    /* add each row */
+                    for (var x = 0; x < table.Rows.Count; x++)
+                    {
+                        for (var y = 0; y < table.Columns.Count; y++)
+                        {
+                            sheet.Cells[x + 2, y + 1].Value = table.Rows[x].GetStringValue(y);
+                        }
+
+                    }
+                }
+                package.SaveAs(new FileInfo(path));
+            }
+
+            MessageBox.Show(this, "Table(s) exported to Excel!");
         }
     }
 }
