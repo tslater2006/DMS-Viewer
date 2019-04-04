@@ -20,9 +20,9 @@ namespace DMS_Viewer
     {
         OracleConnection dbConn;
         DMSFile file;
-        DMSTable table;
+        List<DMSTable> tables;
         BackgroundWorker worker;
-        public DBCompareDialog(OracleConnection dbConn, DMSFile file, DMSTable table)
+        public DBCompareDialog(OracleConnection dbConn, DMSFile file, List<DMSTable> tables)
         {
             InitializeComponent();
 
@@ -32,71 +32,71 @@ namespace DMS_Viewer
 
             this.dbConn = dbConn;
             this.file = file;
-            this.table = table;
+            this.tables = tables;
 
         }
 
         private void RunCompare(object sender, DoWorkEventArgs e)
         {
-            /* check to see if the table exists ... */
-            using (OracleCommand existsCheck = new OracleCommand($"SELECT 'Y' FROM {table.DBName} WHERE ROWNUM = 1",dbConn))
-            {
-                try
-                {
-                    existsCheck.ExecuteReader();
-                } catch (OracleException ex)
-                {
-                    if (ex.Number == 942)
-                    {
-                        /* table doesn't exist */
-                        MessageBox.Show($"The table {table.Name} doesn't exist in the target database. It will be created at import time.");
-                        foreach(var tbl in file.Tables.Where(t => t.Name == table.Name))
-                        {
-                            foreach(var row in tbl.Rows)
-                            {
-                                row.CompareResult = DMSCompareResult.NEW;
-                            }
-                            tbl.CompareResult = DMSCompareResult.NEW;
-                        }
-                        return;
-                    }
-                }
-            }
-
-
-            var totalRows = file.Tables.Where(t => t.Name == table.Name).Select(t => t.Rows.Count).Sum();
+            var totalRows = tables.Select(t => t.Rows.Count).Sum();
             var rowsProcessed = 0;
 
-            List<DMSRecordFieldMetadata> keyFields = table.Metadata.FieldMetadata.Where(m => (int)m.UseEditMask % 2 == 1).ToList();
-
-
-            foreach(var curTable in file.Tables.Where(t => t.Name == table.Name))
+            /* check to see if the table exists ... */
+            foreach (var table in tables)
             {
-                foreach(var curRow in curTable.Rows)
+                using (OracleCommand existsCheck = new OracleCommand($"SELECT 'Y' FROM {table.DBName} WHERE ROWNUM = 1", dbConn))
                 {
-                    /* compare this row to the DB */
-                    CompareRow(curTable, keyFields,curRow);
-                    /* count this row */
-                    rowsProcessed++;
-                    worker.ReportProgress((int)((rowsProcessed / (double)totalRows) * 100));
-                }
+                    try
+                    {
+                        existsCheck.ExecuteReader();
+                        List<DMSRecordFieldMetadata> keyFields = table.Metadata.FieldMetadata.Where(m => (int)m.UseEditMask % 2 == 1).ToList();
+                        foreach (var curRow in table.Rows)
+                        {
+                            /* compare this row to the DB */
+                            CompareRow(table, keyFields, curRow);
+                            /* count this row */
+                            rowsProcessed++;
+                            worker.ReportProgress((int)((rowsProcessed / (double)totalRows) * 100));
+                        }
 
-                if (curTable.Rows.Where(r => r.CompareResult == DMSCompareResult.UPDATE).Count() > 0)
-                {
-                    curTable.CompareResult = DMSCompareResult.UPDATE;
-                } else
-                {
-                    if (curTable.Rows.Where(r => r.CompareResult == DMSCompareResult.NEW).Count() > 0)
-                    {
-                        curTable.CompareResult = DMSCompareResult.NEW;
+                        if (table.Rows.Where(r => r.CompareResult == DMSCompareResult.UPDATE).Count() > 0)
+                        {
+                            table.CompareResult = DMSCompareResult.UPDATE;
+                        }
+                        else
+                        {
+                            if (table.Rows.Where(r => r.CompareResult == DMSCompareResult.NEW).Count() > 0)
+                            {
+                                table.CompareResult = DMSCompareResult.NEW;
+                            }
+                            else
+                            {
+                                table.CompareResult = DMSCompareResult.SAME;
+                            }
+                        }
                     }
-                    else
+
+                    catch (OracleException ex)
                     {
-                        curTable.CompareResult = DMSCompareResult.SAME;
+                        if (ex.Number == 942)
+                        {
+                            /* table doesn't exist */
+                            MessageBox.Show($"The table {table.Name} doesn't exist in the target database. It will be created at import time.");
+                            foreach (var tbl in file.Tables.Where(t => t.Name == table.Name))
+                            {
+                                foreach (var row in tbl.Rows)
+                                {
+                                    row.CompareResult = DMSCompareResult.NEW;
+                                }
+                                tbl.CompareResult = DMSCompareResult.NEW;
+                            }
+                            rowsProcessed += table.Rows.Count;
+                            worker.ReportProgress((int)((rowsProcessed / (double)totalRows) * 100));
+                        }
                     }
                 }
             }
-            
+
         }
 
         private void SetOracleParamValue(OracleParameter param, FieldTypes type, DMSRow curRow, int index)
@@ -186,20 +186,20 @@ namespace DMS_Viewer
             return bytes;
         }
 
-        private void CompareRow(DMSTable curTable, List<DMSRecordFieldMetadata> keys, DMSRow curRow)
+        private void CompareRow(DMSTable table, List<DMSRecordFieldMetadata> keys, DMSRow curRow)
         {
             int[] keyIndexes = new int[keys.Count];
             for (var x = 0; x < keys.Count; x++)
             {
                 var fieldName = keys[x].FieldName;
-                var fieldIndex = curTable.Columns.FindIndex(c => c.Name == fieldName);
+                var fieldIndex = table.Columns.FindIndex(c => c.Name == fieldName);
                 keyIndexes[x] = fieldIndex;
             }
 
             /* create SQL statement for this item */
             /* SELECT 'Y' FROM DBNAME WHERE KEY1 = :1 */
 
-            var sqlBuilder = new StringBuilder($"SELECT 'Y' FROM {curTable.DBName} WHERE ");
+            var sqlBuilder = new StringBuilder($"SELECT 'Y' FROM {table.DBName} WHERE ");
 
             for (var x = 0; x < keys.Count; x++)
             {
@@ -247,7 +247,7 @@ namespace DMS_Viewer
                         /* if a row came back, it exists... */
 
                         /* we need to check if the row that exists matches on each and every column */
-                        StringBuilder diffCheck = new StringBuilder($"SELECT 'Y' FROM {curTable.DBName} WHERE ");
+                        StringBuilder diffCheck = new StringBuilder($"SELECT 'Y' FROM {table.DBName} WHERE ");
                         for (var x = 0; x < table.Metadata.FieldMetadata.Count; x++) 
                         {
                             var column = table.Metadata.FieldMetadata[x];

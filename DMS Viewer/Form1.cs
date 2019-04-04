@@ -102,7 +102,13 @@ namespace DMS_Viewer
             {
                 dataViewer.Enabled = true;
                 btnRecordMeta.Enabled = true;
-                btnCompareToDB.Enabled = true;
+                if (dbConn != null)
+                {
+                    btnCompareToDB.Enabled = true;
+                } else
+                {
+                    btnCompareToDB.Enabled = false;
+                }
                 DrawColumns();
             } else
             {
@@ -252,53 +258,20 @@ namespace DMS_Viewer
 
         private void btnCompareToDB_Click(object sender, EventArgs e)
         {
+            
             if (dbConn != null)
             {
-                if (MessageBox.Show($"Would you like to reuse the existing database connection to {ConnectedDBName}?","Reuse connection",MessageBoxButtons.YesNo,MessageBoxIcon.Question) == DialogResult.No)
-                {
-                    try
-                    {
-                        dbConn.Close();
-                    }
-                    catch (Exception ex) { }
-                    dbConn = null;
-                    /* reset all compare results */
-                    foreach (var table in dmsFile.Tables)
-                    {
-                        table.CompareResult = DMSCompareResult.NONE;
-                        foreach(var row in table.Rows)
-                        {
-                            row.CompareResult = DMSCompareResult.NONE;
-                        }
-                    }
-                }
-            }
-            if (dbConn == null)
-            {
-                /* get a DB connection */
-                var dbConnForm = new DBLogin();
-                if (dbConnForm.ShowDialog() == DialogResult.OK)
-                {
-                    MessageBox.Show("Connected to the database!");
-                    dbConn = dbConnForm.Connection;
-                    ConnectedDBName = dbConnForm.DBName;
-                    this.Text = "DMS Explorer - " + ConnectedDBName;
-                }
-            }
-            if (dbConn != null)
-            {
-                /* create the compare dialog which runs the compare */
-                DMSTable curTable = tableList.SelectedItems[0].Tag as DMSTable;
-                new DBCompareDialog(dbConn, dmsFile, curTable).ShowDialog(this);
+                /* create the compare dialog which runs the compare */                
+                new DBCompareDialog(dbConn, dmsFile, tableList.SelectedItems.Cast<ListViewItem>().Select(i => (DMSTable)i.Tag).ToList()).ShowDialog(this);
                 /* save off the saved index for the table */
-                if (curTable.CompareResult == DMSCompareResult.SAME)
-                {
-                    MessageBox.Show("The select table contains no update or new rows.");
-                    return;
-                }
-                var savedIndex = tableList.SelectedIndices[0];
+
+                var savedIndexes = tableList.SelectedIndices;
                 UpdateUI();
-                tableList.Items[savedIndex].Selected = true;
+                foreach(var x  in savedIndexes.Cast<int>())
+                {
+                    tableList.Items[x].Selected = true;
+                }
+
             }
             
         }
@@ -312,6 +285,35 @@ namespace DMS_Viewer
         private void hideEmptyTablesToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
         {
             UpdateUI();
+        }
+
+        private void ConnectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (dbConn != null)
+            {
+                dbConn.Close();
+                dbConn = null;
+            }
+
+            var dbConnForm = new DBLogin();
+            if (dbConnForm.ShowDialog() == DialogResult.OK)
+            {
+                MessageBox.Show("Connected to the database!");
+                dbConn = dbConnForm.Connection;
+                ConnectedDBName = dbConnForm.DBName;
+                this.Text = "DMS Explorer - " + ConnectedDBName;
+            }
+            disconnectToolStripMenuItem.Visible = true;
+            if (dmsFile != null && tableList.SelectedItems.Count > 0)
+            {
+                /* We have a DMS File loaded, and at least 1 table is selected */
+                btnCompareToDB.Enabled = true;
+            }
+        }
+
+        private void DisconnectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
