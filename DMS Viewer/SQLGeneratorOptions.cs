@@ -34,7 +34,7 @@ namespace DMS_Viewer
                 MessageBox.Show("Please specify and existing directory for the output directory.");
                 return;
             }
-            SQLGenerator.GenerateSQLFile(dmsFile, textBox4.Text, checkBox1.Checked, checkBox2.Checked, checkBox3.Checked);
+            SQLGenerator.GenerateSQLFile(dmsFile, textBox4.Text, checkBox1.Checked, checkBox2.Checked, checkBox3.Checked, textBox1.Text);
             MessageBox.Show("SQL Generated Successfully!");
             this.Close();
         }

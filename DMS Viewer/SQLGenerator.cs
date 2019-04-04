@@ -10,12 +10,11 @@ namespace DMS_Viewer
 {
     public class SQLGenerator
     {
-        public static void GenerateSQLFile(DMSFile dms, string outputFolder, bool padColumns, bool extractLongs, bool ignoreEmptyTables)
+        public static void GenerateSQLFile(DMSFile dms, string outputFolder, bool padColumns, bool extractLongs, bool ignoreEmptyTables, string customSchema)
         {
             StreamWriter sw = new StreamWriter(outputFolder + Path.DirectorySeparatorChar + dms.FileName.Replace(".dat", "").Replace(".DAT", "") + ".sql");
 
             /* Write the header */
-
             sw.WriteLine("/* ****** DMS 2 SQL v1.0 ***********");
             sw.WriteLine(String.Format(" * Database: {0}", dms.Database));
             sw.WriteLine(String.Format(" * Date: {0}", dms.Started));
@@ -118,7 +117,16 @@ namespace DMS_Viewer
                     }
                     columnNames.Length -= 2;
                     columnValues.Length -= 2;
-                    var sqlStatement = String.Format("INSERT INTO {0} \r\n({1}) \r\nVALUES \r\n({2});", table.DBName, columnNames.ToString(), columnValues.ToString());
+                    var sqlStatement = "";
+                    if (customSchema.Length > 0)
+                    {
+                        sqlStatement = String.Format("INSERT INTO {0}.{1} \r\n({1}) \r\nVALUES \r\n({2});", customSchema, table.DBName, columnNames.ToString(), columnValues.ToString());
+                    }
+                    else
+                    {
+                        sqlStatement = String.Format("INSERT INTO {0} \r\n({1}) \r\nVALUES \r\n({2});", table.DBName, columnNames.ToString(), columnValues.ToString());
+                    }
+
                     sw.WriteLine(sqlStatement);
                     sw.WriteLine();
                 }
