@@ -109,7 +109,18 @@ namespace DMS_Viewer
                 {
                     btnCompareToDB.Enabled = false;
                 }
-                DrawColumns();
+
+                if (tableList.SelectedItems.Count > 1)
+                {
+                    dataViewer.Enabled = false;
+                    btnRecordMeta.Enabled = false;
+                    lblRowCount.Text = "0";
+                    columnList.Items.Clear();
+                }
+                else
+                {
+                    DrawColumns();
+                }
             } else
             {
                 dataViewer.Enabled = false;
