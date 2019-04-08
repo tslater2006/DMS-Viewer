@@ -54,7 +54,6 @@ namespace DMS_Viewer
                 {
                     columnNames.Clear();
                     columnValues.Clear();
-                    sw.WriteLine(" /* Row " + table.Name + "." + (table.Rows.IndexOf(row) + 1) + " */");
                     for (var x = 0; x < row.Indexes.Length -1; x++)
                     {
                         var colType = table.Columns[x].Type;
