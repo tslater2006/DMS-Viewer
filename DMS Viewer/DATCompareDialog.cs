@@ -59,6 +59,8 @@ namespace DMS_Viewer
                 lbl.Text = file.FileName;
             }
 
+            var savedIndexes = list.SelectedIndices;
+
             list.Items.Clear();
             foreach (var table in file.Tables)
             {
@@ -82,7 +84,18 @@ namespace DMS_Viewer
                 list.Items.Add(new ListViewItem() {Tag = table, Text = table.Name, BackColor = backgroundColor});
             }
 
-            list.Items[0].Selected = true;
+            if (savedIndexes.Count > 0)
+            {
+                foreach (var x in savedIndexes.Cast<int>())
+                {
+                    list.Items[x].Selected = true;
+                }
+            }
+            else
+            {
+                list.Items[0].Selected = true;
+            }
+
             btn.Enabled = true;
 
             /* enable the compare buttons? */
