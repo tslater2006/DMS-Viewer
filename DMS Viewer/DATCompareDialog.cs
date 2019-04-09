@@ -1,14 +1,10 @@
-﻿using DMSLib;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using DMSLib;
 
 namespace DMS_Viewer
 {
@@ -16,11 +12,16 @@ namespace DMS_Viewer
     {
         DMSFile leftFile = null;
         DMSFile rightFile = null;
-        public DATCompareDialog(DMSFile left)
+
+        public DATCompareDialog(string initialPath)
         {
             InitializeComponent();
+            if (initialPath?.Length > 0)
+            {
+                leftFile = DMSReader.Read(initialPath);
+                leftFile.FileName = new FileInfo(initialPath).Name;
+            }
 
-            leftFile = left;
             UpdateUI(true);
         }
 
@@ -54,7 +55,7 @@ namespace DMS_Viewer
             {
                 lbl.Text = file.FileName;
             }
-            
+
             list.Items.Clear();
             foreach (var table in file.Tables)
             {
@@ -63,6 +64,7 @@ namespace DMS_Viewer
                 {
                     continue;
                 }
+
                 var backgroundColor = Color.White;
                 switch (table.CompareResult)
                 {
@@ -73,16 +75,40 @@ namespace DMS_Viewer
                         backgroundColor = Color.Yellow;
                         break;
                 }
-                list.Items.Add(new ListViewItem() { Tag = table, Text = table.Name, BackColor = backgroundColor });
+
+                list.Items.Add(new ListViewItem() {Tag = table, Text = table.Name, BackColor = backgroundColor});
             }
 
             list.Items[0].Selected = true;
             btn.Enabled = true;
+
+            /* enable the compare buttons? */
+            if (leftFile != null && rightFile != null)
+            {
+                btnCompareRight.Enabled = true;
+                btnCompareToLeft.Enabled = true;
+            }
         }
 
         private void Button2_Click(object sender, EventArgs e)
         {
+            DMSTable[] selectedTables =
+                lstRight.SelectedItems.Cast<ListViewItem>().Select(i => (DMSTable) i.Tag).ToArray();
 
+            var worker = new CompareWorker(selectedTables, leftFile);
+            progressBar1.Value = 0;
+            progressBar1.Minimum = 0;
+            progressBar1.Maximum = selectedTables.Sum(t => t.Rows.Count);
+
+            worker.ProgressChanged += (o, args) =>
+            {
+                progressBar1.Value += args.ProgressPercentage;
+                progressBar1.Update();
+            };
+
+            worker.RunWorkerCompleted += (o, args) => { UpdateUI(false); };
+
+            worker.RunWorkerAsync();
         }
 
         private void button6_Click(object sender, EventArgs e)
@@ -102,16 +128,14 @@ namespace DMS_Viewer
                 dmsFile.FileName = new FileInfo(openFileDialog1.FileName).Name;
                 return dmsFile;
             }
-            
+
             return null;
-            
         }
 
         private void button7_Click(object sender, EventArgs e)
         {
             rightFile = GetDATFile();
             UpdateUI(false);
-            
         }
 
         private void btnViewDataLeft_Click(object sender, EventArgs e)
@@ -142,6 +166,129 @@ namespace DMS_Viewer
         {
             var viewer = new DataViewer(lstRight.SelectedItems[0].Tag as DMSTable, "");
             viewer.ShowDialog(this);
+        }
+
+        private void CompareFiles(DMSTable[] selectedTables, DMSFile target)
+        {
+            /* this compares the rows for tables in Source to tables in Target */
+            foreach (var table in selectedTables)
+            {
+                table.CompareResult = DMSCompareResult.NEW;
+            }
+        }
+
+        private void btnCompareRight_Click(object sender, EventArgs e)
+        {
+            DMSTable[] selectedTables =
+                lstLeft.SelectedItems.Cast<ListViewItem>().Select(i => (DMSTable) i.Tag).ToArray();
+
+            var worker = new CompareWorker(selectedTables, rightFile);
+            progressBar1.Value = 0;
+            progressBar1.Minimum = 0;
+            progressBar1.Maximum = selectedTables.Sum(t => t.Rows.Count);
+
+            worker.ProgressChanged += (o, args) =>
+            {
+                progressBar1.Value += args.ProgressPercentage;
+                progressBar1.Update();
+            };
+
+            worker.RunWorkerCompleted += (o, args) => { UpdateUI(true); };
+
+            worker.RunWorkerAsync();
+        }
+    }
+
+    class CompareWorker : BackgroundWorker
+    {
+        private DMSFile file;
+        private DMSTable[] tables;
+
+        public CompareWorker(DMSTable[] selected, DMSFile target)
+        {
+            tables = selected;
+            file = target;
+
+            WorkerReportsProgress = true;
+            DoWork += OnDoWork;
+        }
+
+
+        private void OnDoWork(object sender, DoWorkEventArgs e)
+        {
+            foreach (var table in tables)
+            {
+                /* determine if this table exists in target file */
+                var targetTables = file.Tables.Where(t => t.Name == table.Name).ToList();
+                if (targetTables.Count == 0)
+                {
+                    foreach (var row in table.Rows)
+                    {
+                        row.CompareResult = DMSCompareResult.NEW;
+                    }
+
+                    ReportProgress(table.Rows.Count);
+                }
+                else
+                {
+                    var keyFieldIndexes = table.Metadata.FieldMetadata
+                        .Where(m => m.UseEditMask.HasFlag(UseEditFlags.KEY))
+                        .Select(t => table.Columns.IndexOf(table.Columns
+                            .First(c => c.Name == t.FieldName))).ToArray();
+
+                    /* for each row in source table, compare against target tables */
+                    foreach (var row in table.Rows)
+                    {
+                        row.CompareResult = DMSCompareResult.NONE;
+
+                        foreach (var targetRow in targetTables.SelectMany(t => t.Rows))
+                        {
+                            CompareRows(row, targetRow, keyFieldIndexes);
+                            if (row.CompareResult != DMSCompareResult.NONE)
+                            {
+                                break;
+                            }
+                        }
+
+                        if (row.CompareResult == DMSCompareResult.NONE)
+                        {
+                            row.CompareResult = DMSCompareResult.NEW;
+                        }
+                    }
+
+                    if (table.Rows.Any(r => r.CompareResult == DMSCompareResult.UPDATE))
+                    {
+                        table.CompareResult = DMSCompareResult.UPDATE;
+                    }
+                    else
+                    {
+                        table.CompareResult = table.Rows.Any(r => r.CompareResult == DMSCompareResult.NEW)
+                            ? DMSCompareResult.NEW
+                            : DMSCompareResult.SAME;
+                    }
+                }
+            }
+        }
+
+        void CompareRows(DMSRow left, DMSRow right, int[] keyFields)
+        {
+            /* check for "same" first */
+            if (left.Values.SequenceEqual(right.Values))
+            {
+                /* rows are identical */
+                left.CompareResult = DMSCompareResult.SAME;
+                return;
+            }
+
+            /* do the rows have the same keys? if so its changed */
+            if (keyFields.Select(left.GetStringValue).SequenceEqual(keyFields.Select(right.GetStringValue)))
+            {
+                left.CompareResult = DMSCompareResult.UPDATE;
+            }
+            else
+            {
+                left.CompareResult = DMSCompareResult.NONE;
+            }
         }
     }
 }

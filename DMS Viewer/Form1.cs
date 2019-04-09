@@ -1,30 +1,28 @@
-﻿using DMSLib;
-using OfficeOpenXml;
-using Oracle.ManagedDataAccess.Client;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using DMSLib;
+using OfficeOpenXml;
+using Oracle.ManagedDataAccess.Client;
 
 namespace DMS_Viewer
 {
     public partial class Form1 : Form
     {
-        DMSFile dmsFile = null;
+        private string ConnectedDBName = "";
         string currentDmsPath;
+        OracleConnection dbConn = null;
+        DMSFile dmsFile = null;
         private bool IsRunningMono = false;
         private bool IsRunningOSX = false;
-        private string ConnectedDBName = "";
-        OracleConnection dbConn = null;
         ScriptRebuildOptions scriptOpts = null;
         SQLGeneratorOptions sqlOpts = null;
+
         public Form1()
         {
             InitializeComponent();
@@ -69,6 +67,7 @@ namespace DMS_Viewer
             {
                 return;
             }
+
             txtVersion.Text = dmsFile.Version;
             txtDatabase.Text = dmsFile.Database;
             txtStarted.Text = dmsFile.Started;
@@ -79,7 +78,8 @@ namespace DMS_Viewer
             btnCompareToDB.Enabled = true;
             foreach (var table in dmsFile.Tables)
             {
-                if (hideEmptyTablesToolStripMenuItem.Checked == false || (hideEmptyTablesToolStripMenuItem.Checked == true && table.Rows.Count > 0))
+                if (hideEmptyTablesToolStripMenuItem.Checked == false ||
+                    (hideEmptyTablesToolStripMenuItem.Checked == true && table.Rows.Count > 0))
                 {
                     var backgroundColor = Color.White;
                     switch (table.CompareResult)
@@ -91,10 +91,12 @@ namespace DMS_Viewer
                             backgroundColor = Color.Yellow;
                             break;
                     }
-                    tableList.Items.Add(new ListViewItem() { Tag = table, Text = table.Name, BackColor = backgroundColor });
-                }
 
+                    tableList.Items.Add(
+                        new ListViewItem() {Tag = table, Text = table.Name, BackColor = backgroundColor});
+                }
             }
+
             tableList.SelectedItems.Clear();
             saveAsToolStripMenuItem.Enabled = true;
             compareToDATToolStripMenuItem.Enabled = true;
@@ -144,11 +146,13 @@ namespace DMS_Viewer
             {
                 return;
             }
+
             columnList.Items.Clear();
 
             foreach (DMSColumn col in value.Columns)
             {
-                var isKey = value.Metadata.FieldMetadata.Where(m => m.FieldName == col.Name).First().UseEditMask.HasFlag(UseEditFlags.KEY);
+                var isKey = value.Metadata.FieldMetadata.Where(m => m.FieldName == col.Name).First().UseEditMask
+                    .HasFlag(UseEditFlags.KEY);
                 ListViewItem item = new ListViewItem(isKey ? "✓" : " ");
                 item.Tag = col;
 
@@ -165,7 +169,6 @@ namespace DMS_Viewer
 
         private void exportToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
         }
 
         private void generateSQLToolStripMenuItem_Click(object sender, EventArgs e)
@@ -197,7 +200,6 @@ namespace DMS_Viewer
             }
 
             scriptOpts.ShowDialog(this);
-
         }
 
         private void dataViewer_Click(object sender, EventArgs e)
@@ -212,8 +214,9 @@ namespace DMS_Viewer
             StringBuilder sb = new StringBuilder();
             foreach (ListViewItem i in tableList.Items)
             {
-                sb.AppendLine(((DMSTable)i.Tag).Name);
+                sb.AppendLine(((DMSTable) i.Tag).Name);
             }
+
             if (IsRunningOSX)
             {
                 OSXClipboard.CopyToClipboard(sb.ToString());
@@ -243,7 +246,9 @@ namespace DMS_Viewer
 
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(this, "Saving of DAT files is currently in testing.\r\n\r\nPlease do not rely on this feature yet as there may be bugs or DAT format issues that haven't been accounted for. \r\n\r\nIf you feel like being adventureous please go ahead and give this feature a try!", "Modifed DAT is in BETA", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show(this,
+                "Saving of DAT files is currently in testing.\r\n\r\nPlease do not rely on this feature yet as there may be bugs or DAT format issues that haven't been accounted for. \r\n\r\nIf you feel like being adventureous please go ahead and give this feature a try!",
+                "Modifed DAT is in BETA", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
             saveFileDialog1.FileName = currentDmsPath;
             saveFileDialog1.Filter = "Data Mover Data Files|*.dat;*.DAT";
@@ -275,16 +280,15 @@ namespace DMS_Viewer
                 editField.Click += EditField_Click;
                 m.MenuItems.Add(editField);
                 m.Show(columnList, new Point(e.X, e.Y));
-
             }
         }
 
         private void EditField_Click(object sender, EventArgs e)
         {
-            var menuItem = (MenuItem)sender;
-            var hitTest = (ListViewHitTestInfo)menuItem.Tag;
+            var menuItem = (MenuItem) sender;
+            var hitTest = (ListViewHitTestInfo) menuItem.Tag;
 
-            var column = (DMSColumn)hitTest.Item.Tag;
+            var column = (DMSColumn) hitTest.Item.Tag;
             DMSTable curTable = tableList.SelectedItems[0].Tag as DMSTable;
             var columnMetadata = curTable.Metadata.FieldMetadata.Where(p => p.FieldName == column.Name).First();
 
@@ -292,16 +296,16 @@ namespace DMS_Viewer
             viewer.ShowDialog(this);
 
             DrawColumns();
-
         }
 
         private void btnCompareToDB_Click(object sender, EventArgs e)
         {
-
             if (dbConn != null)
             {
                 /* create the compare dialog which runs the compare */
-                new DBCompareDialog(dbConn, dmsFile, tableList.SelectedItems.Cast<ListViewItem>().Select(i => (DMSTable)i.Tag).ToList()).ShowDialog(this);
+                new DBCompareDialog(dbConn, dmsFile,
+                        tableList.SelectedItems.Cast<ListViewItem>().Select(i => (DMSTable) i.Tag).ToList())
+                    .ShowDialog(this);
                 /* save off the saved index for the table */
 
                 var savedIndexes = tableList.SelectedIndices;
@@ -310,9 +314,7 @@ namespace DMS_Viewer
                 {
                     tableList.Items[x].Selected = true;
                 }
-
             }
-
         }
 
         private void findAndReplaceToolStripMenuItem_Click(object sender, EventArgs e)
@@ -342,6 +344,7 @@ namespace DMS_Viewer
                 ConnectedDBName = dbConnForm.DBName;
                 toolStripStatusLabel2.Text = "Database: " + ConnectedDBName;
             }
+
             disconnectToolStripMenuItem.Visible = true;
             if (dmsFile != null && tableList.SelectedItems.Count > 0)
             {
@@ -352,21 +355,21 @@ namespace DMS_Viewer
 
         private void DisconnectToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
         }
 
         private void TableList_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
-
-                var selectedTables = tableList.SelectedItems.Cast<ListViewItem>().Select(i => (DMSTable)i.Tag).ToList();
+                var selectedTables =
+                    tableList.SelectedItems.Cast<ListViewItem>().Select(i => (DMSTable) i.Tag).ToList();
                 if (selectedTables.Count > 0)
                 {
                     ContextMenu m = new ContextMenu();
                     MenuItem exportToExcel = new MenuItem("Export to Excel...");
                     exportToExcel.Tag = selectedTables;
-                    exportToExcel.Click += ExportToExcel_Click; ;
+                    exportToExcel.Click += ExportToExcel_Click;
+                    ;
                     m.MenuItems.Add(exportToExcel);
                     m.Show(tableList, new Point(e.X, e.Y));
                 }
@@ -411,9 +414,9 @@ namespace DMS_Viewer
                         {
                             sheet.Cells[x + 2, y + 1].Value = table.Rows[x].GetStringValue(y);
                         }
-
                     }
                 }
+
                 package.SaveAs(new FileInfo(path));
             }
 
@@ -422,7 +425,7 @@ namespace DMS_Viewer
 
         private void CompareToDATToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DATCompareDialog datComp = new DATCompareDialog(dmsFile);
+            DATCompareDialog datComp = new DATCompareDialog(currentDmsPath);
             datComp.ShowDialog(this);
         }
     }
