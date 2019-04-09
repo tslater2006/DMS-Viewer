@@ -248,8 +248,28 @@ namespace DMS_Viewer
                     };
 
                     m.MenuItems.Add(generateSQL);
+
+                    if (leftFile.Tables.Any(t =>
+                        t.CompareResult == DMSCompareResult.NEW || t.CompareResult == DMSCompareResult.UPDATE))
+                    {
+                        MenuItem saveDiffs = new MenuItem("Save DAT diff...");
+                        saveDiffs.Tag = selectedTables;
+                        saveDiffs.Click += (o, args) => { SaveDATDiff(leftFile); };
+                        m.MenuItems.Add(saveDiffs);
+                    }
+
                     m.Show(lstLeft, new Point(e.X, e.Y));
                 }
+            }
+        }
+
+        private void SaveDATDiff(DMSFile file)
+        {
+            saveFileDialog1.Filter = @"Data Mover Data Files|*.dat;*.DAT";
+            var result = saveFileDialog1.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                DMSWriter.Write(saveFileDialog1.FileName, file, true);
             }
         }
 
@@ -269,8 +289,17 @@ namespace DMS_Viewer
                         var sqlGen = new SQLGeneratorOptions(rightFile, rightPath, selectedTables);
                         sqlGen.ShowDialog(this);
                     };
-
                     m.MenuItems.Add(generateSQL);
+
+                    if (rightFile.Tables.Any(t =>
+                        t.CompareResult == DMSCompareResult.NEW || t.CompareResult == DMSCompareResult.UPDATE))
+                    {
+                        MenuItem saveDiffs = new MenuItem("Save DAT diff...");
+                        saveDiffs.Tag = selectedTables;
+                        saveDiffs.Click += (o, args) => { SaveDATDiff(rightFile); };
+                        m.MenuItems.Add(saveDiffs);
+                    }
+
                     m.Show(lstRight, new Point(e.X, e.Y));
                 }
             }

@@ -42,6 +42,7 @@
             this.lblLeftRows = new System.Windows.Forms.Label();
             this.lblRightRows = new System.Windows.Forms.Label();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.SuspendLayout();
             // 
             // openFileDialog1
@@ -233,6 +234,7 @@
         private System.Windows.Forms.Label lblLeftRows;
         private System.Windows.Forms.Label lblRightRows;
         private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.Label lblRight;
     }
 }

@@ -322,6 +322,15 @@ namespace DMS_Viewer
             new FindAndReplace(dmsFile).ShowDialog(this);
         }
 
+        private void SaveDATDiff(DMSFile file)
+        {
+            saveFileDialog1.Filter = @"Data Mover Data Files|*.dat;*.DAT";
+            var result = saveFileDialog1.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                DMSWriter.Write(saveFileDialog1.FileName, dmsFile, true);
+            }
+        }
 
         private void hideEmptyTablesToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
         {
@@ -380,8 +389,17 @@ namespace DMS_Viewer
                     MenuItem exportToExcel = new MenuItem("Export to Excel...");
                     exportToExcel.Tag = selectedTables;
                     exportToExcel.Click += ExportToExcel_Click;
-                    ;
                     m.MenuItems.Add(exportToExcel);
+
+                    if (dmsFile.Tables.Any(t =>
+                        t.CompareResult == DMSCompareResult.NEW || t.CompareResult == DMSCompareResult.UPDATE))
+                    {
+                        MenuItem saveDiffs = new MenuItem("Save DAT diff...");
+                        saveDiffs.Tag = selectedTables;
+                        saveDiffs.Click += (o, args) => { SaveDATDiff(dmsFile); };
+                        m.MenuItems.Add(saveDiffs);
+                    }
+
                     m.Show(tableList, new Point(e.X, e.Y));
                 }
             }
