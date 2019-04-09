@@ -14,8 +14,20 @@ namespace DMS_Viewer
         {
             var tableList = tables == null ? dms.Tables : tables;
 
-            StreamWriter sw = new StreamWriter(outputFolder + Path.DirectorySeparatorChar +
-                                               dms.FileName.Replace(".dat", "").Replace(".DAT", "") + ".sql");
+            string filePath;
+            if (tables == null || tables.Count > 1)
+            {
+                filePath = outputFolder + Path.DirectorySeparatorChar +
+                           dms.FileName.Replace(".dat", "").Replace(".DAT", "") + ".sql";
+            }
+            else
+            {
+                filePath = outputFolder + Path.DirectorySeparatorChar +
+                           dms.FileName.Replace(".dat", "").Replace(".DAT", "") + "_" + tables[0].Name + ".sql";
+            }
+
+
+            StreamWriter sw = new StreamWriter(filePath);
 
             /* Write the header */
             sw.WriteLine("/* ****** DMS 2 SQL v1.0 ***********");

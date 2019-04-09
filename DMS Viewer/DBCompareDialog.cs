@@ -1,18 +1,12 @@
-﻿using DMSLib;
-using Oracle.ManagedDataAccess.Client;
-using Oracle.ManagedDataAccess.Types;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Drawing;
-using System.Globalization;
 using System.Linq;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using DMSLib;
+using Oracle.ManagedDataAccess.Client;
 
 namespace DMS_Viewer
 {
@@ -22,6 +16,7 @@ namespace DMS_Viewer
         DMSFile file;
         List<DMSTable> tables;
         BackgroundWorker worker;
+
         public DBCompareDialog(OracleConnection dbConn, DMSFile file, List<DMSTable> tables)
         {
             InitializeComponent();
@@ -33,7 +28,6 @@ namespace DMS_Viewer
             this.dbConn = dbConn;
             this.file = file;
             this.tables = tables;
-
         }
 
         private void RunCompare(object sender, DoWorkEventArgs e)
@@ -44,19 +38,21 @@ namespace DMS_Viewer
             /* check to see if the table exists ... */
             foreach (var table in tables)
             {
-                using (OracleCommand existsCheck = new OracleCommand($"SELECT 'Y' FROM {table.DBName} WHERE ROWNUM = 1", dbConn))
+                using (OracleCommand existsCheck =
+                    new OracleCommand($"SELECT 'Y' FROM {table.DBName} WHERE ROWNUM = 1", dbConn))
                 {
                     try
                     {
                         existsCheck.ExecuteReader();
-                        List<DMSRecordFieldMetadata> keyFields = table.Metadata.FieldMetadata.Where(m => (int)m.UseEditMask % 2 == 1).ToList();
+                        List<DMSRecordFieldMetadata> keyFields = table.Metadata.FieldMetadata
+                            .Where(m => (int) m.UseEditMask % 2 == 1).ToList();
                         foreach (var curRow in table.Rows)
                         {
                             /* compare this row to the DB */
                             CompareRow(table, keyFields, curRow);
                             /* count this row */
                             rowsProcessed++;
-                            worker.ReportProgress((int)((rowsProcessed / (double)totalRows) * 100));
+                            worker.ReportProgress((int) ((rowsProcessed / (double) totalRows) * 100));
                         }
 
                         if (table.Rows.Where(r => r.CompareResult == DMSCompareResult.UPDATE).Count() > 0)
@@ -81,22 +77,24 @@ namespace DMS_Viewer
                         if (ex.Number == 942)
                         {
                             /* table doesn't exist */
-                            MessageBox.Show($"The table {table.Name} doesn't exist in the target database. It will be created at import time.");
+                            MessageBox.Show(
+                                $"The table {table.Name} doesn't exist in the target database. It will be created at import time.");
                             foreach (var tbl in file.Tables.Where(t => t.Name == table.Name))
                             {
                                 foreach (var row in tbl.Rows)
                                 {
                                     row.CompareResult = DMSCompareResult.NEW;
                                 }
+
                                 tbl.CompareResult = DMSCompareResult.NEW;
                             }
+
                             rowsProcessed += table.Rows.Count;
-                            worker.ReportProgress((int)((rowsProcessed / (double)totalRows) * 100));
+                            worker.ReportProgress((int) ((rowsProcessed / (double) totalRows) * 100));
                         }
                     }
                 }
             }
-
         }
 
         private void SetOracleParamValue(OracleParameter param, FieldTypes type, DMSRow curRow, int index)
@@ -110,10 +108,11 @@ namespace DMS_Viewer
                 case FieldTypes.LONG_CHAR:
                     param.OracleDbType = OracleDbType.Clob;
                     param.Value = curRow.GetValue(index);
-                    if ((string)param.Value == "\0")
+                    if ((string) param.Value == "\0")
                     {
                         param.Value = null;
                     }
+
                     break;
                 case FieldTypes.NUMBER:
                     param.OracleDbType = OracleDbType.Int64;
@@ -177,7 +176,7 @@ namespace DMS_Viewer
                         x = HEX_CHARS.IndexOf(Char.ToUpperInvariant(c));
                         if (x == -1)
                             throw new FormatException();
-                        bytes[currentByte++] = (byte)(value + x);
+                        bytes[currentByte++] = (byte) (value + x);
                         state = 2;
                         break;
                 }
@@ -231,7 +230,6 @@ namespace DMS_Viewer
 
             using (var cmd = new OracleCommand(sqlBuilder.ToString(), dbConn))
             {
-
                 /* set bind parameters */
                 for (var x = 0; x < keys.Count; x++)
                 {
@@ -239,6 +237,7 @@ namespace DMS_Viewer
                     SetOracleParamValue(keyParam, keys[x].FieldType, curRow, keyIndexes[x]);
                     cmd.Parameters.Add(keyParam);
                 }
+
                 /* execute */
                 using (var reader = cmd.ExecuteReader())
                 {
@@ -248,22 +247,27 @@ namespace DMS_Viewer
 
                         /* we need to check if the row that exists matches on each and every column */
                         StringBuilder diffCheck = new StringBuilder($"SELECT 'Y' FROM {table.DBName} WHERE ");
-                        for (var x = 0; x < table.Metadata.FieldMetadata.Count; x++) 
+                        for (var x = 0; x < table.Metadata.FieldMetadata.Count; x++)
                         {
                             var column = table.Metadata.FieldMetadata[x];
-                            if (column.FieldType == FieldTypes.LONG_CHAR || column.FieldType == FieldTypes.IMG_OR_ATTACH)
+                            if (column.FieldType == FieldTypes.LONG_CHAR ||
+                                column.FieldType == FieldTypes.IMG_OR_ATTACH)
                             {
                                 /* dbms_lob.compare */
-                                diffCheck.Append($"dbms_lob.compare(nvl({column.FieldName},'Null'),nvl(:{x + 1},'Null')) = 0 ");
-                            } else
+                                diffCheck.Append(
+                                    $"dbms_lob.compare(nvl({column.FieldName},'Null'),nvl(:{x + 1},'Null')) = 0 ");
+                            }
+                            else
                             {
                                 diffCheck.Append($"{column.FieldName} = :{x + 1} ");
                             }
+
                             if (x + 1 < table.Metadata.FieldMetadata.Count)
                             {
                                 diffCheck.Append(" AND ");
                             }
                         }
+
                         using (var diffCheckCmd = new OracleCommand(diffCheck.ToString(), dbConn))
                         {
                             for (var x = 0; x < table.Metadata.FieldMetadata.Count; x++)
@@ -273,6 +277,7 @@ namespace DMS_Viewer
                                 SetOracleParamValue(fieldParam, column.FieldType, curRow, x);
                                 diffCheckCmd.Parameters.Add(fieldParam);
                             }
+
                             try
                             {
                                 using (var diffCheckReader = diffCheckCmd.ExecuteReader())
@@ -286,26 +291,29 @@ namespace DMS_Viewer
                                         curRow.CompareResult = DMSCompareResult.UPDATE;
                                     }
                                 }
-                            } catch (Exception ex)
+                            }
+                            catch (Exception ex)
                             {
                                 /* failed to do the diff, likely due to column changes */
                                 /* mark as an update */
                                 curRow.CompareResult = DMSCompareResult.UPDATE;
                             }
                         }
-                    } else
+                    }
+                    else
                     {
                         curRow.CompareResult = DMSCompareResult.NEW;
                     }
                 }
             }
         }
+
         private void DBCompareDialog_FormClosing(object sender, FormClosingEventArgs e)
         {
             e.Cancel = true;
         }
 
-        private async void DBCompareDialog_Load(object sender, EventArgs e)
+        private void DBCompareDialog_Load(object sender, EventArgs e)
         {
             worker = new BackgroundWorker();
             worker.WorkerReportsProgress = true;
