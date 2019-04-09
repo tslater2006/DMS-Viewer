@@ -97,6 +97,7 @@ namespace DMS_Viewer
             }
             tableList.SelectedItems.Clear();
             saveAsToolStripMenuItem.Enabled = true;
+            compareToDATToolStripMenuItem.Enabled = true;
         }
 
         private void tableList_SelectedIndexChanged(object sender, EventArgs e)
@@ -417,6 +418,12 @@ namespace DMS_Viewer
             }
 
             MessageBox.Show(this, "Table(s) exported to Excel!");
+        }
+
+        private void CompareToDATToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DATCompareDialog datComp = new DATCompareDialog(dmsFile);
+            datComp.ShowDialog(this);
         }
     }
 }
