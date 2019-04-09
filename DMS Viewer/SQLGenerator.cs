@@ -1,31 +1,34 @@
-﻿using DMSLib;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using DMSLib;
 
 namespace DMS_Viewer
 {
     public class SQLGenerator
     {
-        public static void GenerateSQLFile(DMSFile dms, string outputFolder, bool padColumns, bool extractLongs, bool ignoreEmptyTables, string customSchema)
+        public static void GenerateSQLFile(DMSFile dms, List<DMSTable> tables, string outputFolder, bool padColumns,
+            bool extractLongs, bool ignoreEmptyTables, string customSchema)
         {
-            StreamWriter sw = new StreamWriter(outputFolder + Path.DirectorySeparatorChar + dms.FileName.Replace(".dat", "").Replace(".DAT", "") + ".sql");
+            var tableList = tables == null ? dms.Tables : tables;
+
+            StreamWriter sw = new StreamWriter(outputFolder + Path.DirectorySeparatorChar +
+                                               dms.FileName.Replace(".dat", "").Replace(".DAT", "") + ".sql");
 
             /* Write the header */
             sw.WriteLine("/* ****** DMS 2 SQL v1.0 ***********");
             sw.WriteLine(String.Format(" * Database: {0}", dms.Database));
             sw.WriteLine(String.Format(" * Date: {0}", dms.Started));
-            sw.WriteLine(String.Format(" * Table Count: {0}", dms.Tables.Count));
-            sw.WriteLine(String.Format(" * Total Rows: {0}", dms.Tables.Sum(t => t.Rows.Count)));
+            sw.WriteLine(String.Format(" * Table Count: {0}", tableList.Count));
+            sw.WriteLine(String.Format(" * Total Rows: {0}", tableList.Sum(t => t.Rows.Count)));
             sw.WriteLine("*/");
 
             Console.WriteLine("  Beginning SQL generation.");
-            Console.WriteLine("  Table Count: " + dms.Tables.Count);
+            Console.WriteLine("  Table Count: " + tableList.Count);
 
-            foreach (DMSTable table in dms.Tables)
+            foreach (DMSTable table in tableList)
             {
                 Console.WriteLine("  Processing table: " + table.DBName);
 
@@ -34,16 +37,21 @@ namespace DMS_Viewer
                     Console.WriteLine("    Skipping empty table");
                     continue;
                 }
+
                 /* Write table header */
                 sw.WriteLine(String.Format("/* Begin Table: {0}({1})", table.Name, table.DBName));
-                sw.WriteLine(String.Format(" * Where Clause: {0}", table.WhereClause.Replace("\r", "").Replace("\n", "")));
+                sw.WriteLine(String.Format(" * Where Clause: {0}",
+                    table.WhereClause.Replace("\r", "").Replace("\n", "")));
                 sw.WriteLine(String.Format(" * Row Count: {0}", table.Rows.Count));
                 if (table.Columns.Where(c => c.Type.Equals("LONG")).Count() > 0)
                 {
                     /* Disclaimer about long fields */
-                    sw.WriteLine(" * LONG FIELD: Some rows may not insert properly due to having a LONG field on the table.");
-                    sw.WriteLine(" *     If one fails, please look for the exported long data file associated with the row.");
+                    sw.WriteLine(
+                        " * LONG FIELD: Some rows may not insert properly due to having a LONG field on the table.");
+                    sw.WriteLine(
+                        " *     If one fails, please look for the exported long data file associated with the row.");
                 }
+
                 sw.WriteLine("*/\r\n");
 
                 var columnText = new StringBuilder();
@@ -54,7 +62,7 @@ namespace DMS_Viewer
                 {
                     columnNames.Clear();
                     columnValues.Clear();
-                    for (var x = 0; x < row.Indexes.Length -1; x++)
+                    for (var x = 0; x < row.Indexes.Length - 1; x++)
                     {
                         var colType = table.Columns[x].Type;
                         var colName = table.Columns[x].Name;
@@ -69,26 +77,35 @@ namespace DMS_Viewer
                                 printValue = SafeString(row.GetStringValue(x));
                                 if (extractLongs)
                                 {
-                                    var longFilePath = outputFolder + Path.DirectorySeparatorChar + "Long Chars" + Path.DirectorySeparatorChar + table.DBName + Path.DirectorySeparatorChar + "row_" + (table.Rows.IndexOf(row) + 1) + ".txt";
-                                    Directory.CreateDirectory(outputFolder + Path.DirectorySeparatorChar + "Long Chars" + Path.DirectorySeparatorChar + table.DBName);
+                                    var longFilePath = outputFolder + Path.DirectorySeparatorChar + "Long Chars" +
+                                                       Path.DirectorySeparatorChar + table.DBName +
+                                                       Path.DirectorySeparatorChar + "row_" +
+                                                       (table.Rows.IndexOf(row) + 1) + ".txt";
+                                    Directory.CreateDirectory(outputFolder + Path.DirectorySeparatorChar +
+                                                              "Long Chars" + Path.DirectorySeparatorChar +
+                                                              table.DBName);
                                     File.WriteAllText(longFilePath, row.GetStringValue(x));
                                     printValue = "NULL /* See LongChar File */";
                                 }
+
                                 break;
                             case "DATE":
                                 printValue = String.Format("TO_DATE('{0}','YYYY-MM-DD')", row.GetStringValue(x));
                                 break;
                             case "DATETIME":
-                                printValue = String.Format("TO_DATE('{0}','YYYY-MM-DD-HH24:MI:SS')", row.GetStringValue(x).Replace(".000000", ""));
+                                printValue = String.Format("TO_DATE('{0}','YYYY-MM-DD-HH24:MI:SS')",
+                                    row.GetStringValue(x).Replace(".000000", ""));
                                 break;
                             default:
                                 printValue = row.GetStringValue(x) == null ? "NULL" : row.GetStringValue(x).ToString();
                                 break;
                         }
+
                         if (printValue.Equals("\0"))
                         {
                             printValue = null;
                         }
+
                         /* print them out with padding */
                         var valuePad = 0;
                         var colPad = 0;
@@ -114,25 +131,30 @@ namespace DMS_Viewer
                         columnNames.Append(colName).Append(new string(' ', colPad)).Append(", ");
                         columnValues.Append(printValue).Append(new string(' ', valuePad)).Append(", ");
                     }
+
                     columnNames.Length -= 2;
                     columnValues.Length -= 2;
                     var sqlStatement = "";
                     if (customSchema.Length > 0)
                     {
-                        sqlStatement = String.Format("INSERT INTO {0}.{1} \r\n({1}) \r\nVALUES \r\n({2});", customSchema, table.DBName, columnNames.ToString(), columnValues.ToString());
+                        sqlStatement = String.Format("INSERT INTO {0}.{1} \r\n({1}) \r\nVALUES \r\n({2});",
+                            customSchema, table.DBName, columnNames.ToString(), columnValues.ToString());
                     }
                     else
                     {
-                        sqlStatement = String.Format("INSERT INTO {0} \r\n({1}) \r\nVALUES \r\n({2});", table.DBName, columnNames.ToString(), columnValues.ToString());
+                        sqlStatement = String.Format("INSERT INTO {0} \r\n({1}) \r\nVALUES \r\n({2});", table.DBName,
+                            columnNames.ToString(), columnValues.ToString());
                     }
 
                     sw.WriteLine(sqlStatement);
                     sw.WriteLine();
                 }
+
                 Console.WriteLine("  Finished table: " + table.DBName);
                 Console.WriteLine();
                 sw.WriteLine();
             }
+
             Console.WriteLine("  Generation complete.");
 
             sw.Flush();
@@ -154,6 +176,7 @@ namespace DMS_Viewer
                         {
                             str.Append(c);
                         }
+
                         previousCharControl = false;
                     }
                     else
@@ -174,15 +197,18 @@ namespace DMS_Viewer
                         str.Append("' || ");
                         previousCharControl = true;
                     }
+
                     /* print out the "char" */
-                    str.Append("chr(" + ((int)c) + ") || ");
+                    str.Append("chr(" + ((int) c) + ") || ");
                 }
             }
+
             if (previousCharControl == false)
             {
                 /* close out string */
                 str.Append("'");
             }
+
             if (str.Length >= 3)
             {
                 if (str[str.Length - 3] == '|' && str[str.Length - 2] == '|' && str[str.Length - 1] == ' ')

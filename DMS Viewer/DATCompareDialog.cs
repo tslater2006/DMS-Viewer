@@ -11,7 +11,9 @@ namespace DMS_Viewer
     public partial class DATCompareDialog : Form
     {
         DMSFile leftFile = null;
+        private string leftPath = "";
         DMSFile rightFile = null;
+        private string rightPath = "";
 
         public DATCompareDialog(string initialPath)
         {
@@ -20,6 +22,7 @@ namespace DMS_Viewer
             {
                 leftFile = DMSReader.Read(initialPath);
                 leftFile.FileName = new FileInfo(initialPath).Name;
+                leftPath = initialPath;
             }
 
             UpdateUI(true);
@@ -106,18 +109,22 @@ namespace DMS_Viewer
                 progressBar1.Update();
             };
 
-            worker.RunWorkerCompleted += (o, args) => { UpdateUI(false); };
+            worker.RunWorkerCompleted += (o, args) =>
+            {
+                UpdateUI(false);
+                MessageBox.Show(@"Compare has completed!");
+            };
 
             worker.RunWorkerAsync();
         }
 
         private void button6_Click(object sender, EventArgs e)
         {
-            leftFile = GetDATFile();
+            GetDATFile(true);
             UpdateUI(true);
         }
 
-        private DMSFile GetDATFile()
+        private void GetDATFile(bool isLeft)
         {
             openFileDialog1.Filter = @"Data Mover Data Files|*.dat;*.DAT";
             var result = openFileDialog1.ShowDialog();
@@ -126,15 +133,23 @@ namespace DMS_Viewer
                 var dmsFile = DMSReader.Read(openFileDialog1.FileName);
                 /* Set the file name */
                 dmsFile.FileName = new FileInfo(openFileDialog1.FileName).Name;
-                return dmsFile;
-            }
 
-            return null;
+                if (isLeft)
+                {
+                    leftFile = dmsFile;
+                    leftPath = openFileDialog1.FileName;
+                }
+                else
+                {
+                    rightFile = dmsFile;
+                    rightPath = openFileDialog1.FileName;
+                }
+            }
         }
 
         private void button7_Click(object sender, EventArgs e)
         {
-            rightFile = GetDATFile();
+            GetDATFile(false);
             UpdateUI(false);
         }
 
@@ -193,9 +208,59 @@ namespace DMS_Viewer
                 progressBar1.Update();
             };
 
-            worker.RunWorkerCompleted += (o, args) => { UpdateUI(true); };
+            worker.RunWorkerCompleted += (o, args) =>
+            {
+                UpdateUI(true);
+                MessageBox.Show(@"Compare has completed!");
+            };
 
             worker.RunWorkerAsync();
+        }
+
+        private void lstLeft_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                var selectedTables =
+                    lstLeft.SelectedItems.Cast<ListViewItem>().Select(i => (DMSTable) i.Tag).ToList();
+                if (selectedTables.Count > 0)
+                {
+                    ContextMenu m = new ContextMenu();
+                    MenuItem generateSQL = new MenuItem("Generate SQL...");
+                    generateSQL.Tag = selectedTables;
+                    generateSQL.Click += (o, args) =>
+                    {
+                        var sqlGen = new SQLGeneratorOptions(leftFile, leftPath, selectedTables);
+                        sqlGen.ShowDialog(this);
+                    };
+
+                    m.MenuItems.Add(generateSQL);
+                    m.Show(lstLeft, new Point(e.X, e.Y));
+                }
+            }
+        }
+
+        private void lstRight_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                var selectedTables =
+                    lstRight.SelectedItems.Cast<ListViewItem>().Select(i => (DMSTable) i.Tag).ToList();
+                if (selectedTables.Count > 0)
+                {
+                    ContextMenu m = new ContextMenu();
+                    MenuItem generateSQL = new MenuItem("Generate SQL...");
+                    generateSQL.Tag = selectedTables;
+                    generateSQL.Click += (o, args) =>
+                    {
+                        var sqlGen = new SQLGeneratorOptions(rightFile, rightPath, selectedTables);
+                        sqlGen.ShowDialog(this);
+                    };
+
+                    m.MenuItems.Add(generateSQL);
+                    m.Show(lstRight, new Point(e.X, e.Y));
+                }
+            }
         }
     }
 
@@ -254,6 +319,8 @@ namespace DMS_Viewer
                         {
                             row.CompareResult = DMSCompareResult.NEW;
                         }
+
+                        ReportProgress(1);
                     }
 
                     if (table.Rows.Any(r => r.CompareResult == DMSCompareResult.UPDATE))

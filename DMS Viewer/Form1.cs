@@ -366,6 +366,17 @@ namespace DMS_Viewer
                 if (selectedTables.Count > 0)
                 {
                     ContextMenu m = new ContextMenu();
+
+                    MenuItem generateSQL = new MenuItem("Generate SQL...");
+                    generateSQL.Tag = selectedTables;
+                    generateSQL.Click += (o, args) =>
+                    {
+                        var sqlGen = new SQLGeneratorOptions(dmsFile, currentDmsPath, selectedTables);
+                        sqlGen.ShowDialog(this);
+                    };
+
+                    m.MenuItems.Add(generateSQL);
+
                     MenuItem exportToExcel = new MenuItem("Export to Excel...");
                     exportToExcel.Tag = selectedTables;
                     exportToExcel.Click += ExportToExcel_Click;
