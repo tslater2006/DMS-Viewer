@@ -15,6 +15,9 @@ namespace DMS_Viewer
 {
     public partial class DataViewer : Form
     {
+        int sortColumn = -1;
+        bool sortAscending = true;
+
         private bool IsRunningMono = false;
         private DMSTable viewerTable;
         public DataViewer(DMSTable table, string ConnectedDBName)
@@ -53,7 +56,7 @@ namespace DMS_Viewer
                 dataGridView1.Columns.Add(col.Name, col.Name);
             }
 
-            
+            dataGridView1.RowCount = viewerTable.Rows.Count;
         }
 
 
@@ -216,13 +219,40 @@ namespace DMS_Viewer
 
         private void DataGridView1_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
         {
-            e.Value = viewerTable.Rows[e.RowIndex].GetStringValue(e.ColumnIndex);
+            try
+            {
+                e.Value = viewerTable.Rows[e.RowIndex].GetStringValue(e.ColumnIndex);
+            }
+            catch (Exception ex) { }
             //Debugger.Break();
         }
 
         private void DataGridView1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             Debugger.Break();
+        }
+
+        private void DataGridView1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.ColumnIndex == sortColumn)
+            {
+                sortAscending = !sortAscending;
+            } else
+            {
+                sortColumn = e.ColumnIndex;
+                sortAscending = true;
+            }
+
+            /* sort the rows of the viewer table by the selected colum index */
+            if (sortAscending) {
+                viewerTable.Rows = viewerTable.Rows.OrderBy(r => r.GetStringValue(sortColumn)).ToList();
+            } else
+            {
+                viewerTable.Rows = viewerTable.Rows.OrderByDescending(r => r.GetStringValue(sortColumn)).ToList();
+            }
+
+            RedrawTable();
+
         }
     }
 }

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\tslat\.Rider2019.1\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\tslat\.Rider2019.1\system\resharper-host\local\Transient\ReSharperHost\v191\SolutionCaches\_DMS Viewer.-548145373.00" t="ExcludeRecursive" />
+    <e p="C:\Users\tslat\Documents\GitHub\DMS-Viewer" t="IncludeFlat">
+      <e p="DMS Viewer" t="IncludeRecursive">
+        <e p="AddColumnOptions.cs" t="Include" />
+        <e p="AddColumnOptions.Designer.cs" t="Include" />
+        <e p="AddColumnOptions.resx" t="Include" />
+        <e p="App.config" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="DataViewer.cs" t="Include" />
+        <e p="DataViewer.Designer.cs" t="Include" />
+        <e p="DataViewer.resx" t="Include" />
+        <e p="DATCompareDialog.cs" t="Include" />
+        <e p="DATCompareDialog.Designer.cs" t="Include" />
+        <e p="DATCompareDialog.resx" t="Include" />
+        <e p="DBCompareDialog.cs" t="Include" />
+        <e p="DBCompareDialog.Designer.cs" t="Include" />
+        <e p="DBCompareDialog.resx" t="Include" />
+        <e p="DBLogin.cs" t="Include" />
+        <e p="DBLogin.Designer.cs" t="Include" />
+        <e p="DBLogin.resx" t="Include" />
+        <e p="DMS Viewer.csproj" t="IncludeRecursive" />
+        <e p="DMSRebuilder.cs" t="Include" />
+        <e p="FieldMetadataViewer.cs" t="Include" />
+        <e p="FieldMetadataViewer.Designer.cs" t="Include" />
+        <e p="FieldMetadataViewer.resx" t="Include" />
+        <e p="FindAndReplace.cs" t="Include" />
+        <e p="FindAndReplace.Designer.cs" t="Include" />
+        <e p="FindAndReplace.resx" t="Include" />
+        <e p="Form1.cs" t="Include" />
+        <e p="Form1.Designer.cs" t="Include" />
+        <e p="Form1.resx" t="Include" />
+        <e p="LongDataViewer.cs" t="Include" />
+        <e p="LongDataViewer.Designer.cs" t="Include" />
+        <e p="LongDataViewer.resx" t="Include" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="OSXClipboard.cs" t="Include" />
+        <e p="packages.config" t="Include" />
+        <e p="Program.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+          <e p="Resources.Designer.cs" t="Include" />
+          <e p="Resources.resx" t="Include" />
+          <e p="Settings.Designer.cs" t="Include" />
+          <e p="Settings.settings" t="Include" />
+        </e>
+        <e p="RecordMetadataViewer.cs" t="Include" />
+        <e p="RecordMetadataViewer.Designer.cs" t="Include" />
+        <e p="RecordMetadataViewer.resx" t="Include" />
+        <e p="ScriptRebuildOptions.cs" t="Include" />
+        <e p="ScriptRebuildOptions.Designer.cs" t="Include" />
+        <e p="ScriptRebuildOptions.resx" t="Include" />
+        <e p="SQLGenerator.cs" t="Include" />
+        <e p="SQLGeneratorOptions.cs" t="Include" />
+        <e p="SQLGeneratorOptions.Designer.cs" t="Include" />
+        <e p="SQLGeneratorOptions.resx" t="Include" />
+      </e>
+      <e p="DMS Viewer.sln" t="IncludeFlat" />
+      <e p="DMSLib\DMSLib" t="IncludeRecursive">
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="DMSColumn.cs" t="Include" />
+        <e p="DMSCompareResult.cs" t="Include" />
+        <e p="DMSDecoder.cs" t="Include" />
+        <e p="DMSEncoder.cs" t="Include" />
+        <e p="DMSFile.cs" t="Include" />
+        <e p="DMSLib.csproj" t="IncludeRecursive" />
+        <e p="DMSReader.cs" t="Include" />
+        <e p="DMSRecordMetadata.cs" t="Include" />
+        <e p="DMSRow.cs" t="Include" />
+        <e p="DMSRowDecoder.cs" t="Include" />
+        <e p="DMSTable.cs" t="Include" />
+        <e p="DMSWriter.cs" t="Include" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+      </e>
+      <e p="packages" t="ExcludeRecursive" />
+    </e>
+  </component>
+</project>
