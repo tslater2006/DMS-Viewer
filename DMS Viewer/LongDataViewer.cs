@@ -54,7 +54,7 @@ namespace DMS_Viewer
             {
                 //TODO: Test this
                 tableRow.ChangeValue(colIndex,textBox1.Text.Replace("\r\n","\n"));
-                viewerForm.DrawDataTable();
+                viewerForm.RedrawTable();
                 this.Close();
             }
             if (IsRunningOSX)

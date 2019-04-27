@@ -3,8 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -18,46 +20,42 @@ namespace DMS_Viewer
         public DataViewer(DMSTable table, string ConnectedDBName)
         {
             InitializeComponent();
+
+            typeof(DataGridView).InvokeMember("DoubleBuffered", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.SetProperty, null, this.dataGridView1, new object[] { true });
+
             viewerTable = table;
             this.Text = "Data Viewer: " + table.DBName;
             if (table.CompareResult!= DMSCompareResult.SAME && ConnectedDBName.Length > 0)
             {
                 this.Text += " - " + ConnectedDBName;
             }
-            DrawDataTable();
+            InitDataTable();
+            //FillDataTable();
+            dataGridView1.RowCount = viewerTable.Rows.Count;
 
             IsRunningMono = Type.GetType("Mono.Runtime") != null;
         }
 
-        public void DrawDataTable()
+        public void RedrawTable()
+        {
+            InitDataTable();
+            //FillDataTable();
+        }
+
+        public void InitDataTable()
         {
             dataGridView1.DataSource = null;
             dataGridView1.Rows.Clear();
             dataGridView1.Columns.Clear();
-            foreach(var col in viewerTable.Columns)
+
+            foreach (var col in viewerTable.Columns)
             {
                 dataGridView1.Columns.Add(col.Name, col.Name);
             }
+
             
-            foreach(var row in viewerTable.Rows)
-            {
-                dataGridView1.Rows.Add(row.GetValuesAsString());
-                dataGridView1.Rows[dataGridView1.Rows.Count - 1].Tag = row;
-            }
-            
-            int colIndex = 0;
-            for (colIndex = 0; colIndex < viewerTable.Columns.Count; colIndex++)
-            {
-                if (viewerTable.Columns[colIndex].Type.Equals("LONG"))
-                {
-                    dataGridView1.Columns[colIndex].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-                }
-                else
-                {
-                    dataGridView1.Columns[colIndex].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-                }
-            }
         }
+
 
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -127,7 +125,7 @@ namespace DMS_Viewer
             var hitTest = (DataGridView.HitTestInfo)menuItem.Tag;
             var selectedColumn = viewerTable.Columns[hitTest.ColumnIndex];
             viewerTable.DropColumn(selectedColumn);
-            DrawDataTable();
+            RedrawTable();
         }
 
         private void AddColMenu_Click(object sender, EventArgs e)
@@ -144,7 +142,7 @@ namespace DMS_Viewer
                 var defVal = opts.defaultValue;
 
                 viewerTable.AddColumn(newCol, viewerTable.Columns[hitTest.ColumnIndex], defVal);
-                DrawDataTable();
+                RedrawTable();
             }
 
         }
@@ -159,7 +157,7 @@ namespace DMS_Viewer
             {
                 DMSRow curRow = viewerTable.Rows[hitTest.RowIndex];
                 viewerTable.Rows.Remove(curRow);
-                DrawDataTable();
+                RedrawTable();
             } 
         }
 
@@ -194,9 +192,37 @@ namespace DMS_Viewer
             dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = backColor;
         }
 
+        private void dgGrid_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
+        {
+            /*var grid = sender as DataGridView;
+            var rowIdx = (e.RowIndex + 1).ToString();
+
+            var centerFormat = new StringFormat()
+            {
+                // right alignment might actually make more sense for numbers
+                Alignment = StringAlignment.Center,
+                LineAlignment = StringAlignment.Center
+            };
+
+            var headerBounds = new Rectangle(e.RowBounds.Left, e.RowBounds.Top, grid.RowHeadersWidth, e.RowBounds.Height);
+            e.Graphics.DrawString(rowIdx, this.Font, SystemBrushes.ControlText, headerBounds, centerFormat);*/
+
+        }
+
         private void dataGridView1_Sorted(object sender, EventArgs e)
         {
 
+        }
+
+        private void DataGridView1_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
+        {
+            e.Value = viewerTable.Rows[e.RowIndex].GetStringValue(e.ColumnIndex);
+            //Debugger.Break();
+        }
+
+        private void DataGridView1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            Debugger.Break();
         }
     }
 }
