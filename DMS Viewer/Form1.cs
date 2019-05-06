@@ -37,6 +37,12 @@ namespace DMS_Viewer
                     IsRunningOSX = true;
                 }
             }
+
+            /* set the checked states for our settings */
+            ignoreVersionToolStripMenuItem.Checked = Properties.Settings.Default.IgnoreVersion;
+            ignoreDatesTimesToolStripMenuItem.Checked = Properties.Settings.Default.IgnoreDates;
+            hideEmptyTablesToolStripMenuItem.Checked = Properties.Settings.Default.HideEmptyTables;
+
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -78,8 +84,8 @@ namespace DMS_Viewer
             btnCompareToDB.Enabled = true;
             foreach (var table in dmsFile.Tables)
             {
-                if (hideEmptyTablesToolStripMenuItem.Checked == false ||
-                    (hideEmptyTablesToolStripMenuItem.Checked == true && table.Rows.Count > 0))
+                if (Properties.Settings.Default.HideEmptyTables == false ||
+                    (Properties.Settings.Default.HideEmptyTables == true && table.Rows.Count > 0))
                 {
                     var backgroundColor = Color.White;
                     switch (table.CompareResult)
@@ -456,6 +462,24 @@ namespace DMS_Viewer
         {
             DATCompareDialog datComp = new DATCompareDialog(currentDmsPath);
             datComp.ShowDialog(this);
+        }
+
+        private void HideEmptyTablesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.HideEmptyTables = hideEmptyTablesToolStripMenuItem.Checked;
+            Properties.Settings.Default.Save();
+        }
+
+        private void IgnoreVersionToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.IgnoreVersion = ignoreVersionToolStripMenuItem.Checked;
+            Properties.Settings.Default.Save();
+        }
+
+        private void IgnoreDatesTimesToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.IgnoreDates = ignoreDatesTimesToolStripMenuItem.Checked;
+            Properties.Settings.Default.Save();
         }
     }
 }

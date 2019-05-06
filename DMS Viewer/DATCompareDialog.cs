@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
@@ -311,6 +312,9 @@ namespace DMS_Viewer
         private DMSFile file;
         private DMSTable[] tables;
 
+        bool ignoreVersion = Properties.Settings.Default.IgnoreVersion;
+        bool ignoreDates = Properties.Settings.Default.IgnoreDates;
+
         public CompareWorker(DMSTable[] selected, DMSFile target)
         {
             tables = selected;
@@ -381,6 +385,9 @@ namespace DMS_Viewer
 
         void CompareRows(DMSRow left, DMSRow right, int[] keyFields)
         {
+            /* get list of values */
+
+
             /* check for "same" first */
             if (left.Values.SequenceEqual(right.Values))
             {

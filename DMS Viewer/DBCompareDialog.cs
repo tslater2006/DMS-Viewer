@@ -16,6 +16,8 @@ namespace DMS_Viewer
         DMSFile file;
         List<DMSTable> tables;
         BackgroundWorker worker;
+        bool ignoreVersion = Properties.Settings.Default.IgnoreVersion;
+        bool ignoreDates = Properties.Settings.Default.IgnoreDates;
 
         public DBCompareDialog(OracleConnection dbConn, DMSFile file, List<DMSTable> tables)
         {
@@ -259,6 +261,17 @@ namespace DMS_Viewer
                             }
                             else
                             {
+                                if ((column.FieldType == FieldTypes.DATE || column.FieldType == FieldTypes.DATETIME || column.FieldType == FieldTypes.TIME) && ignoreDates)
+                                {
+                                    /* skip this one... */
+                                    continue;
+                                }
+
+                                if (column.FieldType == FieldTypes.NUMBER && column.FieldName.Equals("VERSION") && ignoreVersion)
+                                {
+                                    continue;
+                                }
+
                                 diffCheck.Append($"{column.FieldName} = :{x + 1} ");
                             }
 
