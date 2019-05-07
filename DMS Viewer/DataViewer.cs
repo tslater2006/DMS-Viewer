@@ -180,9 +180,7 @@ namespace DMS_Viewer
         private void dataGridView1_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
         {
             Color backColor = Color.White;
-            //switch (viewerTable.Rows[e.RowIndex].CompareResult)
-            if (dataGridView1.Rows[e.RowIndex].Tag == null) { return; }
-            switch (((DMSRow)(dataGridView1.Rows[e.RowIndex].Tag)).CompareResult)
+            switch (viewerTable.Rows[e.RowIndex].CompareResult)
             {
                 case DMSCompareResult.NEW:
                     backColor = Color.LawnGreen;
