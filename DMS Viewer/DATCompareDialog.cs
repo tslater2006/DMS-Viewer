@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using DMSLib;
 
@@ -327,122 +328,93 @@ namespace DMS_Viewer
 
         private void OnDoWork(object sender, DoWorkEventArgs e)
         {
-            foreach (var table in tables)
-            {
-                /* determine if this table exists in target file */
-                var targetTables = file.Tables.Where(t => t.Name == table.Name).ToList();
-                if (targetTables.Count == 0)
+            Parallel.ForEach(tables, table =>
                 {
-                    foreach (var row in table.Rows)
+                    /* determine if this table exists in target file */
+                    var targetTables = file.Tables.Where(t => t.Name == table.Name).ToList();
+                    if (targetTables.Count == 0)
                     {
-                        row.CompareResult = DMSCompareResult.NEW;
-                    }
-
-                    ReportProgress(table.Rows.Count);
-                }
-                else
-                {
-                    var keyFieldIndexes = table.Metadata.FieldMetadata
-                        .Where(m => m.UseEditMask.HasFlag(UseEditFlags.KEY))
-                        .Select(t => table.Columns.IndexOf(table.Columns
-                            .First(c => c.Name == t.FieldName))).ToArray();
-
-                    /* for each row in source table, compare against target tables */
-                    foreach (var row in table.Rows)
-                    {
-                        row.CompareResult = DMSCompareResult.NONE;
-
-                        foreach (var targetRow in targetTables.SelectMany(t => t.Rows))
-                        {
-                            CompareRows(row, targetRow, keyFieldIndexes);
-                            if (row.CompareResult != DMSCompareResult.NONE)
-                            {
-                                break;
-                            }
-                        }
-
-                        if (row.CompareResult == DMSCompareResult.NONE)
+                        foreach (var row in table.Rows)
                         {
                             row.CompareResult = DMSCompareResult.NEW;
                         }
 
-                        ReportProgress(1);
-                    }
-
-                    if (table.Rows.Any(r => r.CompareResult == DMSCompareResult.UPDATE))
-                    {
-                        table.CompareResult = DMSCompareResult.UPDATE;
+                        ReportProgress(table.Rows.Count);
                     }
                     else
                     {
-                        table.CompareResult = table.Rows.Any(r => r.CompareResult == DMSCompareResult.NEW)
-                            ? DMSCompareResult.NEW
-                            : DMSCompareResult.SAME;
+                        var keyFieldIndexes = table.Metadata.FieldMetadata
+                            .Where(m => m.UseEditMask.HasFlag(UseEditFlags.KEY))
+                            .Select(t => table.Columns.IndexOf(table.Columns
+                                .First(c => c.Name == t.FieldName))).ToArray();
+
+                        /* for each row in source table, compare against target tables */
+                        Parallel.ForEach(table.Rows, row =>
+                            {
+                                row.CompareResult = DMSCompareResult.NONE;
+
+                                foreach (var targetRow in targetTables.SelectMany(t => t.Rows))
+                                {
+                                    CompareRows(row, targetRow, keyFieldIndexes);
+                                    if (row.CompareResult != DMSCompareResult.NONE)
+                                    {
+                                        break;
+                                    }
+                                }
+
+                                if (row.CompareResult == DMSCompareResult.NONE)
+                                {
+                                    row.CompareResult = DMSCompareResult.NEW;
+                                }
+
+                                ReportProgress(1);
+                            }
+                        );
+
+                        if (table.Rows.Any(r => r.CompareResult == DMSCompareResult.UPDATE))
+                        {
+                            table.CompareResult = DMSCompareResult.UPDATE;
+                        }
+                        else
+                        {
+                            table.CompareResult = table.Rows.Any(r => r.CompareResult == DMSCompareResult.NEW)
+                                ? DMSCompareResult.NEW
+                                : DMSCompareResult.SAME;
+                        }
                     }
                 }
-            }
+            );
         }
 
         void CompareRows(DMSRow left, DMSRow right, int[] keyFields)
         {
-            /* get list of values */
-            List<string> leftValues = new List<string>();
-            List<string> rightValues = new List<string>();
-
-            for(var x =0; x < left.Indexes.Length - 1; x++)
+            bool isSame = false;
+            if (left.ValueHash == right.ValueHash)
             {
-                var colType = left.GetFieldType(x);
-                var isDate = (colType == FieldTypes.DATE || colType == FieldTypes.DATETIME || colType == FieldTypes.TIME);
-                var isVersion = left.GetColumnName(x).Equals("VERSION");
+                isSame = true;
+                if (!ignoreDates)
+                {
+                    isSame = left.DateHash == right.DateHash;
+                }
 
-                if (ignoreDates && isDate)
+                if (!ignoreVersion && isSame)
                 {
-                    continue;
-                } else if (ignoreVersion && isVersion)
+                    isSame = left.VersionHash == right.VersionHash;
+                }
+            }
+
+            if (isSame)
+            {
+                left.CompareResult = DMSCompareResult.SAME;
+            } else
+            {
+                if (left.KeyHash == right.KeyHash)
                 {
-                    continue;
+                    left.CompareResult = DMSCompareResult.UPDATE;
                 } else
                 {
-                    leftValues.Add(left.GetStringValue(x));
+                    left.CompareResult = DMSCompareResult.NEW;
                 }
-            }
-
-            for (var x = 0; x < right.Indexes.Length - 1; x++)
-            {
-                var colType = right.GetFieldType(x);
-                var isDate = (colType == FieldTypes.DATE || colType == FieldTypes.DATETIME || colType == FieldTypes.TIME);
-                var isVersion = right.GetColumnName(x).Equals("VERSION");
-
-                if (ignoreDates && isDate)
-                {
-                    continue;
-                }
-                else if (ignoreVersion && isVersion)
-                {
-                    continue;
-                }
-                else
-                {
-                    rightValues.Add(right.GetStringValue(x));
-                }
-            }
-
-            /* check for "same" first */
-            if (leftValues.SequenceEqual(rightValues))
-            {
-                /* rows are identical */
-                left.CompareResult = DMSCompareResult.SAME;
-                return;
-            }
-
-            /* do the rows have the same keys? if so its changed */
-            if (keyFields.Select(left.GetStringValue).SequenceEqual(keyFields.Select(right.GetStringValue)))
-            {
-                left.CompareResult = DMSCompareResult.UPDATE;
-            }
-            else
-            {
-                left.CompareResult = DMSCompareResult.NONE;
             }
         }
     }
