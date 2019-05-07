@@ -386,10 +386,49 @@ namespace DMS_Viewer
         void CompareRows(DMSRow left, DMSRow right, int[] keyFields)
         {
             /* get list of values */
+            List<string> leftValues = new List<string>();
+            List<string> rightValues = new List<string>();
 
+            for(var x =0; x < left.Indexes.Length - 1; x++)
+            {
+                var colType = left.GetFieldType(x);
+                var isDate = (colType == FieldTypes.DATE || colType == FieldTypes.DATETIME || colType == FieldTypes.TIME);
+                var isVersion = left.GetColumnName(x).Equals("VERSION");
+
+                if (ignoreDates && isDate)
+                {
+                    continue;
+                } else if (ignoreVersion && isVersion)
+                {
+                    continue;
+                } else
+                {
+                    leftValues.Add(left.GetStringValue(x));
+                }
+            }
+
+            for (var x = 0; x < right.Indexes.Length - 1; x++)
+            {
+                var colType = right.GetFieldType(x);
+                var isDate = (colType == FieldTypes.DATE || colType == FieldTypes.DATETIME || colType == FieldTypes.TIME);
+                var isVersion = right.GetColumnName(x).Equals("VERSION");
+
+                if (ignoreDates && isDate)
+                {
+                    continue;
+                }
+                else if (ignoreVersion && isVersion)
+                {
+                    continue;
+                }
+                else
+                {
+                    rightValues.Add(right.GetStringValue(x));
+                }
+            }
 
             /* check for "same" first */
-            if (left.Values.SequenceEqual(right.Values))
+            if (leftValues.SequenceEqual(rightValues))
             {
                 /* rows are identical */
                 left.CompareResult = DMSCompareResult.SAME;
