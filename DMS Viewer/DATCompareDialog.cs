@@ -22,7 +22,14 @@ namespace DMS_Viewer
             InitializeComponent();
             if (initialPath?.Length > 0)
             {
-                leftFile = DMSReader.Read(initialPath);
+                try
+                {
+                    leftFile = DMSReader.Read(initialPath);
+                }catch (FormatException fe)
+                {
+                    MessageBox.Show(this, fe.Message, "File Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
                 leftFile.FileName = new FileInfo(initialPath).Name;
                 leftPath = initialPath;
             }
@@ -32,6 +39,17 @@ namespace DMS_Viewer
 
         void UpdateUI(bool leftSide)
         {
+
+            if (leftSide && leftFile == null)
+            {
+                return;
+            }
+
+            if (!leftSide && rightFile == null)
+            {
+                return;
+            }
+
             ListView list = null;
             DMSFile file = null;
             Button btn = null;
@@ -145,7 +163,16 @@ namespace DMS_Viewer
             var result = openFileDialog1.ShowDialog();
             if (result == DialogResult.OK)
             {
-                var dmsFile = DMSReader.Read(openFileDialog1.FileName);
+                DMSFile dmsFile = null;
+
+                try
+                {
+                    dmsFile = DMSReader.Read(openFileDialog1.FileName);
+                }catch(FormatException fe)
+                {
+                    MessageBox.Show(this, fe.Message, "File Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
                 /* Set the file name */
                 dmsFile.FileName = new FileInfo(openFileDialog1.FileName).Name;
 

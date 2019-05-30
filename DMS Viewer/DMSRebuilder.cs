@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace DMS_Viewer
 {
@@ -32,8 +33,15 @@ namespace DMS_Viewer
             StreamWriter sw = new StreamWriter(fs);
             foreach (var file in files)
             {
-
-                var dmsFile = DMSReader.Read(file);
+                DMSFile dmsFile = null;
+                try
+                {
+                    dmsFile = DMSReader.Read(file);
+                }catch(FormatException fe)
+                {
+                    /* invalid DAT file found... skip */
+                    continue;
+                }
                 Console.WriteLine("  Processing file: " + dmsFile.FileName);
                 Console.WriteLine("    Table count: " + dmsFile.Tables.Count);
                 Console.WriteLine("    Total rows: " + dmsFile.Tables.Sum(t => t.Rows.Count));

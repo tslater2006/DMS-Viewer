@@ -55,7 +55,14 @@ namespace DMS_Viewer
 
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
-                dmsFile = DMSReader.Read(currentDmsPath);
+                try
+                {
+                    dmsFile = DMSReader.Read(currentDmsPath);
+                }catch(FormatException fe)
+                {
+                    MessageBox.Show(this, fe.Message, "File Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
                 toolStripStatusLabel1.Text = "File: " + currentDmsPath;
                 /* Set the file name */
                 dmsFile.FileName = new FileInfo(currentDmsPath).Name;
