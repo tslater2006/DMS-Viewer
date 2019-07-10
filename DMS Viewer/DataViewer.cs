@@ -158,8 +158,12 @@ namespace DMS_Viewer
             var result = MessageBox.Show(this, "Are you sure you want to remove this row?", "Confirm Row Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
             {
-                DMSRow curRow = viewerTable.Rows[hitTest.RowIndex];
-                viewerTable.Rows.Remove(curRow);
+
+                foreach (DataGridViewRow row in dataGridView1.SelectedRows)
+                {
+                    DMSRow curRow = viewerTable.Rows[row.Index];
+                    viewerTable.Rows.Remove(curRow);
+                }
                 RedrawTable();
             } 
         }
