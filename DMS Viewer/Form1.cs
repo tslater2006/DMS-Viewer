@@ -58,7 +58,8 @@ namespace DMS_Viewer
                 try
                 {
                     dmsFile = DMSReader.Read(currentDmsPath);
-                }catch(FormatException fe)
+                }
+                catch(FormatException fe)
                 {
                     MessageBox.Show(this, fe.Message, "File Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
@@ -487,6 +488,15 @@ namespace DMS_Viewer
         {
             Properties.Settings.Default.IgnoreDates = ignoreDatesTimesToolStripMenuItem.Checked;
             Properties.Settings.Default.Save();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            ColumnHeader header = new ColumnHeader();
+            header.Text = "";
+            header.Name = "col1";
+            header.Width = tableList.Width - 25;
+            tableList.Columns.Add(header);
         }
     }
 }

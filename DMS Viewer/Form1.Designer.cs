@@ -206,7 +206,7 @@
             this.ignoreVersionToolStripMenuItem,
             this.ignoreDatesTimesToolStripMenuItem});
             this.compareToolStripMenuItem.Name = "compareToolStripMenuItem";
-            this.compareToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.compareToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.compareToolStripMenuItem.Text = "Compares";
             // 
             // ignoreVersionToolStripMenuItem
@@ -215,7 +215,7 @@
             this.ignoreVersionToolStripMenuItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.ignoreVersionToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.ignoreVersionToolStripMenuItem.Name = "ignoreVersionToolStripMenuItem";
-            this.ignoreVersionToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.ignoreVersionToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
             this.ignoreVersionToolStripMenuItem.Text = "Ignore Version";
             this.ignoreVersionToolStripMenuItem.CheckedChanged += new System.EventHandler(this.IgnoreVersionToolStripMenuItem_CheckedChanged);
             // 
@@ -225,7 +225,7 @@
             this.ignoreDatesTimesToolStripMenuItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.ignoreDatesTimesToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.ignoreDatesTimesToolStripMenuItem.Name = "ignoreDatesTimesToolStripMenuItem";
-            this.ignoreDatesTimesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.ignoreDatesTimesToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
             this.ignoreDatesTimesToolStripMenuItem.Text = "Ignore Dates/Times";
             this.ignoreDatesTimesToolStripMenuItem.CheckedChanged += new System.EventHandler(this.IgnoreDatesTimesToolStripMenuItem_CheckedChanged);
             // 
@@ -235,7 +235,7 @@
             this.hideEmptyTablesToolStripMenuItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.hideEmptyTablesToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.hideEmptyTablesToolStripMenuItem.Name = "hideEmptyTablesToolStripMenuItem";
-            this.hideEmptyTablesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.hideEmptyTablesToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.hideEmptyTablesToolStripMenuItem.Text = "Hide Empty Tables";
             this.hideEmptyTablesToolStripMenuItem.TextImageRelation = System.Windows.Forms.TextImageRelation.Overlay;
             this.hideEmptyTablesToolStripMenuItem.CheckedChanged += new System.EventHandler(this.hideEmptyTablesToolStripMenuItem_CheckedChanged);
@@ -458,7 +458,7 @@
             this.tableList.Size = new System.Drawing.Size(156, 346);
             this.tableList.TabIndex = 25;
             this.tableList.UseCompatibleStateImageBehavior = false;
-            this.tableList.View = System.Windows.Forms.View.List;
+            this.tableList.View = System.Windows.Forms.View.Details;
             this.tableList.SelectedIndexChanged += new System.EventHandler(this.tableList_SelectedIndexChanged);
             this.tableList.MouseClick += new System.Windows.Forms.MouseEventHandler(this.TableList_MouseClick);
             // 
