@@ -47,7 +47,6 @@
             this.ignoreDatesTimesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hideEmptyTablesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.txtVersion = new System.Windows.Forms.TextBox();
             this.txtDatabase = new System.Windows.Forms.TextBox();
@@ -74,6 +73,7 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -244,16 +244,6 @@
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(8, 67);
-            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(47, 13);
-            this.label1.TabIndex = 7;
-            this.label1.Text = "Records";
             // 
             // label2
             // 
@@ -451,11 +441,13 @@
             // 
             // tableList
             // 
+            this.tableList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1});
             this.tableList.HideSelection = false;
-            this.tableList.Location = new System.Drawing.Point(8, 82);
+            this.tableList.Location = new System.Drawing.Point(8, 77);
             this.tableList.Margin = new System.Windows.Forms.Padding(2);
             this.tableList.Name = "tableList";
-            this.tableList.Size = new System.Drawing.Size(156, 346);
+            this.tableList.Size = new System.Drawing.Size(156, 351);
             this.tableList.TabIndex = 25;
             this.tableList.UseCompatibleStateImageBehavior = false;
             this.tableList.View = System.Windows.Forms.View.Details;
@@ -486,6 +478,11 @@
             this.toolStripStatusLabel2.Size = new System.Drawing.Size(0, 17);
             this.toolStripStatusLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Record List";
+            this.columnHeader1.Width = 143;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -510,7 +507,6 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.txtVersion);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;
@@ -532,7 +528,6 @@
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtVersion;
         private System.Windows.Forms.TextBox txtDatabase;
@@ -574,6 +569,7 @@
         private System.Windows.Forms.ToolStripMenuItem ignoreVersionToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ignoreDatesTimesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem hideEmptyTablesToolStripMenuItem;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
     }
 }
 

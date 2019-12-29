@@ -490,13 +490,5 @@ namespace DMS_Viewer
             Properties.Settings.Default.Save();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            ColumnHeader header = new ColumnHeader();
-            header.Text = "";
-            header.Name = "col1";
-            header.Width = tableList.Width - 25;
-            tableList.Columns.Add(header);
-        }
     }
 }
