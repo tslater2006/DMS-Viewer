@@ -114,6 +114,7 @@ namespace DMS_Viewer
             tableList.SelectedItems.Clear();
             saveAsToolStripMenuItem.Enabled = true;
             compareToDATToolStripMenuItem.Enabled = true;
+            tableList.Invalidate();
         }
 
         private void tableList_SelectedIndexChanged(object sender, EventArgs e)
