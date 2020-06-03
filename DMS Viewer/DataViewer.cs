@@ -85,6 +85,7 @@ namespace DMS_Viewer
                     editValue.Tag = hitTest;
                     editValue.Click += EditValue_Click;
                     m.MenuItems.Add(editValue);
+
                     m.Show(dataGridView1, new Point(e.X, e.Y));
 
                 }
@@ -94,6 +95,12 @@ namespace DMS_Viewer
                     /* Right clicked on row header */
                     dataGridView1.Rows[currentRow].Selected = true;
                     ContextMenu m = new ContextMenu();
+
+                    MenuItem copyAsInsert = new MenuItem("Copy as Insert");
+                    copyAsInsert.Tag = hitTest;
+                    copyAsInsert.Click += CopyAsInsert_Click;
+                    m.MenuItems.Add(copyAsInsert);
+
                     MenuItem deleteRow = new MenuItem("Delete Row");
                     deleteRow.Tag = hitTest;
                     deleteRow.Click += DeleteRow_Click;
@@ -120,6 +127,28 @@ namespace DMS_Viewer
                 }
 
             }
+        }
+
+        private void CopyAsInsert_Click(object sender, EventArgs e)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (DataGridViewRow row in dataGridView1.SelectedRows)
+            {
+                DMSRow curRow = viewerTable.Rows[row.Index];
+                sb.Append("-- INSERT INTO ").Append(curRow.OwningTable.DBName).Append(" (");
+                foreach(var c in curRow.OwningTable.Columns)
+                {
+                    sb.Append(c.Name);
+                    if (c.Equals(curRow.OwningTable.Columns.Last()) == false)
+                    {
+                        sb.Append(", ");
+                    }
+                }
+                sb.Append(") VALUES (");
+
+                sb.AppendLine("");
+            }
+            Clipboard.SetText(sb.ToString());
         }
 
         private void DeleteColumn_Click(object sender, EventArgs e)
