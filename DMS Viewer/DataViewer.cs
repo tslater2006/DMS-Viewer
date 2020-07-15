@@ -265,25 +265,30 @@ namespace DMS_Viewer
 
         private void DataGridView1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            if (e.ColumnIndex == sortColumn)
+            if (e.Button == MouseButtons.Left)
             {
-                sortAscending = !sortAscending;
-            } else
-            {
-                sortColumn = e.ColumnIndex;
-                sortAscending = true;
+                if (e.ColumnIndex == sortColumn)
+                {
+                    sortAscending = !sortAscending;
+                }
+                else
+                {
+                    sortColumn = e.ColumnIndex;
+                    sortAscending = true;
+                }
+
+                /* sort the rows of the viewer table by the selected colum index */
+                if (sortAscending)
+                {
+                    viewerTable.Rows = viewerTable.Rows.OrderBy(r => r.GetStringValue(sortColumn)).ToList();
+                }
+                else
+                {
+                    viewerTable.Rows = viewerTable.Rows.OrderByDescending(r => r.GetStringValue(sortColumn)).ToList();
+                }
+
+                RedrawTable();
             }
-
-            /* sort the rows of the viewer table by the selected colum index */
-            if (sortAscending) {
-                viewerTable.Rows = viewerTable.Rows.OrderBy(r => r.GetStringValue(sortColumn)).ToList();
-            } else
-            {
-                viewerTable.Rows = viewerTable.Rows.OrderByDescending(r => r.GetStringValue(sortColumn)).ToList();
-            }
-
-            RedrawTable();
-
         }
     }
 }
