@@ -57,6 +57,12 @@ namespace DMS_Viewer
             }
 
             dataGridView1.RowCount = viewerTable.Rows.Count;
+
+            for(var x = 0; x < dataGridView1.RowCount;x++)
+            {
+                dataGridView1.Rows[x].HeaderCell.Value = $"{x+1}";
+            }
+
         }
 
 
@@ -260,7 +266,7 @@ namespace DMS_Viewer
 
         private void DataGridView1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            Debugger.Break();
+            //Debugger.Break();
         }
 
         private void DataGridView1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
