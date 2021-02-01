@@ -90,7 +90,7 @@ namespace DMS_Viewer
             dataViewer.Enabled = true;
             btnRecordMeta.Enabled = true;
             btnCompareToDB.Enabled = true;
-            foreach (var table in dmsFile.Tables)
+            foreach (var table in dmsFile.Tables.OrderBy(t => t.Name))
             {
                 if (Properties.Settings.Default.HideEmptyTables == false ||
                     (Properties.Settings.Default.HideEmptyTables == true && table.Rows.Count > 0))
