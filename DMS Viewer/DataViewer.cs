@@ -1,4 +1,5 @@
 ﻿using DMSLib;
+using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,6 +9,7 @@ using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -20,6 +22,8 @@ namespace DMS_Viewer
 
         private bool IsRunningMono = false;
         private DMSTable viewerTable;
+        private SqliteConnection tableConnection = null;
+        private List<DMSRow> filteredRows = null;
         public DataViewer(DMSTable table, string ConnectedDBName)
         {
             InitializeComponent();
@@ -60,7 +64,7 @@ namespace DMS_Viewer
 
             for(var x = 0; x < dataGridView1.RowCount;x++)
             {
-                dataGridView1.Rows[x].HeaderCell.Value = $"{x+1}";
+                //dataGridView1.Rows[x].HeaderCell.Value = $"{x+1}";
             }
 
         }
@@ -258,7 +262,14 @@ namespace DMS_Viewer
         {
             try
             {
-                e.Value = viewerTable.Rows[e.RowIndex].GetStringValue(e.ColumnIndex);
+                if (filteredRows != null)
+                {
+                    e.Value = filteredRows[e.RowIndex].GetStringValue(e.ColumnIndex);
+                }
+                else
+                {
+                    e.Value = viewerTable.Rows[e.RowIndex].GetStringValue(e.ColumnIndex);
+                }
             }
             catch (Exception ex) { }
             //Debugger.Break();
@@ -295,6 +306,45 @@ namespace DMS_Viewer
 
                 RedrawTable();
             }
+        }
+
+        private async void btnExecuteFilter_Click(object sender, EventArgs e)
+        {
+            if (tableConnection == null)
+            {
+                progressBar1.Visible = true;
+                progressBar1.Style = ProgressBarStyle.Marquee;
+                tableConnection = await SQLConverter.DMSTableToSQLAsync(viewerTable, null, new CancellationToken());
+                               
+                progressBar1.Visible = false;
+
+            }
+
+            var result = await SQLConverter.ExecuteQuery(tableConnection, $"SELECT __rowHash FROM {viewerTable.DBName} WHERE {textBox1.Text};");
+
+            var resultHashes = new List<long>();
+
+            while (result.Read())
+            {
+                resultHashes.Add(result.GetInt64(0));
+            }
+
+            filteredRows = viewerTable.Rows.Where(r => resultHashes.Contains(r.RowHash)).ToList();
+            dataGridView1.SuspendLayout();
+            dataGridView1.RowCount = 0;
+            InitDataTable();
+            dataGridView1.RowCount = resultHashes.Count();
+            dataGridView1.ResumeLayout();
+            
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            filteredRows.Clear();
+            filteredRows = null;
+            InitDataTable();
+            dataGridView1.RowCount = viewerTable.Rows.Count();
         }
     }
 }

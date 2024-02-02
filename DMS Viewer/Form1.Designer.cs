@@ -38,6 +38,7 @@
             this.generateSQLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rebuildScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.findAndReplaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.queryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.databaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.connectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.disconnectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -70,10 +71,10 @@
             this.btnRecordMeta = new System.Windows.Forms.Button();
             this.btnCompareToDB = new System.Windows.Forms.Button();
             this.tableList = new System.Windows.Forms.ListView();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -140,7 +141,8 @@
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.generateSQLToolStripMenuItem,
             this.rebuildScriptToolStripMenuItem,
-            this.findAndReplaceToolStripMenuItem});
+            this.findAndReplaceToolStripMenuItem,
+            this.queryToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 22);
             this.toolsToolStripMenuItem.Text = "Tools";
@@ -166,6 +168,13 @@
             this.findAndReplaceToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
             this.findAndReplaceToolStripMenuItem.Text = "Find and Replace";
             this.findAndReplaceToolStripMenuItem.Click += new System.EventHandler(this.findAndReplaceToolStripMenuItem_Click);
+            // 
+            // queryToolStripMenuItem
+            // 
+            this.queryToolStripMenuItem.Name = "queryToolStripMenuItem";
+            this.queryToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.queryToolStripMenuItem.Text = "Query...";
+            this.queryToolStripMenuItem.Click += new System.EventHandler(this.queryToolStripMenuItem_Click);
             // 
             // databaseToolStripMenuItem
             // 
@@ -454,6 +463,11 @@
             this.tableList.SelectedIndexChanged += new System.EventHandler(this.tableList_SelectedIndexChanged);
             this.tableList.MouseClick += new System.Windows.Forms.MouseEventHandler(this.TableList_MouseClick);
             // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Record List";
+            this.columnHeader1.Width = 143;
+            // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -477,11 +491,6 @@
             this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
             this.toolStripStatusLabel2.Size = new System.Drawing.Size(0, 17);
             this.toolStripStatusLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // columnHeader1
-            // 
-            this.columnHeader1.Text = "Record List";
-            this.columnHeader1.Width = 143;
             // 
             // Form1
             // 
@@ -570,6 +579,7 @@
         private System.Windows.Forms.ToolStripMenuItem ignoreDatesTimesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem hideEmptyTablesToolStripMenuItem;
         private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.ToolStripMenuItem queryToolStripMenuItem;
     }
 }
 

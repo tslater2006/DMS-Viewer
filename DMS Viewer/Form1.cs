@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using DMSLib;
 using OfficeOpenXml;
 using Oracle.ManagedDataAccess.Client;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace DMS_Viewer
 {
@@ -169,6 +170,7 @@ namespace DMS_Viewer
                 var isKey = value.Metadata.FieldMetadata.Where(m => m.FieldName == col.Name).First().UseEditMask
                     .HasFlag(UseEditFlags.KEY);
                 ListViewItem item = new ListViewItem(isKey ? "✓" : " ");
+                
                 item.Tag = col;
 
                 /* is this item a key? */
@@ -491,5 +493,9 @@ namespace DMS_Viewer
             Properties.Settings.Default.Save();
         }
 
+        private void queryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            
+        }
     }
 }
