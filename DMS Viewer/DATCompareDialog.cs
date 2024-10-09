@@ -82,7 +82,7 @@ namespace DMS_Viewer
             var savedIndexes = list.SelectedIndices;
 
             list.Items.Clear();
-            foreach (var table in file.Tables)
+            foreach (var table in file.Tables.OrderBy(t => t.Name))
             {
                 /* ignore empty tables */
                 if (table.Rows.Count == 0)
@@ -91,12 +91,12 @@ namespace DMS_Viewer
                 }
 
                 var backgroundColor = Color.White;
-                switch (table.CompareResult)
+                switch (table.CompareResult.Status)
                 {
-                    case DMSCompareResult.NEW:
+                    case DMSCompareStatus.NEW:
                         backgroundColor = Color.LawnGreen;
                         break;
-                    case DMSCompareResult.UPDATE:
+                    case DMSCompareStatus.UPDATE:
                         backgroundColor = Color.Yellow;
                         break;
                 }
@@ -145,6 +145,12 @@ namespace DMS_Viewer
             worker.RunWorkerCompleted += (o, args) =>
             {
                 UpdateUI(false);
+
+                var firstTable = selectedTables[0];
+                var index = lstRight.Items.IndexOf(lstRight.Items.Cast<ListViewItem>().First(i => (i.Tag as DMSTable) == firstTable));
+                lstRight.Focus();
+                lstRight.EnsureVisible(index);
+
                 MessageBox.Show(@"Compare has completed!");
             };
 
@@ -207,6 +213,29 @@ namespace DMS_Viewer
             {
                 btnViewDataLeft.Enabled = true;
                 lblLeftRows.Text = $@"Rows: {(lstLeft.SelectedItems[0].Tag as DMSTable)?.Rows.Count}";
+
+                /* Find the corresponding table in the right side */
+                if (rightFile != null)
+                {
+                    var table = lstLeft.SelectedItems[0].Tag as DMSTable;
+
+                    var rightTable = rightFile.Tables.FirstOrDefault(t => t.Name == table.Name);
+                    if (rightTable != null)
+                    {
+                        var index = lstRight.Items.IndexOf(lstRight.Items.Cast<ListViewItem>().First(i => (i.Tag as DMSTable).Name == rightTable.Name));
+
+                        if (lstRight.SelectedItems.Count == 1 && lstRight.SelectedItems[0].Tag == rightTable)
+                        {
+                            lstRight.EnsureVisible(index);
+                            return;
+                        }
+
+                        lstRight.SelectedItems.Clear();
+                        lstRight.Items[index].Selected = true;
+                        /* scroll it into view */
+                        lstRight.EnsureVisible(index);
+                    }
+                }
             }
         }
 
@@ -216,6 +245,28 @@ namespace DMS_Viewer
             {
                 btnViewDataRight.Enabled = true;
                 lblRightRows.Text = $@"Rows: {(lstRight.SelectedItems[0].Tag as DMSTable)?.Rows.Count}";
+
+                /* Find the corresponding table in the left side */
+                if (leftFile != null)
+                {
+                    var table = lstRight.SelectedItems[0].Tag as DMSTable;
+                    var leftTable = leftFile.Tables.FirstOrDefault(t => t.Name == table.Name);
+                    if (leftTable != null)
+                    {
+                        var index = lstLeft.Items.IndexOf(lstLeft.Items.Cast<ListViewItem>().First(i => (i.Tag as DMSTable).Name == leftTable.Name));
+
+                        if (lstLeft.SelectedItems.Count == 1 && lstLeft.SelectedItems[0].Tag == leftTable)
+                        {
+                            lstLeft.EnsureVisible(index);
+                            return;
+                        }
+
+                        lstLeft.SelectedItems.Clear();
+                        lstLeft.Items[index].Selected = true;
+                        /* scroll it into view */
+                        lstLeft.EnsureVisible(index);
+                    }
+                }
             }
         }
 
@@ -230,7 +281,7 @@ namespace DMS_Viewer
             /* this compares the rows for tables in Source to tables in Target */
             foreach (var table in selectedTables)
             {
-                table.CompareResult = DMSCompareResult.NEW;
+                table.CompareResult.Status = DMSCompareStatus.NEW;
             }
         }
 
@@ -253,6 +304,13 @@ namespace DMS_Viewer
             worker.RunWorkerCompleted += (o, args) =>
             {
                 UpdateUI(true);
+
+                var firstTable = selectedTables[0];
+                var index = lstLeft.Items.IndexOf(lstLeft.Items.Cast<ListViewItem>().First(i => (i.Tag as DMSTable) == firstTable));
+                lstLeft.Focus();
+                lstLeft.EnsureVisible(index);
+
+
                 MessageBox.Show(@"Compare has completed!");
             };
 
@@ -279,7 +337,7 @@ namespace DMS_Viewer
                     m.MenuItems.Add(generateSQL);
 
                     if (leftFile.Tables.Any(t =>
-                        t.CompareResult == DMSCompareResult.NEW || t.CompareResult == DMSCompareResult.UPDATE))
+                        t.CompareResult.Status == DMSCompareStatus.NEW || t.CompareResult.Status == DMSCompareStatus.UPDATE))
                     {
                         MenuItem saveDiffs = new MenuItem("Save DAT diff...");
                         saveDiffs.Tag = selectedTables;
@@ -321,7 +379,7 @@ namespace DMS_Viewer
                     m.MenuItems.Add(generateSQL);
 
                     if (rightFile.Tables.Any(t =>
-                        t.CompareResult == DMSCompareResult.NEW || t.CompareResult == DMSCompareResult.UPDATE))
+                        t.CompareResult.Status == DMSCompareStatus.NEW || t.CompareResult.Status == DMSCompareStatus.UPDATE))
                     {
                         MenuItem saveDiffs = new MenuItem("Save DAT diff...");
                         saveDiffs.Tag = selectedTables;
@@ -357,13 +415,13 @@ namespace DMS_Viewer
         {
             Parallel.ForEach(tables, table =>
                 {
-                    /* determine if this table exists in target file */
+                    /* determine if this table exists in target file, note that the table (by name) could be in the file multiple times */
                     var targetTables = file.Tables.Where(t => t.Name == table.Name).ToList();
                     if (targetTables.Count == 0)
                     {
                         foreach (var row in table.Rows)
                         {
-                            row.CompareResult = DMSCompareResult.NEW;
+                            row.CompareResult.Status = DMSCompareStatus.NEW;
                         }
 
                         ReportProgress(table.Rows.Count);
@@ -378,35 +436,31 @@ namespace DMS_Viewer
                         /* for each row in source table, compare against target tables */
                         Parallel.ForEach(table.Rows, row =>
                             {
-                                row.CompareResult = DMSCompareResult.NONE;
+                                row.CompareResult.Status = DMSCompareStatus.NONE;
 
-                                foreach (var targetRow in targetTables.SelectMany(t => t.Rows))
+                                DMSRow targetRow = targetTables.SelectMany(t => t.Rows.Where(r => r.KeyHash == row.KeyHash)).FirstOrDefault();
+                                if (targetRow == null)
+                                {
+                                    row.CompareResult.Status = DMSCompareStatus.NEW;
+                                }
+                                else
                                 {
                                     CompareRows(row, targetRow, keyFieldIndexes);
-                                    if (row.CompareResult != DMSCompareResult.NONE)
-                                    {
-                                        break;
-                                    }
-                                }
-
-                                if (row.CompareResult == DMSCompareResult.NONE)
-                                {
-                                    row.CompareResult = DMSCompareResult.NEW;
                                 }
 
                                 ReportProgress(1);
                             }
                         );
 
-                        if (table.Rows.Any(r => r.CompareResult == DMSCompareResult.UPDATE))
+                        if (table.Rows.Any(r => r.CompareResult.Status == DMSCompareStatus.UPDATE))
                         {
-                            table.CompareResult = DMSCompareResult.UPDATE;
+                            table.CompareResult.Status = DMSCompareStatus.UPDATE;
                         }
                         else
                         {
-                            table.CompareResult = table.Rows.Any(r => r.CompareResult == DMSCompareResult.NEW)
-                                ? DMSCompareResult.NEW
-                                : DMSCompareResult.SAME;
+                            table.CompareResult.Status = table.Rows.Any(r => r.CompareResult.Status == DMSCompareStatus.NEW)
+                                ? DMSCompareStatus.NEW
+                                : DMSCompareStatus.SAME;
                         }
                     }
                 }
@@ -432,15 +486,29 @@ namespace DMS_Viewer
 
             if (isSame)
             {
-                left.CompareResult = DMSCompareResult.SAME;
+                left.CompareResult.Status = DMSCompareStatus.SAME;
             } else
             {
                 if (left.KeyHash == right.KeyHash)
                 {
-                    left.CompareResult = DMSCompareResult.UPDATE;
+                    left.CompareResult.Status = DMSCompareStatus.UPDATE;
+                    left.CompareResult.ChangedIndexes = new List<int>();
+                    /* go piece by piece and compare each field */
+                    for (int i = 0; i < left.Values.Length; i++)
+                    {
+                        if (left.Values[i] != right.Values[i])
+                        {
+
+                            var closestIndex = left.Indexes.Where(z => z <= i).Max();
+                            var column = Array.IndexOf(left.Indexes, closestIndex);
+
+                            left.CompareResult.ChangedIndexes.Add(column);
+                            break;
+                        }
+                    }
                 } else
                 {
-                    left.CompareResult = DMSCompareResult.NEW;
+                    left.CompareResult.Status = DMSCompareStatus.NEW;
                 }
             }
         }

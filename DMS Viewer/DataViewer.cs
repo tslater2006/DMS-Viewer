@@ -32,7 +32,7 @@ namespace DMS_Viewer
 
             viewerTable = table;
             this.Text = "Data Viewer: " + table.DBName;
-            if (table.CompareResult!= DMSCompareResult.SAME && ConnectedDBName.Length > 0)
+            if (table.CompareResult.Status!= DMSCompareStatus.SAME && ConnectedDBName.Length > 0)
             {
                 this.Text += " - " + ConnectedDBName;
             }
@@ -223,12 +223,12 @@ namespace DMS_Viewer
         private void dataGridView1_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
         {
             Color backColor = Color.White;
-            switch (viewerTable.Rows[e.RowIndex].CompareResult)
+            switch (viewerTable.Rows[e.RowIndex].CompareResult.Status)
             {
-                case DMSCompareResult.NEW:
+                case DMSCompareStatus.NEW:
                     backColor = Color.LawnGreen;
                     break;
-                case DMSCompareResult.UPDATE:
+                case DMSCompareStatus.UPDATE:
                     backColor = Color.Yellow;
                     break;
             }
@@ -345,6 +345,40 @@ namespace DMS_Viewer
             filteredRows = null;
             InitDataTable();
             dataGridView1.RowCount = viewerTable.Rows.Count();
+        }
+
+        private void dataGridView1_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        {
+            // Check if this is the cell you want to customize (for example, row 1, column 1)
+            if (e.RowIndex >= 0 && e.ColumnIndex >= 0)
+            {
+                /* if this rows compare status is not update, do nothing */
+                if (viewerTable.Rows[e.RowIndex].CompareResult.Status != DMSCompareStatus.UPDATE)
+                {
+                    return;
+                }
+
+                /* if this cell in the row is one of the changed indexes, paint it red */
+                if (viewerTable.Rows[e.RowIndex].CompareResult.ChangedIndexes.Contains(e.ColumnIndex))
+                {
+                    // Paint the cell normally first
+                    e.Paint(e.CellBounds, DataGridViewPaintParts.All);
+
+                    // Define the red border
+                    using (Pen redPen = new Pen(Color.Red, 2))
+                    {
+                        Rectangle rect = e.CellBounds;
+                        rect.Width -= 1;
+                        rect.Height -= 1;
+
+                        // Draw the red border around the cell content
+                        e.Graphics.DrawRectangle(redPen, rect);
+                    }
+
+                    // Prevent default cell painting
+                    e.Handled = true;
+                }
+            }
         }
     }
 }

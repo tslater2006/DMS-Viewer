@@ -57,19 +57,19 @@ namespace DMS_Viewer
                             worker.ReportProgress((int) ((rowsProcessed / (double) totalRows) * 100));
                         }
 
-                        if (table.Rows.Where(r => r.CompareResult == DMSCompareResult.UPDATE).Count() > 0)
+                        if (table.Rows.Where(r => r.CompareResult.Status == DMSCompareStatus.UPDATE).Count() > 0)
                         {
-                            table.CompareResult = DMSCompareResult.UPDATE;
+                            table.CompareResult.Status = DMSCompareStatus.UPDATE;
                         }
                         else
                         {
-                            if (table.Rows.Where(r => r.CompareResult == DMSCompareResult.NEW).Count() > 0)
+                            if (table.Rows.Where(r => r.CompareResult.Status == DMSCompareStatus.NEW).Count() > 0)
                             {
-                                table.CompareResult = DMSCompareResult.NEW;
+                                table.CompareResult.Status = DMSCompareStatus.NEW;
                             }
                             else
                             {
-                                table.CompareResult = DMSCompareResult.SAME;
+                                table.CompareResult.Status = DMSCompareStatus.SAME;
                             }
                         }
                     }
@@ -85,10 +85,10 @@ namespace DMS_Viewer
                             {
                                 foreach (var row in tbl.Rows)
                                 {
-                                    row.CompareResult = DMSCompareResult.NEW;
+                                    row.CompareResult.Status = DMSCompareStatus.NEW;
                                 }
 
-                                tbl.CompareResult = DMSCompareResult.NEW;
+                                tbl.CompareResult.Status = DMSCompareStatus.NEW;
                             }
 
                             rowsProcessed += table.Rows.Count;
@@ -297,11 +297,11 @@ namespace DMS_Viewer
                                 {
                                     if (diffCheckReader.Read())
                                     {
-                                        curRow.CompareResult = DMSCompareResult.SAME;
+                                        curRow.CompareResult.Status = DMSCompareStatus.SAME;
                                     }
                                     else
                                     {
-                                        curRow.CompareResult = DMSCompareResult.UPDATE;
+                                        curRow.CompareResult.Status = DMSCompareStatus.UPDATE;
                                     }
                                 }
                             }
@@ -309,13 +309,13 @@ namespace DMS_Viewer
                             {
                                 /* failed to do the diff, likely due to column changes */
                                 /* mark as an update */
-                                curRow.CompareResult = DMSCompareResult.UPDATE;
+                                curRow.CompareResult.Status = DMSCompareStatus.UPDATE;
                             }
                         }
                     }
                     else
                     {
-                        curRow.CompareResult = DMSCompareResult.NEW;
+                        curRow.CompareResult.Status = DMSCompareStatus.NEW;
                     }
                 }
             }

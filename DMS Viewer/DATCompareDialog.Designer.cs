@@ -43,6 +43,8 @@
             this.lblRightRows = new System.Windows.Forms.Label();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SuspendLayout();
             // 
             // openFileDialog1
@@ -51,37 +53,40 @@
             // 
             // lstRight
             // 
+            this.lstRight.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader2});
             this.lstRight.HideSelection = false;
-            this.lstRight.Location = new System.Drawing.Point(322, 36);
+            this.lstRight.Location = new System.Drawing.Point(276, 31);
             this.lstRight.Margin = new System.Windows.Forms.Padding(2);
             this.lstRight.Name = "lstRight";
-            this.lstRight.Size = new System.Drawing.Size(257, 399);
+            this.lstRight.Size = new System.Drawing.Size(221, 346);
             this.lstRight.TabIndex = 26;
             this.lstRight.UseCompatibleStateImageBehavior = false;
-            this.lstRight.View = System.Windows.Forms.View.List;
+            this.lstRight.View = System.Windows.Forms.View.Details;
             this.lstRight.SelectedIndexChanged += new System.EventHandler(this.lstRight_SelectedIndexChanged);
             this.lstRight.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lstRight_MouseClick);
             // 
             // lstLeft
             // 
+            this.lstLeft.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1});
             this.lstLeft.HideSelection = false;
-            this.lstLeft.Location = new System.Drawing.Point(13, 36);
+            this.lstLeft.Location = new System.Drawing.Point(11, 31);
             this.lstLeft.Margin = new System.Windows.Forms.Padding(2);
             this.lstLeft.Name = "lstLeft";
-            this.lstLeft.Size = new System.Drawing.Size(257, 399);
+            this.lstLeft.Size = new System.Drawing.Size(221, 346);
             this.lstLeft.TabIndex = 27;
             this.lstLeft.UseCompatibleStateImageBehavior = false;
-            this.lstLeft.View = System.Windows.Forms.View.List;
+            this.lstLeft.View = System.Windows.Forms.View.Details;
             this.lstLeft.SelectedIndexChanged += new System.EventHandler(this.lstLeft_SelectedIndexChanged);
             this.lstLeft.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lstLeft_MouseClick);
             // 
             // btnCompareRight
             // 
             this.btnCompareRight.Enabled = false;
-            this.btnCompareRight.Location = new System.Drawing.Point(74, 479);
-            this.btnCompareRight.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.btnCompareRight.Location = new System.Drawing.Point(63, 415);
             this.btnCompareRight.Name = "btnCompareRight";
-            this.btnCompareRight.Size = new System.Drawing.Size(118, 27);
+            this.btnCompareRight.Size = new System.Drawing.Size(101, 23);
             this.btnCompareRight.TabIndex = 28;
             this.btnCompareRight.Text = "Compare to Right";
             this.btnCompareRight.UseVisualStyleBackColor = true;
@@ -90,10 +95,9 @@
             // btnCompareToLeft
             // 
             this.btnCompareToLeft.Enabled = false;
-            this.btnCompareToLeft.Location = new System.Drawing.Point(393, 479);
-            this.btnCompareToLeft.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.btnCompareToLeft.Location = new System.Drawing.Point(337, 415);
             this.btnCompareToLeft.Name = "btnCompareToLeft";
-            this.btnCompareToLeft.Size = new System.Drawing.Size(118, 27);
+            this.btnCompareToLeft.Size = new System.Drawing.Size(101, 23);
             this.btnCompareToLeft.TabIndex = 29;
             this.btnCompareToLeft.Text = "Compare to Left";
             this.btnCompareToLeft.UseVisualStyleBackColor = true;
@@ -102,10 +106,9 @@
             // btnViewDataLeft
             // 
             this.btnViewDataLeft.Enabled = false;
-            this.btnViewDataLeft.Location = new System.Drawing.Point(74, 441);
-            this.btnViewDataLeft.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.btnViewDataLeft.Location = new System.Drawing.Point(63, 382);
             this.btnViewDataLeft.Name = "btnViewDataLeft";
-            this.btnViewDataLeft.Size = new System.Drawing.Size(118, 27);
+            this.btnViewDataLeft.Size = new System.Drawing.Size(101, 23);
             this.btnViewDataLeft.TabIndex = 31;
             this.btnViewDataLeft.Text = "View Data";
             this.btnViewDataLeft.UseVisualStyleBackColor = true;
@@ -114,10 +117,9 @@
             // btnViewDataRight
             // 
             this.btnViewDataRight.Enabled = false;
-            this.btnViewDataRight.Location = new System.Drawing.Point(393, 441);
-            this.btnViewDataRight.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.btnViewDataRight.Location = new System.Drawing.Point(337, 382);
             this.btnViewDataRight.Name = "btnViewDataRight";
-            this.btnViewDataRight.Size = new System.Drawing.Size(118, 27);
+            this.btnViewDataRight.Size = new System.Drawing.Size(101, 23);
             this.btnViewDataRight.TabIndex = 32;
             this.btnViewDataRight.Text = "View Data";
             this.btnViewDataRight.UseVisualStyleBackColor = true;
@@ -126,19 +128,17 @@
             // lblLeft
             // 
             this.lblLeft.AutoSize = true;
-            this.lblLeft.Location = new System.Drawing.Point(9, 10);
-            this.lblLeft.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblLeft.Location = new System.Drawing.Point(8, 9);
             this.lblLeft.Name = "lblLeft";
-            this.lblLeft.Size = new System.Drawing.Size(75, 15);
+            this.lblLeft.Size = new System.Drawing.Size(71, 13);
             this.lblLeft.TabIndex = 33;
             this.lblLeft.Text = "Select a file...";
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(240, 3);
-            this.button6.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.button6.Location = new System.Drawing.Point(206, 3);
             this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(28, 27);
+            this.button6.Size = new System.Drawing.Size(24, 23);
             this.button6.TabIndex = 34;
             this.button6.Text = "...";
             this.button6.UseVisualStyleBackColor = true;
@@ -146,10 +146,9 @@
             // 
             // button7
             // 
-            this.button7.Location = new System.Drawing.Point(552, 5);
-            this.button7.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.button7.Location = new System.Drawing.Point(473, 4);
             this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(28, 27);
+            this.button7.Size = new System.Drawing.Size(24, 23);
             this.button7.TabIndex = 35;
             this.button7.Text = "...";
             this.button7.UseVisualStyleBackColor = true;
@@ -158,46 +157,52 @@
             // lblRight
             // 
             this.lblRight.AutoSize = true;
-            this.lblRight.Location = new System.Drawing.Point(320, 10);
-            this.lblRight.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblRight.Location = new System.Drawing.Point(274, 9);
             this.lblRight.Name = "lblRight";
-            this.lblRight.Size = new System.Drawing.Size(75, 15);
+            this.lblRight.Size = new System.Drawing.Size(71, 13);
             this.lblRight.TabIndex = 36;
             this.lblRight.Text = "Select a file...";
             // 
             // lblLeftRows
             // 
             this.lblLeftRows.AutoSize = true;
-            this.lblLeftRows.Location = new System.Drawing.Point(200, 441);
-            this.lblLeftRows.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblLeftRows.Location = new System.Drawing.Point(171, 382);
             this.lblLeftRows.Name = "lblLeftRows";
-            this.lblLeftRows.Size = new System.Drawing.Size(41, 15);
+            this.lblLeftRows.Size = new System.Drawing.Size(40, 13);
             this.lblLeftRows.TabIndex = 37;
             this.lblLeftRows.Text = "Rows: ";
             // 
             // lblRightRows
             // 
             this.lblRightRows.AutoSize = true;
-            this.lblRightRows.Location = new System.Drawing.Point(519, 441);
-            this.lblRightRows.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblRightRows.Location = new System.Drawing.Point(445, 382);
             this.lblRightRows.Name = "lblRightRows";
-            this.lblRightRows.Size = new System.Drawing.Size(41, 15);
+            this.lblRightRows.Size = new System.Drawing.Size(40, 13);
             this.lblRightRows.TabIndex = 38;
             this.lblRightRows.Text = "Rows: ";
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(13, 512);
-            this.progressBar1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.progressBar1.Location = new System.Drawing.Point(11, 444);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(566, 18);
+            this.progressBar1.Size = new System.Drawing.Size(485, 16);
             this.progressBar1.TabIndex = 39;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Table Name";
+            this.columnHeader1.Width = 213;
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Table Name";
+            this.columnHeader2.Width = 217;
             // 
             // DATCompareDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(602, 534);
+            this.ClientSize = new System.Drawing.Size(516, 463);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.lblRightRows);
             this.Controls.Add(this.lblLeftRows);
@@ -211,12 +216,12 @@
             this.Controls.Add(this.btnCompareRight);
             this.Controls.Add(this.lstLeft);
             this.Controls.Add(this.lstRight);
-            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "DATCompareDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "DAT Compare";
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         #endregion
@@ -236,5 +241,7 @@
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.Label lblRight;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.ColumnHeader columnHeader2;
     }
 }

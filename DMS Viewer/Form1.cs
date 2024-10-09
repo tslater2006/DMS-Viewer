@@ -44,6 +44,9 @@ namespace DMS_Viewer
             ignoreDatesTimesToolStripMenuItem.Checked = Properties.Settings.Default.IgnoreDates;
             hideEmptyTablesToolStripMenuItem.Checked = Properties.Settings.Default.HideEmptyTables;
 
+
+            menuStrip1.Renderer = new LegendRenderer(new List<ToolStripItem> { legendChanged, legendNew, LegendMissing, legendSame});
+
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -97,12 +100,12 @@ namespace DMS_Viewer
                     (Properties.Settings.Default.HideEmptyTables == true && table.Rows.Count > 0))
                 {
                     var backgroundColor = Color.White;
-                    switch (table.CompareResult)
+                    switch (table.CompareResult.Status)
                     {
-                        case DMSCompareResult.NEW:
+                        case DMSCompareStatus.NEW:
                             backgroundColor = Color.LawnGreen;
                             break;
-                        case DMSCompareResult.UPDATE:
+                        case DMSCompareStatus.UPDATE:
                             backgroundColor = Color.Yellow;
                             break;
                     }
@@ -409,7 +412,7 @@ namespace DMS_Viewer
                     m.MenuItems.Add(exportToExcel);
 
                     if (dmsFile.Tables.Any(t =>
-                        t.CompareResult == DMSCompareResult.NEW || t.CompareResult == DMSCompareResult.UPDATE))
+                        t.CompareResult.Status == DMSCompareStatus.NEW || t.CompareResult.Status == DMSCompareStatus.UPDATE))
                     {
                         MenuItem saveDiffs = new MenuItem("Save DAT diff...");
                         saveDiffs.Tag = selectedTables;
@@ -496,6 +499,29 @@ namespace DMS_Viewer
         private void queryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             
+        }
+    }
+
+
+    public class LegendRenderer : ToolStripProfessionalRenderer
+    {
+        List<ToolStripItem> legendItems = new List<ToolStripItem>();
+
+        public LegendRenderer(List<ToolStripItem> items)
+        {
+            legendItems = items;
+        }
+        protected override void OnRenderMenuItemBackground(ToolStripItemRenderEventArgs e)
+        {
+            if (legendItems.Contains(e.Item)) // Check if the item is selected (highlighted)
+            {
+                e.Graphics.FillRectangle(new SolidBrush(e.Item.BackColor), e.Item.ContentRectangle);
+            }
+            else
+            {
+                // Draw default background for non-selected items
+                base.OnRenderMenuItemBackground(e);
+            }
         }
     }
 }

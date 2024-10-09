@@ -47,6 +47,11 @@
             this.ignoreVersionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ignoreDatesTimesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hideEmptyTablesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.legendToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.legendNew = new System.Windows.Forms.ToolStripMenuItem();
+            this.legendChanged = new System.Windows.Forms.ToolStripMenuItem();
+            this.LegendMissing = new System.Windows.Forms.ToolStripMenuItem();
+            this.legendSame = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.label2 = new System.Windows.Forms.Label();
             this.txtVersion = new System.Windows.Forms.TextBox();
@@ -86,7 +91,8 @@
             this.fileToolStripMenuItem,
             this.toolsToolStripMenuItem,
             this.databaseToolStripMenuItem,
-            this.optionsToolStripMenuItem});
+            this.optionsToolStripMenuItem,
+            this.legendToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(3, 1, 0, 1);
@@ -249,6 +255,45 @@
             this.hideEmptyTablesToolStripMenuItem.TextImageRelation = System.Windows.Forms.TextImageRelation.Overlay;
             this.hideEmptyTablesToolStripMenuItem.CheckedChanged += new System.EventHandler(this.hideEmptyTablesToolStripMenuItem_CheckedChanged);
             this.hideEmptyTablesToolStripMenuItem.Click += new System.EventHandler(this.HideEmptyTablesToolStripMenuItem_Click);
+            // 
+            // legendToolStripMenuItem
+            // 
+            this.legendToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.legendNew,
+            this.legendChanged,
+            this.LegendMissing,
+            this.legendSame});
+            this.legendToolStripMenuItem.Name = "legendToolStripMenuItem";
+            this.legendToolStripMenuItem.Size = new System.Drawing.Size(110, 22);
+            this.legendToolStripMenuItem.Text = "Compare Legend";
+            // 
+            // legendNew
+            // 
+            this.legendNew.BackColor = System.Drawing.Color.LawnGreen;
+            this.legendNew.Name = "legendNew";
+            this.legendNew.Size = new System.Drawing.Size(180, 22);
+            this.legendNew.Text = "New";
+            // 
+            // legendChanged
+            // 
+            this.legendChanged.BackColor = System.Drawing.Color.Yellow;
+            this.legendChanged.Name = "legendChanged";
+            this.legendChanged.Size = new System.Drawing.Size(180, 22);
+            this.legendChanged.Text = "Changed";
+            // 
+            // LegendMissing
+            // 
+            this.LegendMissing.BackColor = System.Drawing.Color.LightCoral;
+            this.LegendMissing.Name = "LegendMissing";
+            this.LegendMissing.Size = new System.Drawing.Size(180, 22);
+            this.LegendMissing.Text = "Missing";
+            // 
+            // legendSame
+            // 
+            this.legendSame.BackColor = System.Drawing.Color.White;
+            this.legendSame.Name = "legendSame";
+            this.legendSame.Size = new System.Drawing.Size(180, 22);
+            this.legendSame.Text = "Same";
             // 
             // openFileDialog1
             // 
@@ -580,6 +625,11 @@
         private System.Windows.Forms.ToolStripMenuItem hideEmptyTablesToolStripMenuItem;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ToolStripMenuItem queryToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem legendToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem legendNew;
+        private System.Windows.Forms.ToolStripMenuItem legendChanged;
+        private System.Windows.Forms.ToolStripMenuItem LegendMissing;
+        private System.Windows.Forms.ToolStripMenuItem legendSame;
     }
 }
 
